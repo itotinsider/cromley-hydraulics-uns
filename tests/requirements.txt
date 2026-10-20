@@ -1,0 +1,2 @@
+# Test runner only; the services bring their own pins (requirements.txt).
+pytest==8.3.5

@@ -1,0 +1,185 @@
+# Cromley Hydraulics (CH) at Copper Canyon Dam: demo environment, MQTT only, one local broker.
+#
+#   mosquitto      the local broker (both trees)
+#   dam-sim        reservoir, spillway, bottom outlet, three units, plant controller → customer tree
+#   ch-plc-sim     one simulated CH PLC per turbine → CH asset tree (1 s process values + raw waveforms)
+#   dam-scada      the customer's dam SCADA (subscribes the customer tree, publishes Cmd) + the hub page
+#   instructor     hidden fault scenarios; talks to the simulators over HTTP, never through the broker
+#   ch-viewer      the machine builder's view of the CH tree (nameplates, values, raw waveforms)
+#   nodered, mqtt-explorer   exploration and flows on both trees
+#   tests          test runner (profile "test", never started by `up`): docker compose run --rm tests
+#
+# Everything beyond the broker (edge devices, analytics, transport, buffering, security, device
+# management) is what the edge / IIoT vendors bring in the next step.
+#
+# Ports are chosen so Haltenberg (8110…) and Sweet Harmony (8090, 1883, 1880, 4000) can run side
+# by side. Several CH stacks on one machine (one per git worktree / agent): put a git-ignored .env
+# next to this file that sets CH_STACK and the six CH_*_PORT host ports, e.g.
+#   CH_STACK=ch2  CH_HUB_PORT=8220  CH_INSTRUCTOR_PORT=8221  CH_VIEWER_PORT=8222
+#   CH_MQTT_PORT=1984  CH_NODERED_PORT=1981  CH_MQTT_EXPLORER_PORT=4101
+# Inside the network the services keep their standard ports.
+
+x-mqtt: &mqtt
+  # The broker's compose service name: "localhost" inside a container is the container itself.
+  MQTT_HOST: mosquitto
+  MQTT_PORT: "1883"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0.22
+    container_name: ${CH_STACK:-ch}-mosquitto
+    restart: unless-stopped
+    ports:
+      - "${CH_MQTT_PORT:-1884}:1883"   # mqtt://localhost:1884 for clients on the host (edge devices, scripts)
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+      - ./mosquitto/data:/mosquitto/data
+
+  dam-sim:
+    build:
+      context: .
+      dockerfile: damsim/Dockerfile
+    image: ${CH_STACK:-ch}/dam-sim:latest
+    container_name: ${CH_STACK:-ch}-dam-sim
+    restart: unless-stopped
+    environment:
+      <<: *mqtt
+      WEB_PORT: "8123"                 # instructor API, compose network only
+      PUBLISH_INTERVAL_SECONDS: "1"
+      STEP_SECONDS: "0.1"
+      # The customer's turbine sensors (element A), served by the CH PLC simulator: the "copper".
+      HARDWIRED_URL: http://ch-plc-sim:8125/api/hardwired
+      START_LEVEL_M: "412"
+      INFLOW_M3S: "115"
+      PLANT_MW_SETPOINT: "110"
+      AGC_ENABLED: "true"
+      SEED: "1"
+    depends_on:
+      - mosquitto
+
+  ch-plc-sim:
+    build:
+      context: .
+      dockerfile: chplc/Dockerfile
+    image: ${CH_STACK:-ch}/ch-plc-sim:latest
+    container_name: ${CH_STACK:-ch}-ch-plc-sim
+    restart: unless-stopped
+    environment:
+      <<: *mqtt
+      WEB_PORT: "8125"                 # hardwired + instructor API, compose network only
+      PUBLISH_INTERVAL_SECONDS: "1"
+      DATA_DIR: /app/data              # counters (starts, run hours, ...) survive restarts
+      COOLING_WATER_TEMP_C: "14"
+      RETAIN_PROCESS_VALUES: "true"
+      # Waveform load: raise for vendors who want to show streaming (design basis "Waveform blocks").
+      DETAILED_TURBINES: "3"           # how many turbines publish waveforms (0-3)
+      WAVEFORM_SHAFT_EVERY_S: "30"     # 6 shaft displacement channels, 1 kS/s
+      WAVEFORM_SHAFT_SECONDS: "4"
+      WAVEFORM_DRAFTTUBE_EVERY_S: "30" # draft-tube pressure, 100 S/s
+      WAVEFORM_DRAFTTUBE_SECONDS: "10"
+      WAVEFORM_ACCEL_EVERY_S: "300"    # headcover accelerometer, 10 kS/s
+      WAVEFORM_ACCEL_SECONDS: "0.5"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - mosquitto
+
+  dam-scada:
+    build:
+      context: .
+      dockerfile: scada/Dockerfile
+    image: ${CH_STACK:-ch}/dam-scada:latest
+    container_name: ${CH_STACK:-ch}-dam-scada
+    restart: unless-stopped
+    ports:
+      - "${CH_HUB_PORT:-8120}:8120"    # Hub + dam SCADA: http://localhost:8120
+    environment:
+      <<: *mqtt
+      WEB_PORT: "8120"
+      STALE_SECONDS: "5"
+      # Links on the hub page: how a browser on the host reaches the other systems.
+      PUBLIC_INSTRUCTOR_URL: http://localhost:${CH_INSTRUCTOR_PORT:-8121}
+      PUBLIC_VIEWER_URL: http://localhost:${CH_VIEWER_PORT:-8122}
+      PUBLIC_NODERED_URL: http://localhost:${CH_NODERED_PORT:-1881}
+      PUBLIC_MQTT_EXPLORER_URL: http://localhost:${CH_MQTT_EXPLORER_PORT:-4001}
+      PUBLIC_BROKER: localhost:${CH_MQTT_PORT:-1884}
+    depends_on:
+      - mosquitto
+      - dam-sim
+
+  instructor:
+    build:
+      context: .
+      dockerfile: instructor/Dockerfile
+    image: ${CH_STACK:-ch}/instructor:latest
+    container_name: ${CH_STACK:-ch}-instructor
+    restart: unless-stopped
+    ports:
+      - "${CH_INSTRUCTOR_PORT:-8121}:8121"   # Instructor station: http://localhost:8121
+    environment:
+      WEB_PORT: "8121"
+      DAM_URL: http://dam-sim:8123
+      CH_URL: http://ch-plc-sim:8125
+      PUBLIC_HUB_URL: http://localhost:${CH_HUB_PORT:-8120}
+    depends_on:
+      - dam-sim
+      - ch-plc-sim
+
+  ch-viewer:
+    build:
+      context: .
+      dockerfile: chviewer/Dockerfile
+    image: ${CH_STACK:-ch}/ch-viewer:latest
+    container_name: ${CH_STACK:-ch}-ch-viewer
+    restart: unless-stopped
+    ports:
+      - "${CH_VIEWER_PORT:-8122}:8122"   # CH asset viewer: http://localhost:8122
+    environment:
+      <<: *mqtt
+      WEB_PORT: "8122"
+      PUBLIC_HUB_URL: http://localhost:${CH_HUB_PORT:-8120}
+    depends_on:
+      - mosquitto
+
+  nodered:
+    image: nodered/node-red:4.1.4
+    container_name: ${CH_STACK:-ch}-nodered
+    restart: unless-stopped
+    ports:
+      - "${CH_NODERED_PORT:-1881}:1880"   # Flow editor: http://localhost:1881
+    environment:
+      # Pins the flow filename; the official image otherwise names it after the container's
+      # hostname, which is different every time the container is recreated.
+      FLOWS: flows.json
+      BEARING_CSV_FILE: /data/exports/ch_bearings_1min.csv
+    volumes:
+      - ./nodered_data:/data
+      - ./exports:/data/exports
+    depends_on:
+      - mosquitto
+
+  mqtt-explorer:
+    image: smeagolworms4/mqtt-explorer:browser-1.0.3
+    container_name: ${CH_STACK:-ch}-mqtt-explorer
+    restart: unless-stopped
+    ports:
+      - "${CH_MQTT_EXPLORER_PORT:-4001}:4000"   # Web UI: http://localhost:4001
+    environment:
+      HTTP_PORT: "4000"
+    volumes:
+      # Saved connections persist here; the seeded one points at host "mosquitto", port 1883
+      # (the browser UI connects server-side, inside the compose network).
+      - ./mqtt_explorer_data:/mqtt-explorer/config
+    depends_on:
+      - mosquitto
+
+  # Test runner: inventory, contract, behaviour and end-to-end tests against the working tree.
+  # Not part of the stack: `docker compose run --rm tests` builds and runs it on demand.
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    image: ${CH_STACK:-ch}/tests:latest
+    profiles: ["test"]
+    volumes:
+      - .:/w

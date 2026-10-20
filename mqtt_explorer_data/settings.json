@@ -1,0 +1,20 @@
+{
+  "ConnectionManager_connections": {
+    "Copper Canyon Dam": {
+      "configVersion": 1,
+      "certValidation": true,
+      "clientId": "mqtt-explorer-copper-canyon",
+      "id": "Copper Canyon Dam",
+      "name": "Copper Canyon Dam",
+      "encryption": false,
+      "subscriptions": [
+        {"topic": "v1.0/DRWPA/#", "qos": 0},
+        {"topic": "v1.0/CH/#", "qos": 0}
+      ],
+      "type": "mqtt",
+      "host": "mosquitto",
+      "port": 1883,
+      "protocol": "mqtt"
+    }
+  }
+}

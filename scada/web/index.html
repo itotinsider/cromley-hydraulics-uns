@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copper Canyon Dam Systems</title>
+<style>
+  :root {
+    --bg: #eef0f2; --card: #fff; --line: #d3d7db; --text: #1c2024; --muted: #5f666d;
+    --brand: #0f5e6e; --cust: #3b4b5c; --sim: #7c3aed; --nr: #8f1c1c; --learn: #0e7490; --copper: #b45f2a;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --sans: "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); }
+  header { background: #142a33; color: #fff; padding: 22px 16px 26px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  header .wrap { display: flex; align-items: center; gap: 16px; }
+  header svg { width: 52px; height: 52px; flex: none; }
+  h1 { margin: 0; font-size: 24px; letter-spacing: .01em; }
+  header p { margin: 2px 0 0; color: #b5c8cf; }
+  h2 { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 28px 0 10px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  a.card, .card { display: block; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--cust); padding: 14px 16px; text-decoration: none; color: inherit; }
+  a.card:hover { border-color: #9fb0c4; box-shadow: 0 2px 10px #0001; }
+  .card.ch { border-top-color: var(--brand); }
+  .card.sim { border-top-color: var(--sim); }
+  .card.raw { border-top-color: #8a8f94; }
+  .card.nr { border-top-color: var(--nr); }
+  .card.learn { border-top-color: var(--learn); }
+  .card.learn.star { background: #f3fafb; border-color: #9fcbd6; border-top-color: var(--learn); }
+  .card h3 { margin: 0 0 4px; font-size: 16px; }
+  .card .k { font: 600 11px var(--mono); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .card p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+  .card .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .card .tabs a { font: 600 11px var(--mono); color: var(--cust); border: 1px solid var(--line); padding: 2px 8px; text-decoration: none; background: #f7f8f9; }
+  .card .tabs a:hover { border-color: var(--cust); }
+  code { font: 12px var(--mono); background: #f1f3f5; padding: 1px 5px; border: 1px solid #e1e4e7; word-break: break-all; }
+  .arch { background: var(--card); border: 1px solid var(--line); padding: 12px; overflow-x: auto; }
+  .arch svg { display: block; min-width: 900px; width: 100%; height: auto; }
+  .arch text { font-family: var(--sans); }
+  .arch .mono { font-family: var(--mono); }
+  footer { color: var(--muted); font-size: 12px; padding: 26px 0 30px; }
+  footer p { margin: 0 0 6px; }
+  button.copy { font: 600 11px var(--mono); border: 1px solid var(--line); background: #f7f8f9; padding: 2px 8px; cursor: pointer; margin-left: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <rect x="1" y="1" width="38" height="38" rx="5" fill="#0f5e6e"/>
+      <path d="M8 31 L8 13 L20 9 L20 31" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M20 22 c4 -4 8 -4 12 0 M20 27 c4 -4 8 -4 12 0" fill="none" stroke="#8fd3df" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <h1>Copper Canyon Dam · Cromley Hydraulics demo environment</h1>
+      <p>Desert River Water &amp; Power Authority (DRWPA) · 3 × 40 MW CH-Francis "Canyon" turbines · one local MQTT broker</p>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <h2>Learn</h2>
+  <div class="grid">
+    <a class="card learn star" data-wiki="Customer-data-vs-machine-builder-data" href="#">
+      <span class="k">📖 Wiki · the core lesson</span>
+      <h3>Customer data vs. machine-builder data</h3>
+      <p>Two trees on one broker: the dam owner's ISA-95 tree and the CH asset tree, organised by serial number. Who owns which data, what overlaps (the hardwired sensors) and what only the machine builder sees.</p>
+    </a>
+    <a class="card learn" data-wiki="Dams-and-turbines-in-brief" href="#">
+      <span class="k">📖 Wiki · primer</span>
+      <h3>Dams and turbines in brief</h3>
+      <p>Reservoir, intake, penstock, Francis turbine, governor and HPU, rough zone and vortex rope, in plain language. No hydro background needed.</p>
+    </a>
+    <a class="card learn" data-wiki="Edge-vendor-brief" href="#">
+      <span class="k">📖 Wiki · for edge / IIoT vendors</span>
+      <h3>Edge vendor brief</h3>
+      <p>Where this environment stops (the local broker) and what you bring: edge analytics on the waveforms, transport, buffering, security, data scoping and device management.</p>
+    </a>
+  </div>
+
+  <h2>Level 2 · Supervisory — the customer's dam SCADA</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="k">DRWPA · dam SCADA (MQTT)</span>
+      <h3><a href="/scada" style="color:inherit">Copper Canyon Dam SCADA</a></h3>
+      <p>The customer's operator screens: plant overview, reservoir and spillway, the three units, governor and HPU, alarms and events, trends. Reads the customer tree and sends commands as <code>…/Cmd/…</code> topics, including the grid operator's MW setpoint.</p>
+      <div class="tabs">
+        <a href="/scada#overview">Overview</a><a href="/scada#reservoir">Reservoir &amp; spillway</a>
+        <a href="/scada#unit/Unit1">Unit 1</a><a href="/scada#unit/Unit2">Unit 2</a><a href="/scada#unit/Unit3">Unit 3</a>
+        <a href="/scada#governor">Governor &amp; HPU</a><a href="/scada#alarms">Alarms</a><a href="/scada#trends">Trends</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>Machine builder — Cromley Hydraulics</h2>
+  <div class="grid">
+    <a class="card ch" id="viewer" href="http://localhost:8122" target="_blank" rel="noopener">
+      <span class="k">CH · asset viewer ↗</span>
+      <h3>CH fleet: Copper Canyon turbines</h3>
+      <p>What CH sees of its turbines, from the CH tree only: nameplates, PLC status (last will), 1 s process values with quality and sequence numbers, PLC alarm events and the raw waveform blocks (shaft orbits, draft-tube pressure, headcover accelerometer).</p>
+    </a>
+    <div class="card ch">
+      <span class="k">CH tree · asset-centric</span>
+      <h3>Organised by serial number</h3>
+      <p><code>v1.0/CH/Fleet/DRWPA/CopperCanyon/&lt;AssetSerial&gt;/&lt;Subsystem&gt;/…</code> — e.g. <code>CH-FR-1987-0042/Bearings/TGB/PadTemp01</code>. The serial stays when the customer renames "Unit 1"; the customer's name lives in <code>_meta/Nameplate</code>.</p>
+    </div>
+  </div>
+
+  <h2>Level 3–4 · Integration — the broker and its clients</h2>
+  <div class="grid">
+    <div class="card raw">
+      <span class="k">Mosquitto · one local broker</span>
+      <h3>MQTT endpoint</h3>
+      <p><code id="broker">localhost:1884</code><button class="copy" data-copy="broker">copy</button></p>
+      <p>Plain MQTT, anonymous, no TLS: security is what the vendors bring. Customer tree <code>v1.0/DRWPA/CopperCanyon/#</code>, CH tree <code>v1.0/CH/#</code>. Inside the compose network: <code>mosquitto:1883</code>.</p>
+    </div>
+    <a class="card nr" id="nodered" href="http://localhost:1881" target="_blank" rel="noopener">
+      <span class="k">Integration · Node-RED ↗</span>
+      <h3>Node-RED</h3>
+      <p>Flow editor with pre-loaded flows on both trees: message rate per tree, a look at a raw waveform block, and 1-minute bearing averages with their operating context written to <code>exports/</code>.</p>
+    </a>
+    <a class="card nr" id="mqttx" href="http://localhost:4001" target="_blank" rel="noopener">
+      <span class="k">Exploration · MQTT Explorer ↗</span>
+      <h3>MQTT Explorer</h3>
+      <p>Browse both trees live. The saved connection <b>Copper Canyon Dam</b> is pre-configured: press Connect.</p>
+    </a>
+  </div>
+
+  <h2>Level 0–1 · Process, machines &amp; training</h2>
+  <div class="grid">
+    <a class="card sim" id="instr" href="http://localhost:8121" target="_blank" rel="noopener">
+      <span class="k">Training simulator · not part of the plant ↗</span>
+      <h3>Instructor Station</h3>
+      <p>Starts hidden fault scenarios A–H (bearing degradation, strainer blockage, rough zone, HPU wear, shear pin, unbalance, RTD drift, low head) and more failure modes, and shows the ground truth. Nothing here is published: the faults must be found in the data.</p>
+    </a>
+    <div class="card raw">
+      <span class="k">Simulators · the "real" plant</span>
+      <h3>dam-sim and the CH turbine PLCs</h3>
+      <p><b>dam-sim</b>: reservoir, spillway, bottom outlet, three units with governor and plant controller; publishes the customer tree. <b>ch-plc-sim</b>: one CH PLC per turbine (thermal, HPU, vibration models); publishes the CH tree at ~18 KB/s per turbine (1 s values + raw waveforms). A few dual-element sensors are also hardwired to the customer's unit controller.</p>
+    </div>
+  </div>
+
+  <h2>How the systems connect</h2>
+  <div class="arch">
+    <svg viewBox="0 0 1080 420" role="img" aria-label="Architecture: simulators and tools around one Mosquitto broker">
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#5f666d"/></marker>
+        <marker id="arc" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#b45f2a"/></marker>
+      </defs>
+      <!-- simulators (left) -->
+      <rect x="10" y="40" width="230" height="110" fill="#f1f3f5" stroke="#3b4b5c"/>
+      <text x="22" y="64" font-weight="700" font-size="14">dam-sim</text>
+      <text x="22" y="84" font-size="12" fill="#5f666d">reservoir, spillway, bottom outlet</text>
+      <text x="22" y="101" font-size="12" fill="#5f666d">3 units: governor, state machine</text>
+      <text x="22" y="118" font-size="12" fill="#5f666d">plant controller (rough zones)</text>
+      <text x="22" y="138" font-size="11" fill="#3b4b5c" class="mono">→ customer tree</text>
+
+      <rect x="10" y="240" width="230" height="110" fill="#eaf4f6" stroke="#0f5e6e"/>
+      <text x="22" y="264" font-weight="700" font-size="14">ch-plc-sim · 3 CH PLCs</text>
+      <text x="22" y="284" font-size="12" fill="#5f666d">one per turbine (by serial)</text>
+      <text x="22" y="301" font-size="12" fill="#5f666d">thermal, HPU, vibration models</text>
+      <text x="22" y="318" font-size="12" fill="#5f666d">1 s values + raw waveforms</text>
+      <text x="22" y="338" font-size="11" fill="#0f5e6e" class="mono">→ CH tree (context ← customer)</text>
+
+      <!-- hardwired copper -->
+      <path d="M90 238 V152" stroke="#b45f2a" stroke-width="3" marker-end="url(#arc)"/>
+      <text x="98" y="200" font-size="12" fill="#b45f2a" font-weight="600">hardwired (element A)</text>
+      <text x="98" y="215" font-size="11" fill="#b45f2a">RTDs, flow, oil pressure</text>
+
+      <!-- broker -->
+      <rect x="380" y="130" width="250" height="130" fill="#fff" stroke="#1c2024" stroke-width="2"/>
+      <text x="396" y="156" font-weight="700" font-size="15">Mosquitto · one local broker</text>
+      <text x="396" y="176" font-size="12" fill="#5f666d" class="mono">:1884 on the host</text>
+      <text x="396" y="204" font-size="11.5" fill="#3b4b5c" class="mono">v1.0/DRWPA/CopperCanyon/…</text>
+      <text x="396" y="222" font-size="11.5" fill="#0f5e6e" class="mono">v1.0/CH/Fleet/…/&lt;Serial&gt;/…</text>
+      <text x="396" y="244" font-size="11" fill="#5f666d">retained last values, last will</text>
+
+      <path d="M240 95 C310 95 320 160 378 165" fill="none" stroke="#3b4b5c" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M378 180 C330 180 300 120 242 112" fill="none" stroke="#3b4b5c" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+      <text x="262" y="150" font-size="10.5" fill="#5f666d">Cmd/…</text>
+      <path d="M240 295 C310 295 320 230 378 225" fill="none" stroke="#0f5e6e" stroke-width="2" marker-end="url(#ar)"/>
+
+      <!-- clients (right) -->
+      <rect x="760" y="20" width="200" height="66" fill="#f1f3f5" stroke="#3b4b5c"/>
+      <text x="774" y="44" font-weight="700" font-size="13">dam SCADA + hub :8120</text>
+      <text x="774" y="62" font-size="11.5" fill="#5f666d">customer tree only</text>
+      <text x="774" y="78" font-size="11.5" fill="#5f666d">sends Cmd topics</text>
+      <rect x="760" y="104" width="200" height="56" fill="#eaf4f6" stroke="#0f5e6e"/>
+      <text x="774" y="128" font-weight="700" font-size="13">CH asset viewer :8122</text>
+      <text x="774" y="146" font-size="11.5" fill="#5f666d">CH tree only</text>
+      <rect x="760" y="178" width="200" height="56" fill="#fbeeee" stroke="#8f1c1c"/>
+      <text x="774" y="202" font-weight="700" font-size="13">Node-RED :1881</text>
+      <text x="774" y="220" font-size="11.5" fill="#5f666d">flows on both trees</text>
+      <rect x="760" y="252" width="200" height="56" fill="#fbeeee" stroke="#8f1c1c"/>
+      <text x="774" y="276" font-weight="700" font-size="13">MQTT Explorer :4001</text>
+      <text x="774" y="294" font-size="11.5" fill="#5f666d">browse both trees</text>
+      <path d="M632 160 L758 53" stroke="#5f666d" stroke-width="1.6" marker-end="url(#ar)"/>
+      <path d="M632 180 L758 132" stroke="#5f666d" stroke-width="1.6" marker-end="url(#ar)"/>
+      <path d="M632 205 L758 206" stroke="#5f666d" stroke-width="1.6" marker-end="url(#ar)"/>
+      <path d="M632 228 L758 280" stroke="#5f666d" stroke-width="1.6" marker-end="url(#ar)"/>
+
+      <!-- instructor -->
+      <rect x="380" y="330" width="250" height="70" fill="#f5f0ff" stroke="#7c3aed"/>
+      <text x="396" y="354" font-weight="700" font-size="13">Instructor station :8121</text>
+      <text x="396" y="372" font-size="11.5" fill="#5f666d">hidden faults, over HTTP to the</text>
+      <text x="396" y="388" font-size="11.5" fill="#5f666d">simulators — never via the broker</text>
+      <path d="M380 350 C320 350 300 340 242 330" fill="none" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+      <path d="M380 340 C300 320 280 200 242 140" fill="none" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+
+      <!-- vendor scope -->
+      <rect x="690" y="330" width="380" height="80" fill="none" stroke="#5f666d" stroke-width="1.6" stroke-dasharray="7 5"/>
+      <text x="704" y="354" font-weight="700" font-size="13" fill="#3b4148">Edge / IIoT vendor (next step)</text>
+      <text x="704" y="373" font-size="11.5" fill="#5f666d">edge analytics (FFT, orbits, models), transport,</text>
+      <text x="704" y="390" font-size="11.5" fill="#5f666d">buffering, security, device management</text>
+      <path d="M632 250 C680 290 700 310 720 328" fill="none" stroke="#5f666d" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    </svg>
+  </div>
+  <footer>
+    <p><b>Demo only.</b> Part of the <a href="https://itot.academy">IT/OT Academy</a> by <a href="https://itotinsider.com">The IT/OT Insider</a>. A generated, vibe-coded system for demonstration and training only: not for production, not for real equipment, not a basis for any real control or maintenance decision.</p>
+    <p>Copper Canyon Dam, DRWPA and Cromley Hydraulics are fictional; all values are demo assumptions, not OEM or site data.</p>
+  </footer>
+</div>
+<script>
+  // The only API call on this page: where a browser on the host finds the other systems.
+  const DEF = { wiki: "https://github.com/itotinsider/cromley-hydraulics-uns/wiki" };
+  function apply(links) {
+    links = Object.assign({}, DEF, links || {});
+    document.querySelectorAll("[data-wiki]").forEach(a => { a.href = links.wiki + "/" + a.dataset.wiki; a.target = "_blank"; a.rel = "noopener"; });
+    if (links.broker) document.getElementById("broker").textContent = links.broker;
+    for (const [id, k] of [["viewer", "viewer"], ["nodered", "nodered"], ["mqttx", "mqtt_explorer"], ["instr", "instructor"]])
+      if (links[k]) document.getElementById(id).href = links[k];
+  }
+  apply();
+  fetch("/api/config").then(r => r.json()).then(c => apply(c.links)).catch(() => {});
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+    const t = document.getElementById(b.dataset.copy).textContent;
+    try { navigator.clipboard.writeText(t); b.textContent = "copied"; setTimeout(() => b.textContent = "copy", 1500); } catch {}
+  }));
+</script>
+</body>
+</html>

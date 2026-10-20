@@ -1,0 +1,38 @@
+{
+  "_source": "the @app.get/@app.post routes in each service's main.py",
+  "dam-sim": {
+    "port": 8123,
+    "host": false,
+    "pages": [],
+    "get": ["/api/state", "/api/scenarios", "/api/ground_truth"],
+    "post": ["/api/scenarios/<sid>/start", "/api/scenarios/<sid>/stop", "/api/command"]
+  },
+  "ch-plc-sim": {
+    "port": 8125,
+    "host": false,
+    "pages": [],
+    "get": ["/api/hardwired", "/api/state", "/api/config", "/api/scenarios", "/api/ground_truth"],
+    "post": ["/api/scenarios/<sid>/start", "/api/scenarios/<sid>/stop", "/api/waveforms/<unit>"]
+  },
+  "dam-scada": {
+    "port": 8120,
+    "host": true,
+    "pages": ["/", "/scada"],
+    "get": ["/api/state", "/api/config", "/api/trend", "/api/events"],
+    "post": ["/api/cmd", "/api/alarms/ack"]
+  },
+  "instructor": {
+    "port": 8121,
+    "host": true,
+    "pages": ["/"],
+    "get": ["/api/scenarios", "/api/ground_truth", "/api/overview"],
+    "post": ["/api/scenarios/<sid>/start", "/api/scenarios/<sid>/stop", "/api/reset"]
+  },
+  "ch-viewer": {
+    "port": 8122,
+    "host": true,
+    "pages": ["/"],
+    "get": ["/api/assets", "/api/asset/<serial>", "/api/waveform/<serial>", "/api/trend"],
+    "post": []
+  }
+}

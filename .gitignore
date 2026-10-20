@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+
+# runtime state (bind mounts)
+data/*
+!data/.gitkeep
+exports/*
+!exports/.gitkeep
+
+# Mosquitto's persistence file (retained messages)
+mosquitto/data/*
+!mosquitto/data/.gitkeep
+
+# Node-RED: only the hand-written flow is tracked
+nodered_data/*
+!nodered_data/flows.json
+
+# MQTT Explorer: only the seeded settings.json (Copper Canyon Dam connection) is tracked
+mqtt_explorer_data/*
+!mqtt_explorer_data/.gitkeep
+!mqtt_explorer_data/settings.json
+
+# per-worktree stack settings (stack name, host ports)
+.env

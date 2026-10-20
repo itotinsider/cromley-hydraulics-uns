@@ -1,0 +1,417 @@
+[
+ {
+  "id": "cfg-broker",
+  "type": "mqtt-broker",
+  "name": "Copper Canyon broker (Mosquitto)",
+  "broker": "mosquitto",
+  "port": "1883",
+  "clientid": "copper-canyon-nodered",
+  "autoConnect": true,
+  "usetls": false,
+  "protocolVersion": "4",
+  "keepalive": "60",
+  "cleansession": true,
+  "birthTopic": "",
+  "closeTopic": "",
+  "willTopic": "",
+  "sessionExpiry": ""
+ },
+ {
+  "id": "tab-rate",
+  "type": "tab",
+  "label": "Data rate per tree",
+  "disabled": false,
+  "info": "Counts messages and bytes per tree on the broker: the customer tree (v1.0/DRWPA/…) and the CH tree per asset serial (v1.0/CH/Fleet/…/<serial>/…), split into process values and raw waveform blocks.\n\nEvery 10 s the node status and the debug sidebar show messages/s and KB/s. This is the load an edge device on this broker has to take, and what would leave the site if everything were sent."
+ },
+ {
+  "id": "r-c1",
+  "type": "comment",
+  "z": "tab-rate",
+  "name": "1 · every message on the broker",
+  "info": "",
+  "x": 180,
+  "y": 60,
+  "wires": []
+ },
+ {
+  "id": "r-in",
+  "type": "mqtt in",
+  "z": "tab-rate",
+  "name": "v1.0/# (raw)",
+  "topic": "v1.0/#",
+  "qos": "0",
+  "datatype": "buffer",
+  "broker": "cfg-broker",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 160,
+  "y": 120,
+  "wires": [
+   [
+    "r-count"
+   ]
+  ]
+ },
+ {
+  "id": "r-c2",
+  "type": "comment",
+  "z": "tab-rate",
+  "name": "2 · count per tree, report every 10 s",
+  "info": "",
+  "x": 220,
+  "y": 200,
+  "wires": []
+ },
+ {
+  "id": "r-tick",
+  "type": "inject",
+  "z": "tab-rate",
+  "name": "every 10 s",
+  "props": [
+   {
+    "p": "topic",
+    "vt": "str"
+   }
+  ],
+  "repeat": "10",
+  "crontab": "",
+  "once": true,
+  "onceDelay": "3",
+  "topic": "tick",
+  "x": 150,
+  "y": 260,
+  "wires": [
+   [
+    "r-count"
+   ]
+  ]
+ },
+ {
+  "id": "r-count",
+  "type": "function",
+  "z": "tab-rate",
+  "name": "Count per tree",
+  "func": "// Accumulate per bucket; on the tick, report rates over the last window.\n// Buckets: \"customer\", \"CH <serial> process\", \"CH <serial> waveforms\", \"CH <serial> other\".\nconst acc = context.get(\"acc\") || {};\nconst since = context.get(\"since\") || Date.now();\nif (msg.topic === \"tick\") {\n    const dt = Math.max(1, (Date.now() - since) / 1000);\n    const rows = Object.keys(acc).sort().map(k => ({\n        bucket: k,\n        msgs_per_s: +(acc[k].n / dt).toFixed(1),\n        kbytes_per_s: +(acc[k].b / dt / 1024).toFixed(2)\n    }));\n    const total = rows.reduce((s, r) => s + r.kbytes_per_s, 0);\n    context.set(\"acc\", {});\n    context.set(\"since\", Date.now());\n    node.status({fill: \"grey\", shape: \"dot\", text: `${total.toFixed(1)} KB/s on the broker`});\n    msg.payload = {window_s: +dt.toFixed(0), total_kbytes_per_s: +total.toFixed(2), rows};\n    return msg;\n}\nconst t = msg.topic;\nlet bucket = \"other\";\nif (t.startsWith(\"v1.0/DRWPA/\")) bucket = \"customer\";\nelse if (t.startsWith(\"v1.0/CH/Fleet/\")) {\n    const p = t.split(\"/\");\n    const serial = p[5];\n    const kind = t.endsWith(\"/Waveform\") ? \"waveforms\" : (p[6] === \"Events\" || p[6] === \"_meta\") ? \"events+meta\" : \"process\";\n    bucket = `CH ${serial} ${kind}`;\n}\nconst a = acc[bucket] || {n: 0, b: 0};\na.n += 1;\na.b += msg.payload.length + t.length;\nacc[bucket] = a;\ncontext.set(\"acc\", acc);\nif (!context.get(\"since\")) context.set(\"since\", Date.now());\nreturn null;",
+  "outputs": 1,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [],
+  "x": 470,
+  "y": 200,
+  "wires": [
+   [
+    "r-dbg"
+   ]
+  ]
+ },
+ {
+  "id": "r-dbg",
+  "type": "debug",
+  "z": "tab-rate",
+  "name": "rates",
+  "active": true,
+  "tosidebar": true,
+  "console": false,
+  "tostatus": false,
+  "complete": "payload",
+  "targetType": "msg",
+  "statusVal": "",
+  "statusType": "auto",
+  "x": 690,
+  "y": 200,
+  "wires": []
+ },
+ {
+  "id": "tab-bearings",
+  "type": "tab",
+  "label": "Bearing pads → 1-min CSV",
+  "disabled": false,
+  "info": "Subscribes to the CH tree only and writes one row per asset per minute to `exports/ch_bearings_1min.csv` (host folder): the operating context (MW, net head, cooling water inlet temperature and flow) next to the TGB pad and oil temperatures and the hottest thrust pad.\n\nThese are the inputs of a level 3 residual model (pad temperature expected from MW, cooling water and oil temperature vs. measured), the flagship demo for scenario A. Values with a quality other than GOOD are left out of the averages. The file is set by `BEARING_CSV_FILE`."
+ },
+ {
+  "id": "b-c1",
+  "type": "comment",
+  "z": "tab-bearings",
+  "name": "1 · the CH tree: context, cooling, bearings",
+  "info": "",
+  "x": 220,
+  "y": 60,
+  "wires": []
+ },
+ {
+  "id": "b-in1",
+  "type": "mqtt in",
+  "z": "tab-bearings",
+  "name": "Context",
+  "topic": "v1.0/CH/Fleet/+/+/+/Context/+",
+  "qos": "0",
+  "datatype": "json",
+  "broker": "cfg-broker",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 150,
+  "y": 120,
+  "wires": [
+   [
+    "b-avg"
+   ]
+  ]
+ },
+ {
+  "id": "b-in2",
+  "type": "mqtt in",
+  "z": "tab-bearings",
+  "name": "Cooling",
+  "topic": "v1.0/CH/Fleet/+/+/+/Cooling/+",
+  "qos": "0",
+  "datatype": "json",
+  "broker": "cfg-broker",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 150,
+  "y": 170,
+  "wires": [
+   [
+    "b-avg"
+   ]
+  ]
+ },
+ {
+  "id": "b-in3",
+  "type": "mqtt in",
+  "z": "tab-bearings",
+  "name": "Bearings",
+  "topic": "v1.0/CH/Fleet/+/+/+/Bearings/+/+",
+  "qos": "0",
+  "datatype": "json",
+  "broker": "cfg-broker",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 150,
+  "y": 220,
+  "wires": [
+   [
+    "b-avg"
+   ]
+  ]
+ },
+ {
+  "id": "b-c2",
+  "type": "comment",
+  "z": "tab-bearings",
+  "name": "2 · 1-minute mean per asset and column",
+  "info": "",
+  "x": 220,
+  "y": 300,
+  "wires": []
+ },
+ {
+  "id": "b-tick",
+  "type": "inject",
+  "z": "tab-bearings",
+  "name": "every 5 s",
+  "props": [
+   {
+    "p": "topic",
+    "vt": "str"
+   }
+  ],
+  "repeat": "5",
+  "crontab": "",
+  "once": true,
+  "onceDelay": "3",
+  "topic": "tick",
+  "x": 150,
+  "y": 360,
+  "wires": [
+   [
+    "b-avg"
+   ]
+  ]
+ },
+ {
+  "id": "b-avg",
+  "type": "function",
+  "z": "tab-bearings",
+  "name": "1-min mean per asset",
+  "func": "// Columns of the CSV: CH path -> column name. Add a line to add a column.\nconst COLS = {\n    \"Context/MW\": \"mw\",\n    \"Context/NetHead_m\": \"net_head_m\",\n    \"Cooling/WaterInletTemp\": \"cw_inlet_c\",\n    \"Cooling/WaterFlow_TB\": \"cw_flow_tb_lps\",\n    \"Bearings/TGB/PadTemp01\": \"tgb_pad1_c\",\n    \"Bearings/TGB/PadTemp02\": \"tgb_pad2_c\",\n    \"Bearings/TGB/PadTemp03\": \"tgb_pad3_c\",\n    \"Bearings/TGB/PadTemp04\": \"tgb_pad4_c\",\n    \"Bearings/TGB/OilTemp\": \"tgb_oil_c\",\n};\nconst THRUST = /^Bearings\\/Thrust\\/PadTemp\\d\\d$/;\nconst win = context.get(\"win\") || {};           // serial -> {col: [sum, n]}\nconst minute = context.get(\"minute\");\nconst now = Math.floor(Date.now() / 60000);\nif (msg.topic === \"tick\") {\n    if (minute === undefined) { context.set(\"minute\", now); return null; }\n    if (now === minute) return null;\n    const out = [];\n    const ts = new Date(minute * 60000).toISOString();\n    for (const serial of Object.keys(win).sort()) {\n        const row = {timestamp: ts, serial};\n        for (const c of [...Object.values(COLS), \"thrust_pad_max_c\"]) {\n            const s = win[serial][c];\n            row[c] = s && s[1] ? +(s[0] / s[1]).toFixed(2) : \"\";\n        }\n        out.push(row);\n    }\n    context.set(\"win\", {});\n    context.set(\"minute\", now);\n    // one message per minute with every asset's row: one append, so the header check can't race\n    return out.length ? {payload: out} : null;\n}\nconst p = msg.topic.split(\"/\");\nconst serial = p[5], path = p.slice(6).join(\"/\");\nconst v = msg.payload;\nif (!v || typeof v.value !== \"number\" || v.quality !== \"GOOD\") return null;\nconst w = win[serial] || (win[serial] = {});\nconst add = (c, x) => { const s = w[c] || (w[c] = [0, 0]); s[0] += x; s[1] += 1; };\nif (COLS[path]) add(COLS[path], v.value);\nif (THRUST.test(path)) {\n    // hottest thrust pad: keep a per-second max, averaged over the minute\n    const k = context.get(\"tmax\") || {};\n    const cur = k[serial] || {t: 0, max: -1e9};\n    const sec = Math.floor(Date.now() / 1000);\n    if (cur.t !== sec) { if (cur.t) add(\"thrust_pad_max_c\", cur.max); k[serial] = {t: sec, max: v.value}; }\n    else cur.max = Math.max(cur.max, v.value);\n    context.set(\"tmax\", k);\n}\ncontext.set(\"win\", win);\nreturn null;",
+  "outputs": 1,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [],
+  "x": 400,
+  "y": 300,
+  "wires": [
+   [
+    "b-csv",
+    "b-dbg"
+   ]
+  ]
+ },
+ {
+  "id": "b-c3",
+  "type": "comment",
+  "z": "tab-bearings",
+  "name": "3 · append one CSV row per asset per minute",
+  "info": "",
+  "x": 240,
+  "y": 440,
+  "wires": []
+ },
+ {
+  "id": "b-csv",
+  "type": "function",
+  "z": "tab-bearings",
+  "name": "CSV line (+ header if new)",
+  "func": "// The header is written when the file is new or empty, so the file stays valid across restarts.\nconst FILE = env.get(\"BEARING_CSV_FILE\") || \"/data/exports/ch_bearings_1min.csv\";\nconst rows = msg.payload;\nconst cols = Object.keys(rows[0]);\nlet header = \"\";\ntry {\n    if (!fs.existsSync(FILE) || fs.statSync(FILE).size === 0) header = cols.join(\",\") + \"\\n\";\n} catch (e) { header = cols.join(\",\") + \"\\n\"; }\nmsg.filename = FILE;\nmsg.payload = header + rows.map(r => cols.map(c => r[c]).join(\",\")).join(\"\\n\");\nreturn msg;",
+  "outputs": 1,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [
+   {
+    "var": "fs",
+    "module": "fs"
+   }
+  ],
+  "x": 420,
+  "y": 500,
+  "wires": [
+   [
+    "b-file"
+   ]
+  ]
+ },
+ {
+  "id": "b-file",
+  "type": "file",
+  "z": "tab-bearings",
+  "name": "append to CSV",
+  "filename": "filename",
+  "filenameType": "msg",
+  "appendNewline": true,
+  "createDir": true,
+  "overwriteFile": "false",
+  "encoding": "utf8",
+  "x": 650,
+  "y": 500,
+  "wires": [
+   []
+  ]
+ },
+ {
+  "id": "b-dbg",
+  "type": "debug",
+  "z": "tab-bearings",
+  "name": "row",
+  "active": false,
+  "tosidebar": true,
+  "console": false,
+  "tostatus": false,
+  "complete": "payload",
+  "targetType": "msg",
+  "statusVal": "",
+  "statusType": "auto",
+  "x": 630,
+  "y": 300,
+  "wires": []
+ },
+ {
+  "id": "tab-dft",
+  "type": "tab",
+  "label": "Draft tube block → dominant frequency (example)",
+  "disabled": false,
+  "info": "**An example of edge analytics, not part of the CH PLC.** The PLC only publishes raw blocks. This flow takes each 10 s draft-tube pressure block (100 S/s), removes the mean and runs a plain DFT over 0.2–10 Hz. The dominant frequency and amplitude show the vortex rope (0.2–0.4 × the 5 Hz runner frequency) when a unit runs at part load, e.g. in instructor scenario C.\n\nReal edge analytics (FFT, orbits, envelope, order tracking, models) is what the edge vendors bring."
+ },
+ {
+  "id": "d-c1",
+  "type": "comment",
+  "z": "tab-dft",
+  "name": "1 · raw draft-tube pressure blocks (every 30 s per turbine)",
+  "info": "",
+  "x": 260,
+  "y": 60,
+  "wires": []
+ },
+ {
+  "id": "d-in",
+  "type": "mqtt in",
+  "z": "tab-dft",
+  "name": "Draft tube waveform",
+  "topic": "v1.0/CH/Fleet/+/+/+/Vibration/DraftTube/Pressure/Waveform",
+  "qos": "0",
+  "datatype": "json",
+  "broker": "cfg-broker",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 200,
+  "y": 120,
+  "wires": [
+   [
+    "d-dft"
+   ]
+  ]
+ },
+ {
+  "id": "d-c2",
+  "type": "comment",
+  "z": "tab-dft",
+  "name": "2 · DFT 0.2-10 Hz, dominant peak vs runner frequency",
+  "info": "",
+  "x": 270,
+  "y": 200,
+  "wires": []
+ },
+ {
+  "id": "d-dft",
+  "type": "function",
+  "z": "tab-dft",
+  "name": "Dominant frequency",
+  "func": "const w = msg.payload;\nconst serial = msg.topic.split(\"/\")[5];\nconst x = w.values, fs = w.sampleRate, n = x.length;\nif (!n) return null;\nconst mean = x.reduce((s, v) => s + v, 0) / n;\nlet best = {f: 0, amp: 0};\nconst df = fs / n;                                   // 0.1 Hz for 1,000 samples at 100 S/s\nfor (let k = Math.ceil(0.2 / df); k * df <= 10; k++) {\n    let re = 0, im = 0;\n    for (let i = 0; i < n; i++) {\n        const a = 2 * Math.PI * k * i / n;\n        re += (x[i] - mean) * Math.cos(a);\n        im -= (x[i] - mean) * Math.sin(a);\n    }\n    const amp = 2 * Math.sqrt(re * re + im * im) / n;   // amplitude in bar\n    if (amp > best.amp) best = {f: k * df, amp};\n}\nconst runner = (w.speedRpm || 0) / 60;\nconst ratio = runner > 0 ? best.f / runner : null;\nconst rope = ratio !== null && ratio >= 0.2 && ratio <= 0.4 && best.amp > 0.02;\nnode.status({fill: rope ? \"yellow\" : \"grey\", shape: \"dot\",\n             text: `${serial}: ${best.f.toFixed(2)} Hz, ${best.amp.toFixed(3)} bar${rope ? \" · vortex rope?\" : \"\"}`});\nmsg.payload = {serial, timestamp: w.timestamp, dominant_hz: +best.f.toFixed(2), amplitude_bar: +best.amp.toFixed(4),\n               runner_hz: +runner.toFixed(2), ratio: ratio === null ? null : +ratio.toFixed(3), rope_suspected: rope};\nreturn msg;",
+  "outputs": 1,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [],
+  "x": 420,
+  "y": 200,
+  "wires": [
+   [
+    "d-dbg"
+   ]
+  ]
+ },
+ {
+  "id": "d-dbg",
+  "type": "debug",
+  "z": "tab-dft",
+  "name": "dominant frequency",
+  "active": true,
+  "tosidebar": true,
+  "console": false,
+  "tostatus": false,
+  "complete": "payload",
+  "targetType": "msg",
+  "statusVal": "",
+  "statusType": "auto",
+  "x": 650,
+  "y": 200,
+  "wires": []
+ }
+]

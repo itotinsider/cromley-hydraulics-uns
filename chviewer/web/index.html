@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CH Asset Viewer</title>
+<style>
+  /* Cromley Hydraulics brand: deep teal/steel. Not the customer's SCADA, not alarm colours. */
+  :root {
+    --bg: #f2f5f6; --card: #fff; --line: #d5dde0; --text: #13252b; --muted: #5b6d73;
+    --ch: #0f5e6e; --ch-2: #137a8c; --ch-lt: #e3f1f3; --steel: #33464d;
+    --warn: #b7791f; --crit: #c0392b; --bad: #b0177a;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; --sans: "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.45 var(--sans); }
+  header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--ch); color: #fff; }
+  header svg { width: 34px; height: 34px; flex: none; }
+  header b { font-size: 17px; letter-spacing: .01em; }
+  header small { display: block; color: #bfe0e6; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .spacer { flex: 1; }
+  .hdr-pill { font: 600 11px var(--mono); padding: 3px 9px; border: 1px solid #ffffff55; white-space: nowrap; }
+  header a { font: 600 11px var(--mono); color: #fff; text-decoration: none; border: 1px solid #ffffff55; padding: 3px 8px; }
+  .layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); min-height: calc(100vh - 54px); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  aside { background: #e8eef0; border-right: 1px solid var(--line); padding: 12px; }
+  aside h4, .sec { margin: 0 0 8px; font: 700 10.5px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .asset { display: block; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--line); padding: 8px 10px; margin-bottom: 8px; cursor: pointer; text-decoration: none; color: inherit; }
+  .asset.sel { border-left-color: var(--ch); box-shadow: 0 1px 6px #0f5e6e22; }
+  .asset .sn { font: 700 13px var(--mono); color: var(--ch); }
+  .asset .cu { color: var(--muted); font-size: 11.5px; }
+  .asset .st { display: flex; gap: 8px; align-items: center; font: 11px var(--mono); color: var(--muted); margin-top: 4px; flex-wrap: wrap; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #9aa; display: inline-block; }
+  .dot.on { background: #1f9d6b; } .dot.off { background: var(--crit); }
+  .badge { font: 700 10px var(--mono); padding: 1px 6px; border: 1px solid; }
+  .badge.w { color: var(--warn); border-color: var(--warn); } .badge.c { color: #fff; background: var(--crit); border-color: var(--crit); }
+  .teach { font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; margin-top: 10px; }
+  main { padding: 14px 16px 30px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-content: start; }
+  @media (max-width: 1250px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); }
+  .card > h3 { margin: 0; padding: 8px 12px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--steel); border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: center; background: #f8fbfb; }
+  .card > h3 span { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); }
+  .span2 { grid-column: 1 / -1; }
+  .np { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 16px; padding: 10px 12px; }
+  .np div span { display: block; font: 600 10px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .np div b { font: 600 13px var(--mono); }
+  .tree { max-height: 560px; overflow: auto; }
+  .tree .sub { font: 700 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ch); padding: 8px 12px 3px; background: var(--ch-lt); border-bottom: 1px solid var(--line); position: sticky; top: 0; }
+  .tree .row { display: grid; grid-template-columns: 1fr 96px 56px 80px; gap: 6px; padding: 2px 12px; border-bottom: 1px solid #edf1f2; font: 12px var(--mono); cursor: pointer; align-items: center; }
+  .tree .row:hover { background: #f1f7f8; }
+  .tree .row.sel { background: #dcefF2; }
+  .tree .row .p { color: var(--steel); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tree .row .v { text-align: right; font-weight: 600; }
+  .tree .row .u { color: var(--muted); }
+  .tree .row .q { font-size: 10.5px; color: #1f9d6b; }
+  .tree .row.nq .q, .tree .row.nq .v { color: var(--bad); font-weight: 700; }
+  .tree .row.alm .v { color: var(--crit); }
+  canvas { display: block; width: 100%; }
+  .trend { padding: 8px 12px 12px; }
+  .trend .ttl { font: 12px var(--mono); color: var(--steel); margin-bottom: 4px; }
+  .ev { max-height: 260px; overflow: auto; }
+  table { width: 100%; border-collapse: collapse; font: 11.5px var(--mono); }
+  th, td { text-align: left; padding: 3px 10px; border-bottom: 1px solid #edf1f2; white-space: nowrap; }
+  th { color: var(--muted); font-weight: 600; background: #f8fbfb; position: sticky; top: 0; }
+  td.ACTIVE { font-weight: 700; } td.CLEARED { color: var(--muted); }
+  td.CRITICAL { color: var(--crit); font-weight: 700; } td.WARNING { color: var(--warn); font-weight: 700; }
+  .empty { padding: 10px 12px; color: var(--muted); }
+  .wv-ctl { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  .wv-ctl button { font: 600 11px var(--mono); border: 1px solid var(--line); background: #f7fafa; color: var(--steel); padding: 3px 8px; cursor: pointer; }
+  .wv-ctl button.on { background: var(--ch); color: #fff; border-color: var(--ch); }
+  .wv-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; padding: 10px 12px; }
+  @media (max-width: 1250px) { .wv-body { grid-template-columns: 1fr; } }
+  .wv-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; font: 11.5px var(--mono); color: var(--muted); padding: 0 12px 10px; }
+  .wv-meta b { color: var(--text); font-weight: 600; }
+  .note { font-size: 11.5px; color: var(--muted); padding: 0 12px 10px; }
+  .orbit-cap { font: 11px var(--mono); color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="5" fill="#fff"/>
+    <path d="M27 12a10 10 0 1 0 0 16" fill="none" stroke="#0f5e6e" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M22 13v14M22 20h8M30 13v14" stroke="#137a8c" stroke-width="3" stroke-linecap="round"/></svg>
+  <div><small>Cromley Hydraulics · fleet monitoring</small><b>CH Asset Viewer</b></div>
+  <span class="hdr-pill" id="conn">broker …</span>
+  <div class="spacer"></div>
+  <span class="hdr-pill">source: v1.0/CH/Fleet/# only</span>
+  <a id="home" href="http://localhost:8120">⌂ All systems</a>
+</header>
+<div class="layout">
+  <aside>
+    <h4>Fleet · DRWPA / Copper Canyon</h4>
+    <div id="fleet"><div class="empty">waiting for the CH tree…</div></div>
+    <div class="teach"><b>The serial is the identity.</b> CH organises its tree by asset serial: it stays the same when the customer renames "Unit 1" or the unit is refurbished. The customer's unit name only lives in <code>_meta/Nameplate</code>.</div>
+  </aside>
+  <main>
+    <div class="card span2"><h3>Nameplate <span id="np-topic"></span></h3><div class="np" id="np"></div></div>
+    <div class="card span2"><h3>Raw waveform blocks <span id="wv-topic"></span></h3>
+      <div class="wv-ctl" id="wv-ctl"></div>
+      <div class="wv-body"><div><canvas id="wv" height="260"></canvas></div>
+        <div id="orbit-wrap"><canvas id="orbit" height="300"></canvas><div class="orbit-cap" id="orbit-cap"></div></div></div>
+      <div class="wv-meta" id="wv-meta"></div>
+      <div class="note">Raw blocks, exactly as the PLC publishes them: no FFT, no filtering. Analytics (spectra, orbits analysis, envelopes, models) is what the edge vendors bring.</div>
+    </div>
+    <div class="card"><h3>Process values · 1 s <span id="tree-n"></span></h3><div class="tree" id="tree"></div></div>
+    <div>
+      <div class="card" style="margin-bottom:14px"><h3>Trend · last 30 min <span>click a value</span></h3>
+        <div class="trend"><div class="ttl" id="tr-ttl">—</div><canvas id="tr" height="170"></canvas></div></div>
+      <div class="card"><h3>PLC alarm events <span id="ev-n"></span></h3><div class="ev" id="ev"></div></div>
+    </div>
+  </main>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const S = { assets: {}, tags: [], waves: [], serial: null, tag: null, wave: null, block: null, blockKey: null, asset: null };
+const SUBS = ["Context", "Bearings", "Cooling", "Governor", "Turbine", "Vibration", "Generator", "Counters"];
+const CSS = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function parseHash() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (!h) return;
+  const [serial, kind, ...rest] = h.split("/");
+  S.serial = serial;
+  if (kind === "wave" && rest.length) S.wave = rest.join("/");
+  if (kind === "tag" && rest.length) S.tag = rest.join("/");
+}
+function setHash() {
+  const h = S.serial + (S.wave ? "/wave/" + S.wave : "");
+  history.replaceState(null, "", "#" + h);
+}
+
+async function j(url) { const r = await fetch(url); if (!r.ok) throw new Error(r.status); return r.json(); }
+
+function fmtV(v, dec) {
+  if (v == null) return "—";
+  if (typeof v === "boolean") return v ? "true" : "false";
+  if (typeof v === "number") return Number.isInteger(v) && dec === 0 ? String(v) : v.toFixed(dec ?? 2);
+  if (Array.isArray(v)) return v.length ? v.join(",") : "[]";
+  return String(v);
+}
+
+function renderFleet() {
+  const list = Object.entries(S.assets);
+  if (!list.length) return;
+  $("fleet").innerHTML = list.map(([s, a]) => {
+    const np = a.nameplate || {};
+    const crit = (a.active_alarms || []).filter(x => x.endsWith("_HH") || x.includes("DANGER") || x.includes("BROKEN")).length;
+    const n = (a.active_alarms || []).length;
+    return `<a class="asset ${s === S.serial ? "sel" : ""}" href="#${s}" data-s="${s}">
+      <div class="sn">${esc(s)}</div>
+      <div class="cu">${esc(np.productLine || "")} · customer name: <b>${esc(np.customer?.unitName || "?")}</b></div>
+      <div class="st"><span class="dot ${a.status === "ONLINE" ? "on" : a.status ? "off" : ""}"></span>${esc(a.status || "no status")}
+        · ${a.msgs_per_s} msg/s · ${a.kbytes_per_s} KB/s
+        ${n ? `<span class="badge ${crit ? "c" : "w"}">${n} alarm${n > 1 ? "s" : ""}</span>` : ""}</div>
+      <div class="st">seq ${a.seq ?? "—"} · gaps ${a.seq_gaps}</div></a>`;
+  }).join("");
+}
+
+function renderNameplate() {
+  const a = S.assets[S.serial]; if (!a) return;
+  const np = a.nameplate;
+  $("np-topic").textContent = `…/${S.serial}/_meta/Nameplate (retained)`;
+  if (!np) { $("np").innerHTML = `<div class="empty">no nameplate received</div>`; return; }
+  const f = [["Serial", np.serial], ["Manufacturer", np.manufacturer], ["Product line", np.productLine], ["Model", np.model],
+    ["Type", np.type], ["Rated power", np.ratedPower_MW + " MW"], ["Rated head", np.ratedHead_m + " m"], ["Rated flow", np.ratedFlow_m3s + " m³/s"],
+    ["Rated speed", np.ratedSpeed_rpm + " rpm"], ["Runner blades", np.runnerBlades], ["Wicket gates", np.wicketGates],
+    ["Commissioned", np.commissioned], ["PLC retrofit", np.plcRetrofit], ["Firmware", np.plcFirmware], ["Data model", np.dataModel],
+    ["Customer", np.customer?.name], ["Site", np.customer?.site], ["Customer unit name", np.customer?.unitName], ["PLC status", a.status],
+    ["Waveform channels", (np.waveforms || []).length]];
+  $("np").innerHTML = f.map(([k, v]) => `<div><span>${k}</span><b>${esc(v ?? "—")}</b></div>`).join("");
+}
+
+function tagSpec(path) { return S.tags.find(t => t.path === path); }
+
+function renderTree() {
+  const a = S.asset; if (!a) return;
+  const active = new Set((S.assets[S.serial]?.active_alarms) || []);
+  const alarmTags = new Set();
+  (a.events || []).forEach(e => { if (active.has(e.alarmId)) alarmTags.add(e.tag); });
+  const groups = {};
+  for (const t of S.tags) {
+    const sub = t.path.split("/")[0];
+    (groups[sub] = groups[sub] || []).push(t);
+  }
+  let h = "", n = 0;
+  for (const sub of SUBS) {
+    if (!groups[sub]) continue;
+    h += `<div class="sub">${sub}${sub === "Context" ? " · copied from the customer tree" : ""}</div>`;
+    for (const t of groups[sub]) {
+      const e = a.values[t.path]; n += e ? 1 : 0;
+      const q = e ? e.q : "—";
+      const nq = e && q !== "GOOD";
+      const name = t.path.split("/").slice(1).join("/");
+      h += `<div class="row ${nq ? "nq" : ""} ${alarmTags.has(t.path) ? "alm" : ""} ${S.tag === t.path ? "sel" : ""}" data-p="${t.path}" title="${esc(t.desc)}">
+        <span class="p">${esc(name)}</span><span class="v">${e ? esc(fmtV(e.v, t.dec)) : "—"}</span><span class="u">${esc(t.unit)}</span><span class="q">${esc(q)}</span></div>`;
+    }
+  }
+  const tree = $("tree"), top = tree.scrollTop;
+  tree.innerHTML = h; tree.scrollTop = top;
+  $("tree-n").textContent = `${n} tags · value · unit · quality`;
+}
+
+function renderEvents() {
+  const ev = S.asset?.events || [];
+  $("ev-n").textContent = `…/Events/Alarm · ${ev.length}`;
+  $("ev").innerHTML = ev.length ? `<table><tr><th>time</th><th>alarm</th><th>state</th><th>severity</th><th>value</th><th>limit</th></tr>` +
+    ev.map(e => `<tr title="${esc(e.text)} · ${esc(e.tag)}"><td>${esc((e.timestamp || "").slice(11, 19))}</td><td>${esc(e.alarmId)}</td>
+      <td class="${esc(e.state)}">${esc(e.state)}</td><td class="${e.state === "ACTIVE" ? esc(e.severity) : ""}">${esc(e.severity)}</td>
+      <td>${esc(fmtV(e.value, 1))}</td><td>${esc(e.limit)}</td></tr>`).join("") + "</table>"
+    : `<div class="empty">No PLC alarm events since the viewer started.</div>`;
+}
+
+// ---------------------------------------------------------------- canvas helpers
+function prep(cv) {
+  const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1;
+  const h = Number(cv.getAttribute("height"));
+  cv.width = Math.max(10, r.width) * d; cv.height = h * d;
+  cv.style.height = h + "px";
+  const c = cv.getContext("2d"); c.setTransform(d, 0, 0, d, 0, 0);
+  return [c, r.width, h];
+}
+function axes(c, w, h, x0, y0, lo, hi) {
+  c.strokeStyle = "#d5dde0"; c.fillStyle = "#5b6d73"; c.font = "10px " + CSS("--mono"); c.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = y0 + (h - y0 - 18) * i / 4, v = hi - (hi - lo) * i / 4;
+    c.beginPath(); c.moveTo(x0, y); c.lineTo(w - 4, y); c.stroke();
+    c.fillText(v.toFixed(Math.abs(hi - lo) < 2 ? 3 : 1), 2, y + 3);
+  }
+}
+function range(vals) {
+  let lo = Infinity, hi = -Infinity;
+  for (const v of vals) if (v != null) { if (v < lo) lo = v; if (v > hi) hi = v; }
+  if (!isFinite(lo)) return [0, 1];
+  const minSpan = Math.max(0.2, Math.abs(hi) * 0.01);       // don't blow noise up into a trend
+  if (hi - lo < minSpan) { const m = (hi + lo) / 2; lo = m - minSpan / 2; hi = m + minSpan / 2; }
+  const p = (hi - lo) * 0.08; return [lo - p, hi + p];
+}
+
+async function renderTrend() {
+  if (!S.tag || !S.serial) { $("tr-ttl").textContent = "click a value in the tree"; return; }
+  const sp = tagSpec(S.tag);
+  let r; try { r = await j(`/api/trend?serial=${encodeURIComponent(S.serial)}&paths=${encodeURIComponent(S.tag)}&minutes=30&points=300`); } catch { return; }
+  const ys = r.series[S.tag] || [];
+  $("tr-ttl").textContent = `${S.tag} [${sp?.unit || ""}] · ${ys.length} buckets`;
+  const [c, w, h] = prep($("tr"));
+  c.clearRect(0, 0, w, h);
+  const [lo, hi] = range(ys);
+  const x0 = 48;
+  axes(c, w, h, x0, 6, lo, hi, sp?.unit);
+  if (!r.t.length) return;
+  const t0 = Date.now() / 1000 - 1800, sx = t => x0 + (w - x0 - 6) * (t - t0) / 1800, sy = v => 6 + (h - 24) * (hi - v) / (hi - lo);
+  c.strokeStyle = CSS("--ch"); c.lineWidth = 1.6; c.beginPath(); let pen = false;
+  r.t.forEach((t, i) => { const v = ys[i]; if (v == null) { pen = false; return; } pen ? c.lineTo(sx(t), sy(v)) : c.moveTo(sx(t), sy(v)); pen = true; });
+  c.stroke();
+  c.fillStyle = "#5b6d73"; c.fillText("−30 min", x0, h - 4); c.fillText("now", w - 26, h - 4);
+}
+
+function renderWaveCtl() {
+  const a = S.assets[S.serial];
+  const have = a?.waveforms || {};
+  $("wv-ctl").innerHTML = S.waves.map(w => {
+    const label = w.path.replace("Vibration/", "").replace("/Waveform", "");
+    const ok = have[w.path];
+    return `<button class="${S.wave === w.path ? "on" : ""}" data-w="${w.path}" ${ok ? "" : "disabled title='no block yet'"}>${esc(label)}</button>`;
+  }).join("");
+}
+
+async function loadWave(force) {
+  if (!S.serial || !S.wave) { $("wv-topic").textContent = "pick a channel"; return; }
+  const summary = S.assets[S.serial]?.waveforms?.[S.wave];
+  const key = S.serial + "|" + S.wave + "|" + (summary?.timestamp || "");
+  if (!force && key === S.blockKey) return;
+  try {
+    const raw = await fetch(`/api/waveform/${encodeURIComponent(S.serial)}?path=${encodeURIComponent(S.wave)}`);
+    if (!raw.ok) { S.block = null; drawWave(); return; }
+    const txt = await raw.text();
+    S.block = JSON.parse(txt); S.block._bytes = txt.length; S.blockKey = key;
+    // orbit partner (X <-> Y of the same bearing)
+    S.partner = null;
+    const m = S.wave.match(/^Vibration\/(\w+)\/Shaft([XY])\/Waveform$/);
+    if (m) {
+      const other = `Vibration/${m[1]}/Shaft${m[2] === "X" ? "Y" : "X"}/Waveform`;
+      const r2 = await fetch(`/api/waveform/${encodeURIComponent(S.serial)}?path=${encodeURIComponent(other)}`);
+      if (r2.ok) S.partner = await r2.json();
+      S.orbitBearing = m[1]; S.orbitAxis = m[2];
+    }
+  } catch { return; }
+  drawWave();
+}
+
+function drawWave() {
+  $("wv-topic").textContent = S.wave ? `…/${S.serial}/${S.wave}` : "";
+  const [c, w, h] = prep($("wv"));
+  c.clearRect(0, 0, w, h);
+  const b = S.block;
+  if (!b) { $("wv-meta").innerHTML = ""; drawOrbit(); return; }
+  const vals = b.values, n = vals.length, x0 = 52;
+  const [lo, hi] = range(vals);
+  axes(c, w, h, x0, 6, lo, hi, b.unit);
+  const sx = i => x0 + (w - x0 - 6) * i / (n - 1), sy = v => 6 + (h - 24) * (hi - v) / (hi - lo);
+  // keyphasor marks
+  c.strokeStyle = "#e0a96d"; c.lineWidth = 1;
+  (b.keyphasorIdx || []).forEach(i => { c.beginPath(); c.moveTo(sx(i), 6); c.lineTo(sx(i), h - 18); c.stroke(); });
+  // trace: min/max per pixel column
+  c.strokeStyle = CSS("--ch"); c.lineWidth = 1; c.beginPath();
+  const cols = Math.max(1, Math.floor(w - x0 - 6)), per = n / cols;
+  if (per > 2) {
+    // min/max envelope per pixel column, joined so the trace stays continuous
+    for (let px = 0; px < cols; px++) {
+      let mn = Infinity, mx = -Infinity;
+      for (let i = Math.floor(px * per); i < Math.min(n, Math.floor((px + 1) * per)); i++) { if (vals[i] < mn) mn = vals[i]; if (vals[i] > mx) mx = vals[i]; }
+      if (!px) c.moveTo(x0 + .5, sy(mx));
+      c.lineTo(x0 + px + .5, sy(mx)); c.lineTo(x0 + px + .5, sy(mn) + 0.5);
+    }
+  } else vals.forEach((v, i) => i ? c.lineTo(sx(i), sy(v)) : c.moveTo(sx(i), sy(v)));
+  c.stroke();
+  c.fillStyle = "#5b6d73"; c.font = "10px " + CSS("--mono");
+  c.fillText("0 s", x0, h - 4); c.fillText((n / b.sampleRate).toFixed(n / b.sampleRate < 1 ? 2 : 1) + " s", w - 40, h - 4);
+  if ((b.keyphasorIdx || []).length) c.fillText("| keyphasor (one per revolution)", x0 + 60, h - 4);
+  const m = [["timestamp", b.timestamp], ["seq", b.seq], ["sampleRate", b.sampleRate + " S/s"], ["samples", b.samples],
+    ["window", (b.samples / b.sampleRate).toFixed(2) + " s"], ["speedRpm", b.speedRpm], ["keyphasors", (b.keyphasorIdx || []).length],
+    ["trigger", b.trigger], ["unit", b.unit], ["payload", (b._bytes / 1024).toFixed(1) + " KB"]];
+  $("wv-meta").innerHTML = m.map(([k, v]) => `<span>${k} <b>${esc(v)}</b></span>`).join("");
+  drawOrbit();
+}
+
+function drawOrbit() {
+  const wrap = $("orbit-wrap");
+  const b = S.block, p = S.partner;
+  if (!b || !p || !S.orbitBearing || !S.wave.includes("/Shaft")) { wrap.style.display = "none"; return; }
+  wrap.style.display = "";
+  const X = S.orbitAxis === "X" ? b : p, Y = S.orbitAxis === "X" ? p : b;
+  const [c, w, h] = prep($("orbit"));
+  c.clearRect(0, 0, w, h);
+  const kp = X.keyphasorIdx || [];
+  let i0 = 0, i1 = Math.min(X.values.length, Y.values.length);
+  if (kp.length >= 3) { i0 = kp[0]; i1 = kp[2]; }       // two revolutions
+  const xs = X.values.slice(i0, i1), ys = Y.values.slice(i0, i1);
+  let m = 1; for (let i = 0; i < xs.length; i++) m = Math.max(m, Math.abs(xs[i]), Math.abs(ys[i]));
+  m *= 1.1;
+  const cx = w / 2, cy = (h - 16) / 2, r = Math.min(w, h - 16) / 2 - 8, s = v => v / m * r;
+  c.strokeStyle = "#d5dde0"; c.lineWidth = 1;
+  c.beginPath(); c.arc(cx, cy, r, 0, 2 * Math.PI); c.stroke();
+  c.beginPath(); c.moveTo(cx - r, cy); c.lineTo(cx + r, cy); c.moveTo(cx, cy - r); c.lineTo(cx, cy + r); c.stroke();
+  c.strokeStyle = CSS("--ch"); c.lineWidth = 1.3; c.beginPath();
+  xs.forEach((x, i) => { const px = cx + s(x), py = cy - s(ys[i]); i ? c.lineTo(px, py) : c.moveTo(px, py); });
+  c.stroke();
+  c.fillStyle = "#c0392b";
+  kp.filter(k => k >= i0 && k < i1).forEach(k => { c.beginPath(); c.arc(cx + s(X.values[k]), cy - s(Y.values[k]), 3.5, 0, 2 * Math.PI); c.fill(); });
+  c.fillStyle = "#5b6d73"; c.font = "10px " + CSS("--mono");
+  c.fillText(`±${m.toFixed(0)} ${X.unit}`, 4, 12);
+  $("orbit-cap").textContent = `${S.orbitBearing} orbit (X vs Y), ${kp.length >= 3 ? "two revolutions" : "whole block"} · ● keyphasor`;
+}
+
+async function pollAssets() {
+  try {
+    const d = await j("/api/assets");
+    S.assets = d.assets; S.tags = d.tags; S.waves = d.waveforms;
+    if (d.links?.hub) $("home").href = d.links.hub;
+    $("conn").textContent = d.connected ? "broker connected" : "broker disconnected";
+    if (!S.serial || !S.assets[S.serial]) S.serial = Object.keys(S.assets)[0] || null;
+    if (!S.serial) return;
+    if (!S.wave) { const first = Object.keys(S.assets[S.serial].waveforms || {})[0]; if (first) S.wave = first; }
+    renderFleet(); renderNameplate(); renderWaveCtl();
+    S.asset = await j(`/api/asset/${encodeURIComponent(S.serial)}`);
+    renderTree(); renderEvents();
+    loadWave(false);
+  } catch {}
+}
+
+$("fleet").addEventListener("click", e => {
+  const a = e.target.closest("[data-s]"); if (!a) return;
+  e.preventDefault(); S.serial = a.dataset.s; S.blockKey = null; setHash(); pollAssets(); renderTrend();
+});
+$("tree").addEventListener("click", e => {
+  const r = e.target.closest("[data-p]"); if (!r) return;
+  S.tag = r.dataset.p; renderTree(); renderTrend();
+});
+$("wv-ctl").addEventListener("click", e => {
+  const b = e.target.closest("[data-w]"); if (!b || b.disabled) return;
+  S.wave = b.dataset.w; S.blockKey = null; setHash(); renderWaveCtl(); loadWave(true);
+});
+window.addEventListener("hashchange", () => { parseHash(); S.blockKey = null; pollAssets(); });
+window.addEventListener("resize", () => { drawWave(); renderTrend(); });
+
+parseHash();
+if (!S.tag) S.tag = "Bearings/TGB/PadTemp01";
+pollAssets().then(renderTrend);
+setInterval(pollAssets, 2000);
+setInterval(renderTrend, 10000);
+</script>
+</body>
+</html>

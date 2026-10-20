@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copper Canyon Instructor Station</title>
+<style>
+  /* Deliberately NOT the SCADA look: this is the training simulator's side of the glass. */
+  :root {
+    --bg: #17131f; --panel: #221c2e; --panel-2: #2b2439; --line: #3d3450; --text: #e7e2f0; --muted: #a197b5;
+    --sim: #a78bfa; --sim-2: #7c3aed; --on: #f472b6; --ok: #34d399; --warn: #fbbf24;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; --sans: "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.45 var(--sans); }
+  header { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 12px 16px; background: #0f0c15; border-bottom: 2px solid var(--sim-2); }
+  header b { font-size: 17px; }
+  header small { display: block; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  .spacer { flex: 1; }
+  .pill { font: 600 11px var(--mono); padding: 3px 9px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .pill.ok { color: var(--ok); border-color: #2c6b56; }
+  .pill.bad { color: var(--on); border-color: #8b2f63; }
+  a { color: var(--sim); }
+  a.home { font: 600 11px var(--mono); color: var(--muted); text-decoration: none; border: 1px solid var(--line); padding: 3px 8px; }
+  a.home:hover { color: var(--text); }
+  .note { color: var(--muted); font-size: 12.5px; margin: 0; padding: 10px 16px; background: #1d1828; border-bottom: 1px solid var(--line); }
+  .note b { color: var(--on); }
+  .wrap { padding: 14px 16px 30px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  @media (max-width: 1000px) { .wrap { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); margin-bottom: 14px; }
+  .panel h3 { margin: 0; padding: 8px 12px; font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--panel-2); display: flex; gap: 10px; align-items: center; }
+  .panel h3 span { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; padding: 10px; }
+  .card { border: 1px solid var(--line); background: #1c1726; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .card .top { display: flex; gap: 10px; align-items: flex-start; }
+  .letter { flex: none; width: 34px; height: 34px; display: grid; place-items: center; font: 800 18px var(--mono); color: var(--sim); border: 2px solid var(--sim-2); }
+  .card b { font-size: 13.5px; }
+  .card .grp { font: 600 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .card p { margin: 0; color: var(--muted); font-size: 12px; }
+  .card.on { background: #2d1f37; box-shadow: inset 3px 0 0 var(--on); border-color: #6b2f58; }
+  .card.on .letter { color: var(--on); border-color: var(--on); }
+  .ctl { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font: 11.5px var(--mono); color: var(--muted); }
+  .ctl label { display: flex; gap: 4px; align-items: center; }
+  select, input { font: 12px var(--mono); background: #15111c; color: var(--text); border: 1px solid var(--line); padding: 3px 5px; }
+  input[type=number] { width: 72px; }
+  .ctl .btns { margin-left: auto; display: flex; gap: 6px; }
+  button { font: 600 12px var(--sans); padding: 5px 12px; border: 1px solid var(--sim-2); background: transparent; color: var(--sim); cursor: pointer; white-space: nowrap; }
+  button:hover { background: #2f2445; }
+  button.stop { border-color: var(--on); color: var(--on); }
+  button:disabled { opacity: .35; cursor: default; background: transparent; }
+  .act { font: 11px var(--mono); color: var(--on); }
+  .sev { height: 8px; background: #15111c; border: 1px solid var(--line); position: relative; }
+  .sev i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--on); }
+  .msg { font: 11px var(--mono); color: var(--warn); min-height: 14px; }
+  .group-h { padding: 10px 12px 0; font: 700 10.5px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--sim); }
+  .rows .r { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 7px 12px; border-bottom: 1px solid #2f283d; align-items: center; }
+  .rows .r p { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 12px; }
+  .rows .r.on { background: #2d1f37; box-shadow: inset 3px 0 0 var(--on); }
+  table { width: 100%; border-collapse: collapse; font: 11.5px var(--mono); }
+  th, td { text-align: left; padding: 3px 10px; border-bottom: 1px solid #2f283d; white-space: nowrap; }
+  td.codes { white-space: normal; overflow-wrap: anywhere; max-width: 180px; }   /* alarm lists: wrap, keep 3 columns */
+  th { color: var(--muted); font-weight: 600; background: var(--panel-2); }
+  td.n { text-align: right; }
+  td.hot { color: var(--on); }
+  .kv { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 8px 12px; font: 12px var(--mono); }
+  .kv span:nth-child(odd) { color: var(--muted); }
+  .kv span:nth-child(even) { text-align: right; }
+  .active .a { padding: 8px 12px; border-bottom: 1px solid #2f283d; display: grid; grid-template-columns: 1fr 130px; gap: 4px 12px; align-items: center; }
+  .active .a small { color: var(--muted); font: 11px var(--mono); }
+  .empty { padding: 10px 12px; color: var(--muted); font-size: 12px; }
+  .repair { display: flex; gap: 8px; align-items: center; padding: 10px 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div><small>Training simulator · not part of the plant</small><b>Copper Canyon Instructor Station</b></div>
+  <span class="pill" id="p-dam">dam-sim …</span>
+  <span class="pill" id="p-ch">ch-plc-sim …</span>
+  <div class="spacer"></div>
+  <span class="pill" id="clock">--:--:--</span>
+  <a class="home" id="home" href="http://localhost:8120">⌂ All systems</a>
+</header>
+<p class="note"><b>Nothing on this page is published.</b> Learners and vendors must find the faults in the data. Scenarios are injected straight into the simulators over HTTP; MQTT, the SCADA and the CH tree only carry their effects.</p>
+<div class="wrap">
+  <div>
+    <div class="panel">
+      <h3>Instructor scenarios A–H <span>hidden machine and operating faults</span></h3>
+      <div class="cards" id="curated"></div>
+    </div>
+    <div class="panel">
+      <h3>More failure modes <span>from the design basis failure-mode table</span></h3>
+      <div id="more" class="rows"></div>
+    </div>
+  </div>
+  <div>
+    <div class="panel">
+      <h3>Active scenarios · ground truth <span id="nact"></span></h3>
+      <div id="active" class="active"></div>
+      <div class="repair">
+        <button class="stop" id="repair">Repair everything</button>
+        <button class="stop" id="repair-yes" hidden>Yes, stop every scenario</button>
+        <button id="repair-no" hidden>Cancel</button>
+        <span class="msg" id="repair-msg"></span>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Plant <span>from the simulators</span></h3>
+      <div class="kv" id="plant"></div>
+    </div>
+    <div class="panel">
+      <h3>Units · watch the effects <span>dam-sim + CH PLC</span></h3>
+      <div id="units"></div>
+    </div>
+  </div>
+</div>
+<script>
+const S = { scen: [], truth: null, ov: null, units: ["Unit1", "Unit2", "Unit3"], built: false, serials: {} };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (v, d = 1) => v == null ? "—" : typeof v === "number" ? v.toFixed(d) : Array.isArray(v) ? (v.length ? v.join(", ") : "—") : String(v);
+const dur = s => s < 90 ? `${Math.round(s)} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`;
+
+async function api(path, body) {
+  const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+  const r = await fetch(path, opt);
+  let j = null; try { j = await r.json(); } catch {}
+  return { ok: r.ok, status: r.status, body: j };
+}
+
+// active instances: [{sid, unit|null, info}]
+function actives() {
+  const out = [];
+  const t = S.truth; if (!t) return out;
+  for (const [sid, a] of Object.entries(t.dam?.active || {})) out.push({ sid, unit: a.unit || null, src: "dam", info: a });
+  for (const [u, d] of Object.entries(t.ch?.units || {}))
+    for (const [sid, a] of Object.entries(d.active || {})) out.push({ sid, unit: u, src: "ch", info: a });
+  return out;
+}
+function activeFor(sid, unit) {
+  return actives().find(a => a.sid === sid && (a.unit === unit || a.src === "dam"));
+}
+
+function controls(s) {
+  let h = "";
+  if (s.target === "unit") {
+    h += `<label>unit <select data-f="unit">${S.units.map(u => `<option ${u === (s.default_unit || "Unit1") ? "selected" : ""}>${u}</option>`).join("")}</select></label>`;
+  }
+  for (const [k, vals] of Object.entries(s.options || {})) {
+    const def = k === "pad" ? 3 : k === "tag" ? "Bearings/TGB/PadTemp02" : vals[0];
+    h += `<label>${esc(k)} <select data-f="opt:${esc(k)}">${vals.map(v => `<option ${String(v) === String(def) ? "selected" : ""} value="${esc(v)}">${esc(String(v).replace("Bearings/", ""))}</option>`).join("")}</select></label>`;
+  }
+  if (s.kind === "ramp") h += `<label title="time compression: how long the degradation takes">over <input type="number" min="30" step="30" data-f="opt:duration_s" value="${s.duration_s || 600}"> s</label>`;
+  h += `<span class="btns"><button data-go="start">Start</button><button class="stop" data-go="stop">Stop</button></span>`;
+  return h;
+}
+
+function build() {
+  const cur = S.scen.filter(s => s.letter), more = S.scen.filter(s => !s.letter);
+  $("curated").innerHTML = cur.map(s => `
+    <div class="card" data-sid="${s.id}">
+      <div class="top"><div class="letter">${esc(s.letter)}</div>
+        <div><div class="grp">${esc(s.group)} · ${s.source === "dam" ? "dam-sim" : "CH turbine"} · ${esc(s.kind)}</div><b>${esc(s.label)}</b></div></div>
+      <p>${esc(s.desc)}</p>
+      <div class="ctl">${controls(s)}</div>
+      <div class="act"></div><div class="msg"></div>
+    </div>`).join("");
+  const groups = {};
+  more.forEach(s => (groups[s.group] = groups[s.group] || []).push(s));
+  $("more").innerHTML = Object.entries(groups).map(([g, list]) => `<div class="group-h">${esc(g)}</div>` + list.map(s => `
+    <div class="r" data-sid="${s.id}">
+      <b>${esc(s.label)}</b><span class="act"></span>
+      <p>${esc(s.desc)}</p>
+      <div class="ctl" style="grid-column:1/-1">${controls(s)}</div>
+      <div class="msg" style="grid-column:1/-1"></div>
+    </div>`).join("")).join("");
+  document.querySelectorAll("[data-sid]").forEach(el => el.addEventListener("click", ev => {
+    const b = ev.target.closest("button[data-go]"); if (!b) return;
+    go(el, b.dataset.go);
+  }));
+  document.querySelectorAll("[data-sid]").forEach(el => el.addEventListener("change", render));
+  S.built = true;
+}
+
+async function go(el, what) {
+  const sid = el.dataset.sid, body = { options: {} };
+  el.querySelectorAll("[data-f]").forEach(f => {
+    const k = f.dataset.f;
+    if (k === "unit") body.unit = f.value;
+    else { const n = k.slice(4); body.options[n] = f.type === "number" || n === "pad" ? Number(f.value) : f.value; }
+  });
+  const msg = el.querySelector(".msg");
+  const r = await api(`/api/scenarios/${sid}/${what}`, what === "start" ? body : { unit: body.unit });
+  msg.textContent = r.ok ? "" : (r.body?.error || `HTTP ${r.status}`);
+  poll();
+}
+
+function render() {
+  if (!S.built && S.scen.length) build();
+  const acts = actives();
+  // cards: active state for the selected unit (or any unit)
+  document.querySelectorAll("[data-sid]").forEach(el => {
+    const sid = el.dataset.sid;
+    const mine = acts.filter(a => a.sid === sid);
+    el.classList.toggle("on", mine.length > 0);
+    const sel = el.querySelector('[data-f="unit"]');
+    const unit = sel ? sel.value : null;
+    const here = mine.find(a => !sel || a.unit === unit || a.src === "dam");
+    el.querySelector('button[data-go="stop"]').disabled = !here;
+    el.querySelector('button[data-go="start"]').disabled = !!here;
+    el.querySelector(".act").textContent = mine.length ? "● active on " + mine.map(a => a.unit || "plant").join(", ") : "";
+  });
+  // active list
+  $("nact").textContent = acts.length ? `${acts.length} active` : "none";
+  $("active").innerHTML = acts.length ? acts.map(a => {
+    const s = S.scen.find(x => x.id === a.sid);
+    const sev = a.info.severity;
+    const label = a.info.label || s?.label || a.sid;
+    return `<div class="a"><div><b>${a.info.letter ? esc(a.info.letter) + " · " : ""}${esc(label)}</b><br>
+      <small>${esc(a.unit || "plant")}${a.unit && S.serials[a.unit] ? " · " + S.serials[a.unit] : ""} · ${a.info.running_s != null ? "running " + dur(a.info.running_s) : esc(a.info.target_level != null ? "to " + a.info.target_level + " m a.s.l." : "")}${a.info.options && Object.keys(a.info.options).length ? " · " + esc(JSON.stringify(a.info.options)) : ""}</small></div>
+      <div>${sev != null ? `<div class="sev" title="severity"><i style="width:${(sev * 100).toFixed(0)}%"></i></div><small>severity ${(sev * 100).toFixed(0)} %</small>` : "<small>latched</small>"}
+        ${a.sid.startsWith("_") ? "" : `<button class="stop" style="margin-top:4px" data-stop="${esc(a.sid)}" data-unit="${esc(a.unit || "")}">Stop</button>`}</div></div>`;
+  }).join("") : `<div class="empty">No scenario running: the plant is healthy.</div>`;
+  const pc = S.truth?.dam?.plant_controller;
+  // plant
+  const ov = S.ov;
+  if (ov) {
+    const p = ov.plant || {};
+    $("plant").innerHTML = [
+      ["Reservoir level", fmt(p["Reservoir/Level"], 2) + " m a.s.l."], ["Gross head", fmt(p["Plant/GrossHead"], 1) + " m"],
+      ["Total / setpoint", fmt(p["Plant/TotalMW"], 1) + " / " + fmt(p["Plant/MWSetpoint"], 1) + " MW"],
+      ["River flow", fmt(p["River/Flow"], 1) + " m³/s"],
+      ["Rough zone (plant controller)", pc ? `${pc.rough_zone_mw[0]}–${pc.rough_zone_mw[1]} MW` : "—"],
+      ["Units above rough zone", pc?.k_high ?? "—"],
+    ].map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join("");
+    const rows = [
+      ["State", u => fmt(u.State)], ["MW / SP", u => `${fmt(u.MW)} / ${fmt(u.MWSetpoint)}`], ["Gate %", u => fmt(u.GatePosition)],
+      ["Unit alarms", u => fmt(u.ActiveAlarms)],
+      ["TGB pad 1 / 2 / 3 °C", u => [1, 2, 3].map(i => fmt(u.ch[`Bearings/TGB/PadTemp0${i}`])).join(" / ")],
+      ["Thrust pad 1 °C", u => fmt(u.ch["Bearings/Thrust/PadTemp01"])],
+      ["CW flow GB L/s", u => fmt(u.ch["Cooling/WaterFlow_GB"], 2)],
+      ["HPU pressure bar", u => fmt(u.ch["Governor/HPU/AccumulatorPressure"])],
+      ["HPU starts / h", u => fmt(u.ch["Governor/HPU/PumpStartsPerHour"], 0)],
+      ["UGB X µm pp", u => fmt(u.ch["Vibration/UGB/ShaftX/Overall_um_pp"])],
+      ["TGB X µm pp", u => fmt(u.ch["Vibration/TGB/ShaftX/Overall_um_pp"])],
+      ["Headcover mm/s", u => fmt(u.ch["Vibration/Headcover/Vel_mm_s_rms"], 2)],
+      ["Shear pins", u => fmt(u.ch["Turbine/ShearPinStatus"])],
+      ["CH PLC alarms", u => u.ch_alarms?.length ? u.ch_alarms.join(" ") : "—"],
+    ];
+    const us = S.units.map(n => ov.units?.[n] || { ch: {} });
+    const hot = n => acts.some(a => a.unit === n);
+    $("units").innerHTML = `<table><tr><th></th>${S.units.map(n => `<th class="${hot(n) ? "hot" : ""}">${n}<br><span style="font-weight:400">${esc(us[S.units.indexOf(n)].serial || "")}</span></th>`).join("")}</tr>` +
+      rows.map(([k, f]) => `<tr><td style="color:var(--muted)">${k}</td>${us.map(u => `<td class="n${/alarms/.test(k) ? " codes" : ""}">${esc(f(u))}</td>`).join("")}</tr>`).join("") + "</table>";
+  }
+}
+
+async function poll() {
+  try {
+    const [t, o] = await Promise.all([api("/api/ground_truth"), api("/api/overview")]);
+    if (t.ok) S.truth = t.body;
+    if (o.ok) S.ov = o.body;
+    render();
+  } catch {}
+}
+
+async function init() {
+  const r = await api("/api/scenarios").catch(() => null);
+  if (r && r.ok) {
+    S.scen = r.body.scenarios; S.units = r.body.units; S.serials = r.body.serials || {};
+    if (r.body.links?.hub) $("home").href = r.body.links.hub;
+    for (const k of ["dam", "ch"]) {
+      const el = $("p-" + k), ok = r.body.reachable?.[k];
+      el.textContent = (k === "dam" ? "dam-sim " : "ch-plc-sim ") + (ok ? "connected" : "unreachable");
+      el.className = "pill " + (ok ? "ok" : "bad");
+    }
+  } else setTimeout(init, 3000);
+  poll();
+}
+$("active").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-stop]"); if (!b) return;
+  b.disabled = true;
+  await api(`/api/scenarios/${b.dataset.stop}/stop`, { unit: b.dataset.unit || null });
+  poll();
+});
+// Repair everything: inline arm-then-confirm, no browser dialogs.
+$("repair").onclick = () => { $("repair").hidden = true; $("repair-yes").hidden = false; $("repair-no").hidden = false; };
+$("repair-no").onclick = () => { $("repair").hidden = false; $("repair-yes").hidden = true; $("repair-no").hidden = true; };
+$("repair-yes").onclick = async () => {
+  const r = await api("/api/reset", {});
+  $("repair-msg").textContent = r.ok ? "every scenario stopped" : "failed";
+  $("repair-no").onclick(); setTimeout(() => $("repair-msg").textContent = "", 4000); poll();
+};
+setInterval(() => $("clock").textContent = new Date().toLocaleTimeString(), 1000);
+init();
+setInterval(poll, 2000);
+</script>
+</body>
+</html>

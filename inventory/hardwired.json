@@ -1,0 +1,12 @@
+{
+  "_source": "common/namespace.py HARDWIRED (served by chplc/main.py GET /api/hardwired, polled by damsim/main.py)",
+  "_note": "element A of dual-element sensors: the customer's copper, not MQTT. A CH-side sensor fault (scenario rtd_fault) only affects element B.",
+  "signals": {
+    "ThrustBearingTemp": {"unit": "°C", "ch_element_b": "Bearings/Thrust/PadTemp01", "customer_topic": "Powerhouse/<Unit>/ThrustBearingTemp"},
+    "UpperGuideBearingTemp": {"unit": "°C", "ch_element_b": "Bearings/UGB/PadTemp01", "customer_topic": "Powerhouse/<Unit>/UpperGuideBearingTemp"},
+    "LowerGuideBearingTemp": {"unit": "°C", "ch_element_b": "Bearings/LGB/PadTemp01", "customer_topic": "Powerhouse/<Unit>/LowerGuideBearingTemp"},
+    "TurbineGuideBearingTemp": {"unit": "°C", "ch_element_b": "Bearings/TGB/PadTemp01", "customer_topic": "Powerhouse/<Unit>/TurbineGuideBearingTemp"},
+    "CoolingWaterFlow": {"unit": "L/s", "ch_element_b": "sum of Cooling/WaterFlow_*", "customer_topic": "Powerhouse/<Unit>/CoolingWaterFlow"},
+    "GovernorOilPressure": {"unit": "bar", "ch_element_b": "Governor/HPU/AccumulatorPressure", "customer_topic": "Powerhouse/<Unit>/GovernorOilPressure"}
+  }
+}

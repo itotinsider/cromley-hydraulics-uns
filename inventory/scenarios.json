@@ -1,0 +1,36 @@
+{
+  "_source": "damsim/model.py SCENARIOS, chplc/model.py SCENARIOS (instructor station only: never published)",
+  "dam": {
+    "agc_rough_zone": {"letter": "C", "label": "AGC parks a unit in the rough zone", "group": "Operation", "target": "unit", "default_unit": "Unit2", "kind": "latched"},
+    "low_reservoir": {"letter": "H", "label": "Low reservoir, low head (drought drawdown)", "group": "Operation", "target": "plant", "kind": "latched"},
+    "flood": {"letter": null, "label": "Flood inflow", "group": "Operation", "target": "plant", "kind": "latched"},
+    "generator_trip": {"letter": null, "label": "Generator protection trip (load rejection)", "group": "Electrical", "target": "unit", "default_unit": "Unit1", "kind": "instant"},
+    "trash_debris": {"letter": null, "label": "Debris on the trash rack", "group": "Operation", "target": "plant", "kind": "timed", "duration_s": 900}
+  },
+  "ch": {
+    "tgb_bearing_degradation": {"letter": "A", "label": "Turbine guide bearing degradation", "group": "Bearings", "mode": 1, "kind": "ramp", "duration_s": 1200, "options": {"pad": [1, 2, 3, 4]}},
+    "cooling_strainer": {"letter": "B", "label": "Cooling-water strainer blockage", "group": "Cooling", "mode": 2, "kind": "ramp", "duration_s": 480},
+    "hpu_pump_wear": {"letter": "D", "label": "HPU pump wear / internal leakage", "group": "Governor & HPU", "mode": 11, "kind": "ramp", "duration_s": 1800},
+    "shear_pin": {"letter": "E", "label": "Wicket gate shear pin break", "group": "Turbine", "mode": 10, "kind": "step"},
+    "unbalance": {"letter": "F", "label": "Mechanical unbalance after maintenance", "group": "Vibration", "mode": 4, "kind": "step"},
+    "rtd_fault": {"letter": "G", "label": "RTD sensor fault (CH element)", "group": "Sensors", "mode": 15, "kind": "ramp", "duration_s": 1500, "options": {"mode": ["drift", "flatline", "spike"], "tag": ["Bearings/UGB/PadTemp02", "Bearings/UGB/PadTemp03", "Bearings/UGB/PadTemp04", "Bearings/LGB/PadTemp02", "Bearings/LGB/PadTemp03", "Bearings/LGB/PadTemp04", "Bearings/TGB/PadTemp02", "Bearings/TGB/PadTemp03", "Bearings/TGB/PadTemp04", "Bearings/Thrust/PadTemp02", "Bearings/Thrust/PadTemp03", "Bearings/Thrust/PadTemp04", "Bearings/Thrust/PadTemp05", "Bearings/Thrust/PadTemp06"]}},
+    "cooler_fouling": {"letter": null, "label": "Oil cooler fouling", "group": "Cooling", "mode": 2, "kind": "ramp", "duration_s": 1800},
+    "oil_water_ingress": {"letter": null, "label": "TGB oil contamination (water ingress)", "group": "Bearings", "mode": 3, "kind": "ramp", "duration_s": 1800},
+    "misalignment": {"letter": null, "label": "Misalignment / bearing clearance", "group": "Vibration", "mode": 5, "kind": "ramp", "duration_s": 600},
+    "hydraulic_unbalance": {"letter": null, "label": "Hydraulic unbalance (runner)", "group": "Vibration", "mode": 6, "kind": "ramp", "duration_s": 600},
+    "runner_crack": {"letter": null, "label": "Runner blade crack", "group": "Turbine", "mode": 9, "kind": "ramp", "duration_s": 1800},
+    "servo_seal_leak": {"letter": null, "label": "Servomotor seal leak", "group": "Governor & HPU", "mode": 12, "kind": "ramp", "duration_s": 1800},
+    "shaft_seal_wear": {"letter": null, "label": "Shaft seal wear", "group": "Turbine", "mode": 13, "kind": "ramp", "duration_s": 1800},
+    "air_gap": {"letter": null, "label": "Generator air-gap anomaly", "group": "Generator", "mode": 14, "kind": "ramp", "duration_s": 1800}
+  },
+  "letters": {
+    "C": "agc_rough_zone",
+    "H": "low_reservoir",
+    "A": "tgb_bearing_degradation",
+    "B": "cooling_strainer",
+    "D": "hpu_pump_wear",
+    "E": "shear_pin",
+    "F": "unbalance",
+    "G": "rtd_fault"
+  }
+}

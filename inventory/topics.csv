@@ -1,0 +1,369 @@
+tree,topic,unit,type,retained,publisher,rate,description
+customer,v1.0/DRWPA/CopperCanyon/Reservoir/Level,m a.s.l.,float,yes,dam-sim,1 s,Reservoir water level
+customer,v1.0/DRWPA/CopperCanyon/Reservoir/Inflow,m³/s,float,yes,dam-sim,1 s,River inflow into the reservoir (estimated)
+customer,v1.0/DRWPA/CopperCanyon/Reservoir/Volume,hm³,float,yes,dam-sim,1 s,Stored volume above the dead storage at 380 m a.s.l.
+customer,v1.0/DRWPA/CopperCanyon/River/TailwaterLevel,m a.s.l.,float,yes,dam-sim,1 s,Tailwater level below the powerhouse
+customer,v1.0/DRWPA/CopperCanyon/River/Flow,m³/s,float,yes,dam-sim,1 s,Total release to the river (units + spillway + bottom outlet)
+customer,v1.0/DRWPA/CopperCanyon/Plant/GrossHead,m,float,yes,dam-sim,1 s,Reservoir level - tailwater level
+customer,v1.0/DRWPA/CopperCanyon/Plant/TotalMW,MW,float,yes,dam-sim,1 s,Sum of the unit outputs
+customer,v1.0/DRWPA/CopperCanyon/Plant/MWSetpoint,MW,float,yes,dam-sim,1 s,Plant MW setpoint from the grid operator (incl. AGC)
+customer,v1.0/DRWPA/CopperCanyon/Plant/MWSetpointReachable,,bool,yes,dam-sim,1 s,False when the online units can't make the setpoint
+customer,v1.0/DRWPA/CopperCanyon/Plant/AGCEnabled,,bool,yes,dam-sim,1 s,The grid operator's AGC adds small setpoint changes
+customer,v1.0/DRWPA/CopperCanyon/Plant/GridFrequency,Hz,float,yes,dam-sim,1 s,Grid frequency at the 150 kV busbar
+customer,v1.0/DRWPA/CopperCanyon/Intake/GatePosition,%,float,yes,dam-sim,1 s,"Intake (emergency) gate position, 100 = open"
+customer,v1.0/DRWPA/CopperCanyon/Intake/TrashRackDP,m,float,yes,dam-sim,1 s,Head loss across the trash rack (clogging)
+customer,v1.0/DRWPA/CopperCanyon/Intake/RakerRunning,,bool,yes,dam-sim,1 s,Trash rack raker cleaning cycle active
+customer,v1.0/DRWPA/CopperCanyon/Penstock/Pressure,bar,float,yes,dam-sim,1 s,Penstock pressure at the powerhouse manifold
+customer,v1.0/DRWPA/CopperCanyon/Penstock/Flow,m³/s,float,yes,dam-sim,1 s,Total penstock flow (all three units)
+customer,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Position,%,float,yes,dam-sim,1 s,Spillway radial gate 01 position
+customer,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Flow,m³/s,float,yes,dam-sim,1 s,Flow over spillway gate 01
+customer,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Mode,,string,yes,dam-sim,1 s,AUTO (opens near 420 m a.s.l.) or MAN
+customer,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Position,%,float,yes,dam-sim,1 s,Spillway radial gate 02 position
+customer,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Flow,m³/s,float,yes,dam-sim,1 s,Flow over spillway gate 02
+customer,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Mode,,string,yes,dam-sim,1 s,AUTO (opens near 420 m a.s.l.) or MAN
+customer,v1.0/DRWPA/CopperCanyon/BottomOutlet/ValvePosition,%,float,yes,dam-sim,1 s,Fixed-cone valve position
+customer,v1.0/DRWPA/CopperCanyon/BottomOutlet/Flow,m³/s,float,yes,dam-sim,1 s,Bottom outlet flow
+customer,v1.0/DRWPA/CopperCanyon/BottomOutlet/Mode,,string,yes,dam-sim,1 s,AUTO (keeps the minimum river flow) or MAN
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/State,,string,yes,dam-sim,1 s,"Unit state: Stopped, Starting, SpeedNoLoad, Synchronising, Generating, Stopping, Tripped"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/BreakerClosed,,bool,yes,dam-sim,1 s,Generator breaker closed
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ControlMode,,string,yes,dam-sim,1 s,PLANT (plant controller) or LOCAL (own MW setpoint)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/MWSetpoint,MW,float,yes,dam-sim,1 s,Unit MW setpoint (from the plant controller or local)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/MW,MW,float,yes,dam-sim,1 s,Active power
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/MVAr,MVAr,float,yes,dam-sim,1 s,Reactive power
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/GatePosition,%,float,yes,dam-sim,1 s,Wicket gate position
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/GateSetpoint,%,float,yes,dam-sim,1 s,Governor gate setpoint
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Speed,rpm,float,yes,dam-sim,1 s,Shaft speed
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Flow,m³/s,float,yes,dam-sim,1 s,Turbine flow
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/NetHead,m,float,yes,dam-sim,1 s,Net head at the unit (gross head - penstock losses)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/InletValveOpen,,bool,yes,dam-sim,1 s,Butterfly inlet valve fully open
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ActiveAlarms,,json,yes,dam-sim,1 s,Unit controller alarms and trip causes (list of codes)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ThrustBearingTemp,°C,float,yes,dam-sim,1 s,Thrust bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/UpperGuideBearingTemp,°C,float,yes,dam-sim,1 s,Upper guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/LowerGuideBearingTemp,°C,float,yes,dam-sim,1 s,Lower guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/TurbineGuideBearingTemp,°C,float,yes,dam-sim,1 s,Turbine guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/CoolingWaterFlow,L/s,float,yes,dam-sim,1 s,Total unit cooling water flow
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/GovernorOilPressure,bar,float,yes,dam-sim,1 s,Governor HPU accumulator pressure
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/State,,string,yes,dam-sim,1 s,"Unit state: Stopped, Starting, SpeedNoLoad, Synchronising, Generating, Stopping, Tripped"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/BreakerClosed,,bool,yes,dam-sim,1 s,Generator breaker closed
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ControlMode,,string,yes,dam-sim,1 s,PLANT (plant controller) or LOCAL (own MW setpoint)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/MWSetpoint,MW,float,yes,dam-sim,1 s,Unit MW setpoint (from the plant controller or local)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/MW,MW,float,yes,dam-sim,1 s,Active power
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/MVAr,MVAr,float,yes,dam-sim,1 s,Reactive power
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/GatePosition,%,float,yes,dam-sim,1 s,Wicket gate position
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/GateSetpoint,%,float,yes,dam-sim,1 s,Governor gate setpoint
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Speed,rpm,float,yes,dam-sim,1 s,Shaft speed
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Flow,m³/s,float,yes,dam-sim,1 s,Turbine flow
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/NetHead,m,float,yes,dam-sim,1 s,Net head at the unit (gross head - penstock losses)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/InletValveOpen,,bool,yes,dam-sim,1 s,Butterfly inlet valve fully open
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ActiveAlarms,,json,yes,dam-sim,1 s,Unit controller alarms and trip causes (list of codes)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ThrustBearingTemp,°C,float,yes,dam-sim,1 s,Thrust bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/UpperGuideBearingTemp,°C,float,yes,dam-sim,1 s,Upper guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/LowerGuideBearingTemp,°C,float,yes,dam-sim,1 s,Lower guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/TurbineGuideBearingTemp,°C,float,yes,dam-sim,1 s,Turbine guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/CoolingWaterFlow,L/s,float,yes,dam-sim,1 s,Total unit cooling water flow
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/GovernorOilPressure,bar,float,yes,dam-sim,1 s,Governor HPU accumulator pressure
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/State,,string,yes,dam-sim,1 s,"Unit state: Stopped, Starting, SpeedNoLoad, Synchronising, Generating, Stopping, Tripped"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/BreakerClosed,,bool,yes,dam-sim,1 s,Generator breaker closed
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ControlMode,,string,yes,dam-sim,1 s,PLANT (plant controller) or LOCAL (own MW setpoint)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/MWSetpoint,MW,float,yes,dam-sim,1 s,Unit MW setpoint (from the plant controller or local)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/MW,MW,float,yes,dam-sim,1 s,Active power
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/MVAr,MVAr,float,yes,dam-sim,1 s,Reactive power
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/GatePosition,%,float,yes,dam-sim,1 s,Wicket gate position
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/GateSetpoint,%,float,yes,dam-sim,1 s,Governor gate setpoint
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Speed,rpm,float,yes,dam-sim,1 s,Shaft speed
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Flow,m³/s,float,yes,dam-sim,1 s,Turbine flow
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/NetHead,m,float,yes,dam-sim,1 s,Net head at the unit (gross head - penstock losses)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/InletValveOpen,,bool,yes,dam-sim,1 s,Butterfly inlet valve fully open
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ActiveAlarms,,json,yes,dam-sim,1 s,Unit controller alarms and trip causes (list of codes)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ThrustBearingTemp,°C,float,yes,dam-sim,1 s,Thrust bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/UpperGuideBearingTemp,°C,float,yes,dam-sim,1 s,Upper guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/LowerGuideBearingTemp,°C,float,yes,dam-sim,1 s,Lower guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/TurbineGuideBearingTemp,°C,float,yes,dam-sim,1 s,Turbine guide bearing pad 1 temperature (customer RTD element)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/CoolingWaterFlow,L/s,float,yes,dam-sim,1 s,Total unit cooling water flow
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/GovernorOilPressure,bar,float,yes,dam-sim,1 s,Governor HPU accumulator pressure
+customer,v1.0/DRWPA/CopperCanyon/Plant/Events,,json,no,dam-sim,on event,"Plant events: commands accepted/refused, state changes, trips"
+command,v1.0/DRWPA/CopperCanyon/Plant/Cmd/MWSetpoint,MW,float,no,dam-scada / any,on command,"Grid operator: plant MW setpoint, split over the units in PLANT mode"
+command,v1.0/DRWPA/CopperCanyon/Plant/Cmd/AGC,,bool,no,dam-scada / any,on command,Grid operator: AGC on/off (small automatic setpoint changes)
+command,v1.0/DRWPA/CopperCanyon/Intake/Cmd/GatePosition,%,float,no,dam-scada / any,on command,Intake gate position; closing is refused while a unit is not stopped
+command,v1.0/DRWPA/CopperCanyon/BottomOutlet/Cmd/Mode,,enum,no,dam-scada / any,on command,AUTO or MAN
+command,v1.0/DRWPA/CopperCanyon/BottomOutlet/Cmd/Position,%,float,no,dam-scada / any,on command,Valve position (switches the outlet to MAN)
+command,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Cmd/Mode,,enum,no,dam-scada / any,on command,AUTO or MAN
+command,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Cmd/Position,%,float,no,dam-scada / any,on command,Gate position (switches the gate to MAN)
+command,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Cmd/Mode,,enum,no,dam-scada / any,on command,AUTO or MAN
+command,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Cmd/Position,%,float,no,dam-scada / any,on command,Gate position (switches the gate to MAN)
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Cmd/Start,,trigger,no,dam-scada / any,on command,Start sequence to Generating (permissives checked)
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Cmd/Stop,,trigger,no,dam-scada / any,on command,"Normal shutdown: unload, open breaker, close gates, brakes"
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Cmd/EmergencyStop,,trigger,no,dam-scada / any,on command,"Emergency stop (latched, needs Reset at standstill)"
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Cmd/Reset,,trigger,no,dam-scada / any,on command,Reset a trip once the unit is at standstill and no cause is active
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Cmd/ControlMode,,enum,no,dam-scada / any,on command,PLANT or LOCAL
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Cmd/MWSetpoint,MW,float,no,dam-scada / any,on command,Local MW setpoint (switches the unit to LOCAL)
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Cmd/Start,,trigger,no,dam-scada / any,on command,Start sequence to Generating (permissives checked)
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Cmd/Stop,,trigger,no,dam-scada / any,on command,"Normal shutdown: unload, open breaker, close gates, brakes"
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Cmd/EmergencyStop,,trigger,no,dam-scada / any,on command,"Emergency stop (latched, needs Reset at standstill)"
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Cmd/Reset,,trigger,no,dam-scada / any,on command,Reset a trip once the unit is at standstill and no cause is active
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Cmd/ControlMode,,enum,no,dam-scada / any,on command,PLANT or LOCAL
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Cmd/MWSetpoint,MW,float,no,dam-scada / any,on command,Local MW setpoint (switches the unit to LOCAL)
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Cmd/Start,,trigger,no,dam-scada / any,on command,Start sequence to Generating (permissives checked)
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Cmd/Stop,,trigger,no,dam-scada / any,on command,"Normal shutdown: unload, open breaker, close gates, brakes"
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Cmd/EmergencyStop,,trigger,no,dam-scada / any,on command,"Emergency stop (latched, needs Reset at standstill)"
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Cmd/Reset,,trigger,no,dam-scada / any,on command,Reset a trip once the unit is at standstill and no cause is active
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Cmd/ControlMode,,enum,no,dam-scada / any,on command,PLANT or LOCAL
+command,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Cmd/MWSetpoint,MW,float,no,dam-scada / any,on command,Local MW setpoint (switches the unit to LOCAL)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/_meta/Nameplate,,json,yes,ch-plc CH-FR-1987-0042,on connect,Nameplate
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/_meta/Status,,string,yes,ch-plc CH-FR-1987-0042,on connect / will,ONLINE / OFFLINE (last will)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/MW,MW,float,yes,ch-plc CH-FR-1987-0042,1 s,Active power (copied from the customer tree)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/MVAr,MVAr,float,yes,ch-plc CH-FR-1987-0042,1 s,Reactive power (copied from the customer tree)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/GatePosition_pct,%,float,yes,ch-plc CH-FR-1987-0042,1 s,Wicket gate position (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/NetHead_m,m,float,yes,ch-plc CH-FR-1987-0042,1 s,Net head (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/Speed_rpm,rpm,float,yes,ch-plc CH-FR-1987-0042,1 s,Shaft speed (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/UnitState,,string,yes,ch-plc CH-FR-1987-0042,1 s,Customer unit state (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Context/TailwaterLevel_m,m a.s.l.,float,yes,ch-plc CH-FR-1987-0042,1 s,Tailwater level (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/PadTemp05,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing pad 5 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/PadTemp06,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing pad 6 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/OilBathTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing oil bath temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/OilLevel,%,float,yes,ch-plc CH-FR-1987-0042,1 s,Thrust bearing oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/Thrust/HPLiftPressure,bar,float,yes,ch-plc CH-FR-1987-0042,1 s,High-pressure oil lift (jacking) pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/UGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,UGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/UGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,UGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/UGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,UGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/UGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,UGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/UGB/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,UGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/UGB/OilLevel,%,float,yes,ch-plc CH-FR-1987-0042,1 s,UGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/LGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,LGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/LGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,LGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/LGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,LGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/LGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,LGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/LGB/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,LGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/LGB/OilLevel,%,float,yes,ch-plc CH-FR-1987-0042,1 s,LGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,TGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,TGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,TGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,TGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,TGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/OilLevel,%,float,yes,ch-plc CH-FR-1987-0042,1 s,TGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Cooling/WaterInletTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Cooling water inlet temperature (seasonal)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Cooling/WaterFlow_TB,L/s,float,yes,ch-plc CH-FR-1987-0042,1 s,"Cooling water flow, turbine bearing circuit"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Cooling/WaterFlow_GB,L/s,float,yes,ch-plc CH-FR-1987-0042,1 s,"Cooling water flow, generator bearing circuit"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Cooling/WaterFlow_AirCoolers,L/s,float,yes,ch-plc CH-FR-1987-0042,1 s,"Cooling water flow, generator air coolers"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Cooling/OilCoolerOutletTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,"Cooling water outlet temperature, oil coolers"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/AccumulatorPressure,bar,float,yes,ch-plc CH-FR-1987-0042,1 s,Accumulator pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/SumpLevel,%,float,yes,ch-plc CH-FR-1987-0042,1 s,HPU sump oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,HPU oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/Pump1Running,,bool,yes,ch-plc CH-FR-1987-0042,1 s,Pump 1 (lead) running
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/Pump2Running,,bool,yes,ch-plc CH-FR-1987-0042,1 s,Pump 2 (lag) running
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/PumpStartsPerHour,1/h,float,yes,ch-plc CH-FR-1987-0042,1 s,Pump starts in the last hour (both pumps)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/FilterDP,bar,float,yes,ch-plc CH-FR-1987-0042,1 s,Pressure filter differential pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/ServoPositionA,%,float,yes,ch-plc CH-FR-1987-0042,1 s,Servomotor A position
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/ServoPositionB,%,float,yes,ch-plc CH-FR-1987-0042,1 s,Servomotor B position
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Governor/HPU/GateSetpoint,%,float,yes,ch-plc CH-FR-1987-0042,1 s,Governor gate setpoint (from the customer's governor)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/SpiralCasePressure,bar,float,yes,ch-plc CH-FR-1987-0042,1 s,Spiral case pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/HeadcoverPressure,bar,float,yes,ch-plc CH-FR-1987-0042,1 s,Headcover pressure (behind the runner crown)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/DraftTubePressure,bar,float,yes,ch-plc CH-FR-1987-0042,1 s,"Draft tube cone pressure, 1 s mean (gauge)"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/ShaftSealWaterFlow,L/min,float,yes,ch-plc CH-FR-1987-0042,1 s,Shaft seal water flow
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/HeadcoverSumpPumpStarts,,int,yes,ch-plc CH-FR-1987-0042,1 s,Headcover sump pump starts (counter)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/ShearPinStatus,,string,yes,ch-plc CH-FR-1987-0042,1 s,Wicket gate shear pins: OK or BROKEN
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Turbine/WicketGateBreakawayAlarm,,bool,yes,ch-plc CH-FR-1987-0042,1 s,A wicket gate lags its servo ring (breakaway link)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/UGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0042,1 s,"UGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/UGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0042,1 s,"UGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/LGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0042,1 s,"LGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/LGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0042,1 s,"LGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/TGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0042,1 s,"TGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/TGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0042,1 s,"TGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/Headcover/Vel_mm_s_rms,mm/s,float,yes,ch-plc CH-FR-1987-0042,1 s,"Headcover vibration velocity, RMS 2-1000 Hz"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/AirGapMin_mm,mm,float,yes,ch-plc CH-FR-1987-0042,1 s,Minimum air gap (rotor to stator)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/StatorTemp01,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Stator winding RTD 1
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/StatorTemp02,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Stator winding RTD 2
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/StatorTemp03,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Stator winding RTD 3
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/StatorTemp04,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Stator winding RTD 4
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/StatorTemp05,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Stator winding RTD 5
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Generator/StatorTemp06,°C,float,yes,ch-plc CH-FR-1987-0042,1 s,Stator winding RTD 6
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Counters/Starts,,int,yes,ch-plc CH-FR-1987-0042,1 s,Unit starts since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Counters/RunHours,h,float,yes,ch-plc CH-FR-1987-0042,1 s,Generating hours since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Counters/EmergencyStops,,int,yes,ch-plc CH-FR-1987-0042,1 s,Emergency stops (trips) since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Counters/LoadRejections,,int,yes,ch-plc CH-FR-1987-0042,1 s,Breaker openings under load
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/UGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,UGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/UGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,UGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/LGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,LGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/LGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,LGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/TGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,TGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/TGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,TGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/DraftTube/Pressure/Waveform,bar,json,no,ch-plc CH-FR-1987-0042,30 s + on alarm,Draft tube cone pressure (gauge): 100 S/s × 10.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Vibration/Headcover/Accel/Waveform,m/s²,json,no,ch-plc CH-FR-1987-0042,300 s + on alarm,Headcover accelerometer (cavitation): 10000 S/s × 0.5 s
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Events/Alarm,,json,no,ch-plc CH-FR-1987-0042,on event,PLC alarm events
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Events/ActiveAlarms,,json,yes,ch-plc CH-FR-1987-0042,on change,Active PLC alarm ids
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/_meta/Nameplate,,json,yes,ch-plc CH-FR-1987-0043,on connect,Nameplate
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/_meta/Status,,string,yes,ch-plc CH-FR-1987-0043,on connect / will,ONLINE / OFFLINE (last will)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/MW,MW,float,yes,ch-plc CH-FR-1987-0043,1 s,Active power (copied from the customer tree)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/MVAr,MVAr,float,yes,ch-plc CH-FR-1987-0043,1 s,Reactive power (copied from the customer tree)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/GatePosition_pct,%,float,yes,ch-plc CH-FR-1987-0043,1 s,Wicket gate position (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/NetHead_m,m,float,yes,ch-plc CH-FR-1987-0043,1 s,Net head (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/Speed_rpm,rpm,float,yes,ch-plc CH-FR-1987-0043,1 s,Shaft speed (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/UnitState,,string,yes,ch-plc CH-FR-1987-0043,1 s,Customer unit state (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Context/TailwaterLevel_m,m a.s.l.,float,yes,ch-plc CH-FR-1987-0043,1 s,Tailwater level (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/PadTemp05,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing pad 5 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/PadTemp06,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing pad 6 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/OilBathTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing oil bath temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/OilLevel,%,float,yes,ch-plc CH-FR-1987-0043,1 s,Thrust bearing oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/Thrust/HPLiftPressure,bar,float,yes,ch-plc CH-FR-1987-0043,1 s,High-pressure oil lift (jacking) pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/UGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,UGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/UGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,UGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/UGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,UGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/UGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,UGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/UGB/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,UGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/UGB/OilLevel,%,float,yes,ch-plc CH-FR-1987-0043,1 s,UGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/LGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,LGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/LGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,LGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/LGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,LGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/LGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,LGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/LGB/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,LGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/LGB/OilLevel,%,float,yes,ch-plc CH-FR-1987-0043,1 s,LGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/TGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,TGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/TGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,TGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/TGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,TGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/TGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,TGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/TGB/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,TGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Bearings/TGB/OilLevel,%,float,yes,ch-plc CH-FR-1987-0043,1 s,TGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Cooling/WaterInletTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Cooling water inlet temperature (seasonal)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Cooling/WaterFlow_TB,L/s,float,yes,ch-plc CH-FR-1987-0043,1 s,"Cooling water flow, turbine bearing circuit"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Cooling/WaterFlow_GB,L/s,float,yes,ch-plc CH-FR-1987-0043,1 s,"Cooling water flow, generator bearing circuit"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Cooling/WaterFlow_AirCoolers,L/s,float,yes,ch-plc CH-FR-1987-0043,1 s,"Cooling water flow, generator air coolers"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Cooling/OilCoolerOutletTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,"Cooling water outlet temperature, oil coolers"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/AccumulatorPressure,bar,float,yes,ch-plc CH-FR-1987-0043,1 s,Accumulator pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/SumpLevel,%,float,yes,ch-plc CH-FR-1987-0043,1 s,HPU sump oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/OilTemp,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,HPU oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/Pump1Running,,bool,yes,ch-plc CH-FR-1987-0043,1 s,Pump 1 (lead) running
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/Pump2Running,,bool,yes,ch-plc CH-FR-1987-0043,1 s,Pump 2 (lag) running
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/PumpStartsPerHour,1/h,float,yes,ch-plc CH-FR-1987-0043,1 s,Pump starts in the last hour (both pumps)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/FilterDP,bar,float,yes,ch-plc CH-FR-1987-0043,1 s,Pressure filter differential pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/ServoPositionA,%,float,yes,ch-plc CH-FR-1987-0043,1 s,Servomotor A position
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/ServoPositionB,%,float,yes,ch-plc CH-FR-1987-0043,1 s,Servomotor B position
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Governor/HPU/GateSetpoint,%,float,yes,ch-plc CH-FR-1987-0043,1 s,Governor gate setpoint (from the customer's governor)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/SpiralCasePressure,bar,float,yes,ch-plc CH-FR-1987-0043,1 s,Spiral case pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/HeadcoverPressure,bar,float,yes,ch-plc CH-FR-1987-0043,1 s,Headcover pressure (behind the runner crown)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/DraftTubePressure,bar,float,yes,ch-plc CH-FR-1987-0043,1 s,"Draft tube cone pressure, 1 s mean (gauge)"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/ShaftSealWaterFlow,L/min,float,yes,ch-plc CH-FR-1987-0043,1 s,Shaft seal water flow
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/HeadcoverSumpPumpStarts,,int,yes,ch-plc CH-FR-1987-0043,1 s,Headcover sump pump starts (counter)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/ShearPinStatus,,string,yes,ch-plc CH-FR-1987-0043,1 s,Wicket gate shear pins: OK or BROKEN
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Turbine/WicketGateBreakawayAlarm,,bool,yes,ch-plc CH-FR-1987-0043,1 s,A wicket gate lags its servo ring (breakaway link)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/UGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0043,1 s,"UGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/UGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0043,1 s,"UGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/LGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0043,1 s,"LGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/LGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0043,1 s,"LGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/TGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0043,1 s,"TGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/TGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1987-0043,1 s,"TGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/Headcover/Vel_mm_s_rms,mm/s,float,yes,ch-plc CH-FR-1987-0043,1 s,"Headcover vibration velocity, RMS 2-1000 Hz"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/AirGapMin_mm,mm,float,yes,ch-plc CH-FR-1987-0043,1 s,Minimum air gap (rotor to stator)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/StatorTemp01,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Stator winding RTD 1
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/StatorTemp02,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Stator winding RTD 2
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/StatorTemp03,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Stator winding RTD 3
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/StatorTemp04,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Stator winding RTD 4
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/StatorTemp05,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Stator winding RTD 5
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Generator/StatorTemp06,°C,float,yes,ch-plc CH-FR-1987-0043,1 s,Stator winding RTD 6
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Counters/Starts,,int,yes,ch-plc CH-FR-1987-0043,1 s,Unit starts since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Counters/RunHours,h,float,yes,ch-plc CH-FR-1987-0043,1 s,Generating hours since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Counters/EmergencyStops,,int,yes,ch-plc CH-FR-1987-0043,1 s,Emergency stops (trips) since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Counters/LoadRejections,,int,yes,ch-plc CH-FR-1987-0043,1 s,Breaker openings under load
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/UGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,UGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/UGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,UGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/LGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,LGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/LGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,LGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/TGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,TGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/TGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,TGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/DraftTube/Pressure/Waveform,bar,json,no,ch-plc CH-FR-1987-0043,30 s + on alarm,Draft tube cone pressure (gauge): 100 S/s × 10.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Vibration/Headcover/Accel/Waveform,m/s²,json,no,ch-plc CH-FR-1987-0043,300 s + on alarm,Headcover accelerometer (cavitation): 10000 S/s × 0.5 s
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Events/Alarm,,json,no,ch-plc CH-FR-1987-0043,on event,PLC alarm events
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0043/Events/ActiveAlarms,,json,yes,ch-plc CH-FR-1987-0043,on change,Active PLC alarm ids
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/_meta/Nameplate,,json,yes,ch-plc CH-FR-1989-0051,on connect,Nameplate
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/_meta/Status,,string,yes,ch-plc CH-FR-1989-0051,on connect / will,ONLINE / OFFLINE (last will)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/MW,MW,float,yes,ch-plc CH-FR-1989-0051,1 s,Active power (copied from the customer tree)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/MVAr,MVAr,float,yes,ch-plc CH-FR-1989-0051,1 s,Reactive power (copied from the customer tree)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/GatePosition_pct,%,float,yes,ch-plc CH-FR-1989-0051,1 s,Wicket gate position (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/NetHead_m,m,float,yes,ch-plc CH-FR-1989-0051,1 s,Net head (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/Speed_rpm,rpm,float,yes,ch-plc CH-FR-1989-0051,1 s,Shaft speed (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/UnitState,,string,yes,ch-plc CH-FR-1989-0051,1 s,Customer unit state (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Context/TailwaterLevel_m,m a.s.l.,float,yes,ch-plc CH-FR-1989-0051,1 s,Tailwater level (copied)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/PadTemp01,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/PadTemp02,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/PadTemp03,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/PadTemp04,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/PadTemp05,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing pad 5 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/PadTemp06,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing pad 6 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/OilBathTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing oil bath temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/OilLevel,%,float,yes,ch-plc CH-FR-1989-0051,1 s,Thrust bearing oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/Thrust/HPLiftPressure,bar,float,yes,ch-plc CH-FR-1989-0051,1 s,High-pressure oil lift (jacking) pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/UGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,UGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/UGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,UGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/UGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,UGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/UGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,UGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/UGB/OilTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,UGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/UGB/OilLevel,%,float,yes,ch-plc CH-FR-1989-0051,1 s,UGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/LGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,LGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/LGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,LGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/LGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,LGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/LGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,LGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/LGB/OilTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,LGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/LGB/OilLevel,%,float,yes,ch-plc CH-FR-1989-0051,1 s,LGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/TGB/PadTemp01,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,TGB pad 1 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/TGB/PadTemp02,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,TGB pad 2 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/TGB/PadTemp03,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,TGB pad 3 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/TGB/PadTemp04,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,TGB pad 4 temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/TGB/OilTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,TGB oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Bearings/TGB/OilLevel,%,float,yes,ch-plc CH-FR-1989-0051,1 s,TGB oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Cooling/WaterInletTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Cooling water inlet temperature (seasonal)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Cooling/WaterFlow_TB,L/s,float,yes,ch-plc CH-FR-1989-0051,1 s,"Cooling water flow, turbine bearing circuit"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Cooling/WaterFlow_GB,L/s,float,yes,ch-plc CH-FR-1989-0051,1 s,"Cooling water flow, generator bearing circuit"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Cooling/WaterFlow_AirCoolers,L/s,float,yes,ch-plc CH-FR-1989-0051,1 s,"Cooling water flow, generator air coolers"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Cooling/OilCoolerOutletTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,"Cooling water outlet temperature, oil coolers"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/AccumulatorPressure,bar,float,yes,ch-plc CH-FR-1989-0051,1 s,Accumulator pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/SumpLevel,%,float,yes,ch-plc CH-FR-1989-0051,1 s,HPU sump oil level
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/OilTemp,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,HPU oil temperature
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/Pump1Running,,bool,yes,ch-plc CH-FR-1989-0051,1 s,Pump 1 (lead) running
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/Pump2Running,,bool,yes,ch-plc CH-FR-1989-0051,1 s,Pump 2 (lag) running
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/PumpStartsPerHour,1/h,float,yes,ch-plc CH-FR-1989-0051,1 s,Pump starts in the last hour (both pumps)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/FilterDP,bar,float,yes,ch-plc CH-FR-1989-0051,1 s,Pressure filter differential pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/ServoPositionA,%,float,yes,ch-plc CH-FR-1989-0051,1 s,Servomotor A position
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/ServoPositionB,%,float,yes,ch-plc CH-FR-1989-0051,1 s,Servomotor B position
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Governor/HPU/GateSetpoint,%,float,yes,ch-plc CH-FR-1989-0051,1 s,Governor gate setpoint (from the customer's governor)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/SpiralCasePressure,bar,float,yes,ch-plc CH-FR-1989-0051,1 s,Spiral case pressure
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/HeadcoverPressure,bar,float,yes,ch-plc CH-FR-1989-0051,1 s,Headcover pressure (behind the runner crown)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/DraftTubePressure,bar,float,yes,ch-plc CH-FR-1989-0051,1 s,"Draft tube cone pressure, 1 s mean (gauge)"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/ShaftSealWaterFlow,L/min,float,yes,ch-plc CH-FR-1989-0051,1 s,Shaft seal water flow
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/HeadcoverSumpPumpStarts,,int,yes,ch-plc CH-FR-1989-0051,1 s,Headcover sump pump starts (counter)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/ShearPinStatus,,string,yes,ch-plc CH-FR-1989-0051,1 s,Wicket gate shear pins: OK or BROKEN
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Turbine/WicketGateBreakawayAlarm,,bool,yes,ch-plc CH-FR-1989-0051,1 s,A wicket gate lags its servo ring (breakaway link)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/UGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1989-0051,1 s,"UGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/UGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1989-0051,1 s,"UGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/LGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1989-0051,1 s,"LGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/LGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1989-0051,1 s,"LGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/TGB/ShaftX/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1989-0051,1 s,"TGB shaft displacement X, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/TGB/ShaftY/Overall_um_pp,µm,float,yes,ch-plc CH-FR-1989-0051,1 s,"TGB shaft displacement Y, overall peak-to-peak"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/Headcover/Vel_mm_s_rms,mm/s,float,yes,ch-plc CH-FR-1989-0051,1 s,"Headcover vibration velocity, RMS 2-1000 Hz"
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/AirGapMin_mm,mm,float,yes,ch-plc CH-FR-1989-0051,1 s,Minimum air gap (rotor to stator)
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/StatorTemp01,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Stator winding RTD 1
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/StatorTemp02,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Stator winding RTD 2
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/StatorTemp03,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Stator winding RTD 3
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/StatorTemp04,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Stator winding RTD 4
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/StatorTemp05,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Stator winding RTD 5
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Generator/StatorTemp06,°C,float,yes,ch-plc CH-FR-1989-0051,1 s,Stator winding RTD 6
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Counters/Starts,,int,yes,ch-plc CH-FR-1989-0051,1 s,Unit starts since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Counters/RunHours,h,float,yes,ch-plc CH-FR-1989-0051,1 s,Generating hours since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Counters/EmergencyStops,,int,yes,ch-plc CH-FR-1989-0051,1 s,Emergency stops (trips) since commissioning
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Counters/LoadRejections,,int,yes,ch-plc CH-FR-1989-0051,1 s,Breaker openings under load
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/UGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,UGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/UGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,UGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/LGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,LGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/LGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,LGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/TGB/ShaftX/Waveform,µm,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,TGB shaft displacement X: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/TGB/ShaftY/Waveform,µm,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,TGB shaft displacement Y: 1000 S/s × 4.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/DraftTube/Pressure/Waveform,bar,json,no,ch-plc CH-FR-1989-0051,30 s + on alarm,Draft tube cone pressure (gauge): 100 S/s × 10.0 s
+ch-waveform,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Vibration/Headcover/Accel/Waveform,m/s²,json,no,ch-plc CH-FR-1989-0051,300 s + on alarm,Headcover accelerometer (cavitation): 10000 S/s × 0.5 s
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Events/Alarm,,json,no,ch-plc CH-FR-1989-0051,on event,PLC alarm events
+ch,v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1989-0051/Events/ActiveAlarms,,json,yes,ch-plc CH-FR-1989-0051,on change,Active PLC alarm ids

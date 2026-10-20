@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copper Canyon Dam · SCADA</title>
+<style>
+  :root {
+    --bg: #1a1d20; --panel: #23272b; --panel-head: #2b3035; --line: #3a4046; --equip: #6b737b;
+    --equip-fill: #2e3338; --equip-hi: #9aa2aa; --text: #cfd4d9; --muted: #858e96; --value: #f3f5f6;
+    --water: #3f6f8f; --water-line: #5d8eae; --water-fill: #2c4d63; --earth: #2a2c2e; --concrete: #4a5056;
+    --p1: #ef4444; --p2: #f0b429; --p3: #b48cf5; --stale: #e050d8; --ok: #8fbf8f;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --sans: "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.4 var(--sans); }
+  body { min-height: 100vh; }
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 8px 16px;
+           background: #111315; border-bottom: 2px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 34px; height: 34px; flex: none; }
+  .brand b { display: block; font-size: 18px; color: var(--value); letter-spacing: .01em; }
+  .brand small { display: block; color: var(--muted); font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 2px; }
+  nav.tabs a { font: 600 12px var(--sans); color: var(--muted); text-decoration: none; padding: 6px 11px; border: 1px solid transparent; border-bottom: 0; }
+  nav.tabs a:hover { color: var(--value); }
+  nav.tabs a.on { color: var(--value); background: var(--panel); border-color: var(--line); }
+  nav.tabs a .badge { display: inline-block; min-width: 16px; padding: 0 4px; margin-left: 4px; font: 700 10px var(--mono); color: #111; border-radius: 2px; text-align: center; }
+  .spacer { flex: 1; }
+  .status { display: flex; align-items: center; gap: 6px; font: 11px var(--mono); color: var(--muted); text-transform: uppercase; }
+  .led { width: 9px; height: 9px; border-radius: 50%; background: #4a4f54; box-shadow: 0 0 0 2px #0006; }
+  .led.ok { background: var(--ok); } .led.bad { background: var(--p1); }
+  .clock { font: 600 15px var(--mono); color: var(--value); }
+  .home a { font: 600 11px var(--mono); color: var(--muted); text-decoration: none; border: 1px solid var(--line); padding: 3px 8px; white-space: nowrap; }
+  .home a:hover { color: var(--value); border-color: var(--muted); }
+
+  .banner { display: flex; align-items: center; gap: 10px; padding: 6px 16px; background: #15181a; border-bottom: 1px solid var(--line); font: 12px var(--mono); min-height: 34px; }
+  .banner .none { color: var(--muted); }
+  .banner .al { display: flex; align-items: center; gap: 6px; padding: 2px 8px; border-left: 4px solid; background: #1d2023; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 460px; }
+  .banner .more { color: var(--muted); }
+  button { font: 600 11.5px var(--sans); color: var(--text); background: #30363c; border: 1px solid #4a5158; padding: 4px 10px; cursor: pointer; }
+  button:hover:not(:disabled) { background: #3a4148; color: var(--value); }
+  button:disabled { opacity: .4; cursor: default; }
+  button.sel { background: #4a5158; color: var(--value); border-color: #7a838c; }
+  button.danger { border-color: #7a3b3b; }
+  button.armed { background: var(--p1); color: #fff; border-color: var(--p1); }
+  input[type=number], input[type=text], select { font: 12px var(--mono); background: #15181a; color: var(--value); border: 1px solid #4a5158; padding: 3px 6px; width: 80px; }
+  select { width: auto; }
+
+  main { padding: 14px 16px 10px; }
+  section.screen { display: none; }
+  section.screen.on { display: block; }
+  .grid { display: grid; gap: 12px; }
+  .ov { grid-template-columns: minmax(0, 1fr) 330px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); }
+  .panel > h3 { margin: 0; padding: 6px 10px; background: var(--panel-head); border-bottom: 1px solid var(--line); font: 700 11px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .panel > h3 .r { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 600; }
+  .pbody { padding: 8px 10px; }
+  .mimic svg { display: block; width: 100%; height: auto; }
+  svg text { font-family: var(--sans); }
+  .rows { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; align-items: baseline; }
+  .rows .l { color: var(--muted); }
+  .rows .v { font: 600 13px var(--mono); color: var(--value); text-align: right; white-space: nowrap; }
+  .u { color: var(--muted); font: 11px var(--mono); margin-left: 3px; }
+  .stale, .stale .v, text.stale { color: var(--stale) !important; fill: var(--stale) !important; }
+  .cmdrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+  .cmdrow .lab { color: var(--muted); min-width: 92px; }
+  .note { color: var(--muted); font-size: 11.5px; }
+  .foot { color: var(--muted); font-size: 11px; padding: 6px 16px 16px; }
+  .toast { position: fixed; right: 16px; bottom: 16px; background: #2b3035; border: 1px solid var(--line); padding: 8px 12px; font: 12px var(--mono); color: var(--value); opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 10; }
+  .toast.show { opacity: 1; }
+
+  /* analog bar (ISA-101): grey track, darker beyond limits, pointer */
+  .bar { position: relative; height: 12px; margin: 3px 0 2px; }
+  .bar .trk { position: absolute; left: 0; right: 0; top: 4px; height: 4px; background: #4a5056; }
+  .bar .zone { position: absolute; top: 4px; height: 4px; }
+  .bar .zone.z1 { background: #6c737a; } .bar .zone.z2 { background: #8d949b; }
+  .bar .zone.rough { top: 1px; height: 10px; background: repeating-linear-gradient(135deg, #5a6168 0 3px, transparent 3px 6px); border: 1px solid #6c737a; }
+  .bar .ptr { position: absolute; top: 0; width: 2px; height: 12px; margin-left: -1px; background: var(--value); }
+  .bar .sp { position: absolute; top: -1px; width: 0; height: 0; margin-left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid transparent; }
+  .bar .sp::after { content: ""; position: absolute; left: -4px; top: -6px; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--bg); }
+  .bar .sp.on { border-top-color: var(--equip-hi); }
+  .bar .mk { position: absolute; top: 12px; font: 9px var(--mono); color: var(--muted); transform: translateX(-50%); white-space: nowrap; }
+  .barwrap { margin-bottom: 14px; }
+  .barlab { display: flex; justify-content: space-between; align-items: baseline; }
+  .barlab .v { font: 600 13px var(--mono); color: var(--value); }
+
+  /* units row on the overview */
+  .units { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+  .ucard { cursor: pointer; }
+  .ucard:hover { border-color: #5a6168; }
+  .state { font: 700 11px var(--mono); letter-spacing: .05em; padding: 1px 6px; border: 1px solid #5a6168; color: var(--value); white-space: nowrap; }
+  .state.Tripped { border-color: var(--p1); color: var(--p1); }
+  .state.Stopped { color: var(--muted); }
+  .codes { display: flex; flex-wrap: wrap; gap: 4px; min-height: 18px; }
+  .code { font: 600 10.5px var(--mono); padding: 1px 5px; border-left: 3px solid; background: #1d2023; }
+  .p1 { border-color: var(--p1) !important; } .p2 { border-color: var(--p2) !important; } .p3 { border-color: var(--p3) !important; }
+  .tp1 { color: var(--p1); } .tp2 { color: var(--p2); } .tp3 { color: var(--p3); }
+  .bgp1 { background: var(--p1); } .bgp2 { background: var(--p2); } .bgp3 { background: var(--p3); }
+
+  /* unit detail */
+  .ud { grid-template-columns: minmax(0, 1fr) 360px; }
+  .seq { display: flex; gap: 2px; margin: 4px 0 8px; }
+  .seq span { flex: 1; text-align: center; font: 600 9.5px var(--mono); padding: 3px 0; background: #1d2023; color: #6c737a; border: 1px solid #2f3439; }
+  .seq span.done { color: var(--muted); }
+  .seq span.on { color: var(--value); border-color: #7a838c; background: #353b41; }
+  .seq span.trip { color: var(--p1); border-color: var(--p1); }
+  .brg { display: grid; grid-template-columns: 1fr 64px; gap: 0 10px; align-items: center; }
+  .unitnav { display: flex; gap: 4px; margin-bottom: 10px; }
+  .unitnav a { font: 600 12px var(--sans); color: var(--muted); text-decoration: none; padding: 4px 12px; border: 1px solid var(--line); }
+  .unitnav a.on { color: var(--value); background: var(--panel); border-color: #6c737a; }
+  .lastev { font: 11px var(--mono); color: var(--muted); margin-top: 8px; min-height: 16px; }
+  .lastev.refused { color: var(--p2); }
+
+  /* tables */
+  table { width: 100%; border-collapse: collapse; font: 12px var(--mono); }
+  th { text-align: left; color: var(--muted); font: 600 10.5px var(--sans); letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+  td { padding: 4px 8px; border-bottom: 1px solid #2c3136; vertical-align: top; }
+  tr.unack td { color: var(--value); font-weight: 600; }
+  tr.rtn td { color: var(--muted); }
+  td.pri { width: 46px; }
+  .scroll { max-height: 640px; overflow: auto; }
+  .kind { font-size: 10.5px; color: var(--muted); text-transform: uppercase; }
+  .k-trip { color: var(--p1); } .k-refused { color: var(--p2); } .k-alarm { color: var(--p2); } .k-operator { color: var(--equip-hi); }
+
+  /* trends */
+  .tr-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 4px 2px 8px; border: 1px solid var(--line); font: 11px var(--mono); }
+  .chip i { width: 10px; height: 3px; display: inline-block; }
+  .chip button { padding: 0 5px; font-size: 11px; }
+  .chart svg { display: block; width: 100%; height: auto; background: #1d2023; }
+  .legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px 14px; margin-top: 6px; font: 11px var(--mono); }
+  .legend i { width: 14px; height: 3px; display: inline-block; margin-right: 6px; vertical-align: middle; }
+  .mini svg { display: block; width: 100%; height: 90px; background: #1d2023; }
+  .gov { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .res { grid-template-columns: 340px minmax(0, 1fr) 360px; }
+  @media (max-width: 1180px) {
+    .ov, .ud, .res { grid-template-columns: 1fr; }
+    .units, .gov { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <rect x="1" y="1" width="38" height="38" rx="5" fill="#2e3338" stroke="#6b737b"/>
+      <path d="M7 30 L15 10 L21 10 L27 30 Z" fill="#4a5056" stroke="#9aa2aa" stroke-width="1.5"/>
+      <path d="M27 24 Q31 22 35 24" stroke="#5d8eae" stroke-width="2" fill="none"/>
+      <path d="M27 28 Q31 26 35 28" stroke="#5d8eae" stroke-width="2" fill="none"/>
+    </svg>
+    <div><b>Copper Canyon Dam · DRWPA</b><small>Dam SCADA · Desert River Water &amp; Power Authority</small></div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <a href="#overview" data-r="overview">Plant overview</a>
+    <a href="#reservoir" data-r="reservoir">Reservoir &amp; spillway</a>
+    <a href="#unit/Unit1" data-r="unit/Unit1">Unit 1</a>
+    <a href="#unit/Unit2" data-r="unit/Unit2">Unit 2</a>
+    <a href="#unit/Unit3" data-r="unit/Unit3">Unit 3</a>
+    <a href="#governor" data-r="governor">Governor &amp; HPU</a>
+    <a href="#alarms" data-r="alarms">Alarms &amp; events<span class="badge" id="al-badge" hidden></span></a>
+    <a href="#trends" data-r="trends">Trends</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="status"><span class="led" id="led"></span><span id="conn">connecting</span></div>
+  <div class="clock" id="clock">--:--:--</div>
+  <div class="home"><a href="/">⌂ All systems</a></div>
+</header>
+<div class="banner" id="banner"><span class="none">No unacknowledged alarms</span></div>
+
+<main>
+  <!-- ============================================================ overview -->
+  <section class="screen" id="s-overview">
+    <div class="grid ov">
+      <div class="panel mimic"><h3>Plant overview · cross-section<span class="r note">schematic, not to scale · elevations in m a.s.l.</span></h3>
+        <svg id="ov-svg" viewBox="0 0 1200 600" role="img" aria-label="Copper Canyon Dam overview"></svg>
+      </div>
+      <div>
+        <div class="panel"><h3>Plant</h3>
+          <div class="pbody">
+            <div class="barwrap"><div class="barlab"><span class="l">Total MW <span class="note">(▼ plant setpoint)</span></span><span><span class="v" data-v="Plant/TotalMW"></span><span class="u">MW</span></span></div>
+              <div class="bar" id="bar-plantmw"></div></div>
+            <div class="rows">
+              <span class="l">Plant MW setpoint</span><span class="v"><span data-v="Plant/MWSetpoint"></span><span class="u">MW</span></span>
+              <span class="l">Setpoint reachable</span><span class="v" data-v="Plant/MWSetpointReachable" data-fmt="yesno"></span>
+              <span class="l">Gross head</span><span class="v"><span data-v="Plant/GrossHead"></span><span class="u">m</span></span>
+              <span class="l">Grid frequency</span><span class="v"><span data-v="Plant/GridFrequency"></span><span class="u">Hz</span></span>
+              <span class="l">Penstock flow</span><span class="v"><span data-v="Penstock/Flow"></span><span class="u">m³/s</span></span>
+            </div>
+            <div class="barwrap" style="margin-top:10px"><div class="barlab"><span class="l">River flow <span class="note">(min. 10 m³/s)</span></span><span><span class="v" data-v="River/Flow"></span><span class="u">m³/s</span></span></div>
+              <div class="bar" id="bar-river"></div></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px"><h3>Grid operator<span class="r note">simulated, over MQTT</span></h3>
+          <div class="pbody">
+            <div class="cmdrow" style="margin-top:0"><span class="lab">MW setpoint</span>
+              <input type="number" id="go-sp" min="0" max="130" step="1" placeholder="MW"><button id="go-sp-send">Send</button></div>
+            <div class="cmdrow"><span class="lab">AGC</span>
+              <button id="go-agc-on">ON</button><button id="go-agc-off">OFF</button>
+              <span class="note">now: <span data-v="Plant/AGCEnabled" data-fmt="onoff"></span></span></div>
+            <p class="note" style="margin:8px 0 0">Publishes <code>Plant/Cmd/MWSetpoint</code> and <code>Plant/Cmd/AGC</code>. The plant controller splits the setpoint over the units in PLANT mode and keeps them out of the rough zone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="units" id="ov-units"></div>
+  </section>
+
+  <!-- ============================================================ reservoir -->
+  <section class="screen" id="s-reservoir">
+    <div class="grid res">
+      <div class="panel"><h3>Reservoir level</h3>
+        <div class="pbody"><svg id="lvl-svg" viewBox="0 0 320 420" style="width:100%;height:auto;display:block"></svg></div>
+      </div>
+      <div>
+        <div class="panel"><h3>Spillway · 2 radial gates</h3>
+          <div class="pbody" id="spill"></div>
+        </div>
+        <div class="panel" style="margin-top:12px"><h3>Bottom outlet · fixed-cone valve</h3>
+          <div class="pbody" id="bottom"></div>
+        </div>
+        <div class="panel" style="margin-top:12px"><h3>Intake</h3>
+          <div class="pbody">
+            <div class="rows">
+              <span class="l">Intake gate position</span><span class="v"><span data-v="Intake/GatePosition"></span><span class="u">%</span></span>
+              <span class="l">Trash rack ΔP</span><span class="v"><span data-v="Intake/TrashRackDP"></span><span class="u">m</span></span>
+              <span class="l">Raker</span><span class="v" data-v="Intake/RakerRunning" data-fmt="running"></span>
+            </div>
+            <div class="cmdrow"><span class="lab">Intake gate</span>
+              <button data-cmd="Intake/Cmd/GatePosition" data-val="100">Open</button>
+              <button data-cmd="Intake/Cmd/GatePosition" data-val="0">Close</button>
+              <span class="note">closing is refused while a unit runs</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel"><h3>Level · last 60 min</h3><div class="pbody mini" data-mini="Reservoir/Level" data-min="60"></div></div>
+        <div class="panel" style="margin-top:12px"><h3>Inflow · last 60 min</h3><div class="pbody mini" data-mini="Reservoir/Inflow" data-min="60"></div></div>
+        <div class="panel" style="margin-top:12px"><h3>River flow · last 60 min</h3><div class="pbody mini" data-mini="River/Flow" data-min="60"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ unit detail -->
+  <section class="screen" id="s-unit">
+    <div class="unitnav" id="unitnav"></div>
+    <div class="grid ud">
+      <div>
+        <div class="panel mimic"><h3 id="ud-title">Unit</h3>
+          <svg id="ud-svg" viewBox="0 0 900 430" role="img" aria-label="Unit mimic"></svg>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(2, minmax(0,1fr)); margin-top:12px">
+          <div class="panel"><h3>MW · last 30 min</h3><div class="pbody mini" id="ud-mini-mw"></div></div>
+          <div class="panel"><h3>Bearing temperatures · last 30 min</h3><div class="pbody mini" id="ud-mini-brg"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel"><h3>Unit control<span class="r"><span class="state" id="ud-state">—</span></span></h3>
+          <div class="pbody">
+            <div class="seq" id="ud-seq"></div>
+            <div class="cmdrow" style="margin-top:0">
+              <button id="ud-start">Start</button><button id="ud-stop">Stop</button>
+              <button id="ud-estop" class="danger">Emergency stop</button><button id="ud-reset">Reset</button>
+            </div>
+            <div class="cmdrow"><span class="lab">Control mode</span>
+              <button id="ud-mode-plant">PLANT</button><button id="ud-mode-local">LOCAL</button></div>
+            <div class="cmdrow"><span class="lab">Local MW sp</span>
+              <input type="number" id="ud-mwsp" min="0" max="42" step="0.5" placeholder="MW"><button id="ud-mwsp-send">Send</button>
+              <span class="note">switches to LOCAL</span></div>
+            <div class="lastev" id="ud-lastev"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px"><h3>Load<span class="r note">hatched: rough zone · ▼ setpoint</span></h3>
+          <div class="pbody">
+            <div class="barwrap"><div class="barlab"><span class="l">Active power</span><span><span class="v" id="ud-mw"></span><span class="u">MW</span></span></div><div class="bar" id="ud-bar-mw"></div></div>
+            <div class="barwrap"><div class="barlab"><span class="l">Wicket gate</span><span><span class="v" id="ud-gate"></span><span class="u">%</span></span></div><div class="bar" id="ud-bar-gate"></div></div>
+            <div class="rows" id="ud-rows"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px"><h3>Turbine signals<span class="r note">customer RTDs · 75 / 80 / 90 trip</span></h3>
+          <div class="pbody" id="ud-brg"></div>
+        </div>
+        <div class="panel" style="margin-top:12px"><h3>Unit controller alarms</h3>
+          <div class="pbody"><div class="codes" id="ud-codes"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ governor -->
+  <section class="screen" id="s-governor">
+    <div class="grid gov" id="gov"></div>
+    <p class="note" style="margin-top:10px">Governor oil pressure is the customer's hardwired signal from the CH HPU: start permissive 55 bar, low alarm 52 bar, unit trip 48 bar (two servo strokes left).</p>
+  </section>
+
+  <!-- ============================================================ alarms -->
+  <section class="screen" id="s-alarms">
+    <div class="grid" style="grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)">
+      <div class="panel"><h3>Alarms<span class="r"><button id="ack-all">Acknowledge all</button></span></h3>
+        <div class="scroll"><table><thead><tr><th>Pri</th><th>Since</th><th>Alarm</th><th>State</th><th></th></tr></thead><tbody id="al-body"></tbody></table></div>
+      </div>
+      <div class="panel"><h3>Event journal<span class="r note">plant events, operator actions, alarms</span></h3>
+        <div class="scroll"><table><thead><tr><th>Time</th><th>Kind</th><th>Source</th><th>Text</th></tr></thead><tbody id="ev-body"></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ trends -->
+  <section class="screen" id="s-trends">
+    <div class="panel"><h3>Trends<span class="r note">from the SCADA's in-memory trend store (1 s for 2 h, 1 min means for 48 h)</span></h3>
+      <div class="pbody">
+        <div class="tr-ctl">
+          <select id="tr-pick"></select><button id="tr-add">Add pen</button>
+          <span id="tr-chips" style="display:contents"></span>
+          <span class="spacer"></span>
+          <span class="note">Range</span><span id="tr-ranges"></span>
+        </div>
+        <div class="chart"><svg id="tr-svg" viewBox="0 0 1200 460"></svg></div>
+        <div class="legend" id="tr-legend"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="foot">This SCADA reads the customer tree only (<code>v1.0/DRWPA/CopperCanyon/…</code>) and sends commands on its <code>Cmd</code> topics. The CH turbine data (<code>v1.0/CH/…</code>) is the machine builder's and is not shown here.</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const SVGNS = "http://www.w3.org/2000/svg";
+let CFG = null, ST = null, TAG = {}, ROUTE = "overview";
+const PRI_COL = { 1: "var(--p1)", 2: "var(--p2)", 3: "var(--p3)" };
+const PENS = ["#7cc4e8", "#e6c27a", "#9fd39a", "#d99ad6", "#e8907c", "#b8c0c8"];
+const $ = id => document.getElementById(id);
+
+// ------------------------------------------------------------------ values
+function E(path) { return ST && ST.values[path]; }
+function val(path) { const e = E(path); return e ? e.v : undefined; }
+function isStale(path) { const e = E(path); return !e || (CFG && e.age > CFG.stale_s); }
+function dec(path) { const t = TAG[path]; return t ? t.dec : 2; }
+function fmt(path, f) {
+  const v = val(path);
+  if (v === undefined || v === null) return "—";
+  if (f === "yesno") return v ? "Yes" : "No";
+  if (f === "onoff") return v ? "ON" : "OFF";
+  if (f === "running") return v ? "Running" : "Idle";
+  if (f === "breaker") return v ? "Closed" : "Open";
+  if (f === "valve") return v ? "Open" : "Not open";
+  if (typeof v === "number") {
+    let d = dec(path); if (f && f.startsWith("d")) d = +f.slice(1);
+    return v.toFixed(Math.min(d, 3));
+  }
+  if (Array.isArray(v)) return v.length ? v.join(", ") : "none";
+  return String(v);
+}
+function num(v, d = 1) { return (v === undefined || v === null || isNaN(v)) ? "—" : (+v).toFixed(d); }
+function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+function el(tag, attrs = {}, parent) {
+  const n = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, attrs = {}) { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+function hhmmss(t) { const d = new Date(t * 1000); return d.toLocaleTimeString("en-GB", { hour12: false }); }
+function zoneAt(head) {
+  const z = CFG.zones; if (!z.length) return null;
+  if (!(head > 0)) head = 100;
+  if (head <= z[0].head) return z[0];
+  for (let i = 1; i < z.length; i++) if (head <= z[i].head) {
+    const a = z[i - 1], b = z[i], f = (head - a.head) / (b.head - a.head);
+    return { rough_lo: a.rough_lo + f * (b.rough_lo - a.rough_lo), rough_hi: a.rough_hi + f * (b.rough_hi - a.rough_hi), max: a.max + f * (b.max - a.max) };
+  }
+  return z[z.length - 1];
+}
+
+// generic patch: [data-v] elements, every poll
+function patchAll() {
+  document.querySelectorAll("[data-v]").forEach(n => {
+    const p = n.dataset.v, s = fmt(p, n.dataset.fmt);
+    if (n.textContent !== s) n.textContent = s;
+    n.classList.toggle("stale", isStale(p));
+  });
+}
+
+// ------------------------------------------------------------------ bars
+// bar(el, {lo, hi, zones:[[a,b,cls]], marks:[v,label], rough:[a,b]}) built once; setBar() per poll
+function buildBar(host, o) {
+  host.innerHTML = "";
+  host._o = o;
+  const span = o.hi - o.lo, X = v => clamp((v - o.lo) / span * 100, 0, 100);
+  const add = (cls, style) => { const d = document.createElement("div"); d.className = cls; d.style.cssText = style; host.appendChild(d); return d; };
+  add("trk", "");
+  for (const [a, b, c] of (o.zones || [])) add("zone " + c, `left:${X(a)}%;width:${X(b) - X(a)}%`);
+  host._rough = add("zone rough", "display:none");
+  for (const [v, lab] of (o.marks || [])) { const m = add("mk", `left:${X(v)}%`); m.textContent = lab; }
+  host._sp = add("sp", "");
+  host._ptr = add("ptr", "");
+}
+function setBar(host, v, sp, rough) {
+  const o = host._o; if (!o) return;
+  const X = x => clamp((x - o.lo) / (o.hi - o.lo) * 100, 0, 100);
+  if (v === undefined || v === null || isNaN(v)) host._ptr.style.display = "none";
+  else { host._ptr.style.display = ""; host._ptr.style.left = X(v) + "%"; }
+  if (sp === undefined || sp === null || isNaN(sp)) host._sp.classList.remove("on");
+  else { host._sp.classList.add("on"); host._sp.style.left = X(sp) + "%"; }
+  if (rough) { host._rough.style.display = ""; host._rough.style.left = X(rough[0]) + "%"; host._rough.style.width = (X(rough[1]) - X(rough[0])) + "%"; }
+  else host._rough.style.display = "none";
+}
+
+// ------------------------------------------------------------------ commands
+let toastT = null;
+function toast(s) { const t = $("toast"); t.textContent = s; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2200); }
+async function cmd(path, value) {
+  try {
+    const r = await fetch("/api/cmd", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path, value }) });
+    const j = await r.json();
+    toast(j.ok ? `→ ${path} = ${value}` : `✗ ${j.error || j.message}`);
+  } catch (e) { toast("✗ SCADA server unreachable"); }
+  setTimeout(poll, 400);
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-cmd]");
+  if (!b) return;
+  let v = b.dataset.val;
+  if (b.dataset.input) { const inp = $(b.dataset.input); v = inp.value; if (v === "") { toast("enter a value first"); return; } v = +v; inp.value = ""; }
+  else if (v === "true") v = true; else if (v === "false") v = false; else if (!isNaN(+v)) v = +v;
+  cmd(b.dataset.cmd, v);
+});
+
+// ------------------------------------------------------------------ overview mimic
+const ey = m => 505 - (m - 296) * 3.0;     // elevation (m a.s.l.) → y
+function dataBlock(svg, x, y, w, rows, title) {
+  const g = el("g", { transform: `translate(${x},${y})` }, svg);
+  const h = 8 + (title ? 15 : 0) + rows.length * 15;
+  el("rect", { x: 0, y: 0, width: w, height: h, fill: "#1d2023", stroke: "#3a4046" }, g);
+  let yy = 4;
+  if (title) { txt(g, 6, yy + 11, title, { "font-size": 10.5, "font-weight": 700, fill: "#9aa2aa", "letter-spacing": ".06em" }); yy += 15; }
+  for (const [label, path, unit, f] of rows) {
+    txt(g, 6, yy + 11, label, { "font-size": 10.5, fill: "#858e96" });
+    const t = txt(g, w - 6 - (unit ? 30 : 0), yy + 11, "—", { "font-size": 11.5, "font-family": "var(--mono)", "font-weight": 600, fill: "#f3f5f6", "text-anchor": "end" });
+    t.dataset.v = path; if (f) t.dataset.fmt = f;
+    if (unit) txt(g, w - 4, yy + 11, unit, { "font-size": 9.5, fill: "#858e96", "text-anchor": "end", "font-family": "var(--mono)" });
+    yy += 15;
+  }
+  return g;
+}
+function buildOverview() {
+  const s = $("ov-svg"); s.innerHTML = "";
+  const defs = el("defs", {}, s);
+  const cp = el("clipPath", { id: "basin" }, defs);
+  el("polygon", { points: `20,40 470,40 470,${ey(300)} 250,${ey(300)} 20,${ey(372)}` }, cp);
+  const cp2 = el("clipPath", { id: "rivclip" }, defs);
+  el("rect", { x: 700, y: 0, width: 480, height: ey(298) }, cp2);
+  const mk = el("marker", { id: "arr", markerWidth: 8, markerHeight: 8, refX: 6, refY: 4, orient: "auto" }, defs);
+  el("path", { d: "M0 0L8 4L0 8z", fill: "#5d8eae" }, mk);
+
+  // earth
+  el("polygon", { points: `0,${ey(374)} 20,${ey(372)} 250,${ey(300)} 1200,${ey(300)} 1200,600 0,600`, fill: "var(--earth)" }, s);
+  el("line", { x1: 0, y1: ey(374), x2: 20, y2: ey(372), stroke: "#4a4f54" }, s);
+  el("path", { d: `M20 ${ey(372)} L250 ${ey(300)} L470 ${ey(300)}`, stroke: "#4a4f54", fill: "none" }, s);
+  // reservoir water
+  const water = el("rect", { id: "ov-water", x: 0, y: ey(412), width: 480, height: 500, fill: "var(--water-fill)", "clip-path": "url(#basin)" }, s);
+  el("line", { id: "ov-wline", x1: 20, x2: 470, y1: ey(412), y2: ey(412), stroke: "var(--water-line)", "stroke-width": 1.5 }, s);
+  // operating limits
+  for (const [m, lab] of [[425, "crest 425"], [420, "max. operating 420"], [385, "min. operating 385"], [410, "spillway crest 410"]]) {
+    el("line", { x1: 230, x2: 470, y1: ey(m), y2: ey(m), stroke: "#6b737b", "stroke-dasharray": "4 4", "stroke-width": 1 }, s);
+    txt(s, 236, ey(m) - 3, lab, { "font-size": 10, fill: "#858e96" });
+  }
+  // river
+  el("rect", { id: "ov-river", x: 700, y: ey(304.5), width: 500, height: 100, fill: "var(--water-fill)", "clip-path": "url(#rivclip)" }, s);
+  el("line", { id: "ov-twline", x1: 700, x2: 1200, y1: ey(304.5), y2: ey(304.5), stroke: "var(--water-line)", "stroke-width": 1.5 }, s);
+  el("line", { x1: 690, x2: 1200, y1: ey(298), y2: ey(298), stroke: "#4a4f54" }, s);
+  // dam body
+  el("polygon", { points: `470,${ey(425)} 520,${ey(425)} 700,${ey(298)} 470,${ey(298)}`, fill: "var(--concrete)", stroke: "#6b737b" }, s);
+  txt(s, 520, ey(360), "concrete gravity dam", { "font-size": 11, fill: "#9aa2aa", transform: `rotate(54 520 ${ey(360)})` });
+  // spillway water down the face (only when flowing)
+  el("path", { id: "ov-spillwater", d: `M520 ${ey(424)} L700 ${ey(299)}`, stroke: "var(--water-line)", "stroke-width": 5, fill: "none", opacity: 0 }, s);
+  // radial spillway gate on the crest (one symbol for both gates)
+  el("path", { d: `M478 ${ey(420)} A 36 36 0 0 1 478 ${ey(410)}`, stroke: "#9aa2aa", "stroke-width": 3, fill: "none" }, s);
+  el("rect", { id: "ov-spillgap", x: 475, y: ey(410) - 1, width: 8, height: 0, fill: "var(--water-line)" }, s);
+  // intake: trash rack + gate + penstock
+  for (let i = 0; i < 6; i++) el("line", { x1: 446 + i * 3, x2: 446 + i * 3, y1: ey(380), y2: ey(366), stroke: "#9aa2aa" }, s);
+  el("rect", { id: "ov-intakegate", x: 466, y: ey(380), width: 6, height: ey(366) - ey(380), fill: "#9aa2aa" }, s);
+  const pen = `M472 ${ey(373)} L600 ${ey(373)} L735 ${ey(312)} L960 ${ey(312)}`;
+  el("path", { d: pen, stroke: "#6b737b", "stroke-width": 12, fill: "none", "stroke-linejoin": "round" }, s);
+  el("path", { id: "ov-penwater", d: pen, stroke: "var(--water)", "stroke-width": 7, fill: "none", "stroke-linejoin": "round" }, s);
+  // bottom outlet through the dam base
+  el("path", { d: `M470 ${ey(301.5)} H690`, stroke: "#6b737b", "stroke-width": 8, fill: "none" }, s);
+  el("path", { id: "ov-bowater", d: `M470 ${ey(301.5)} H690`, stroke: "var(--water)", "stroke-width": 4, fill: "none", opacity: 0.25 }, s);
+  el("polygon", { points: `640,${ey(301.5) - 8} 656,${ey(301.5)} 640,${ey(301.5) + 8} 656,${ey(301.5) + 8} 640,${ey(301.5)} 656,${ey(301.5) - 8}`, fill: "#2e3338", stroke: "#9aa2aa" }, s);
+  // powerhouse
+  el("rect", { x: 730, y: ey(336), width: 260, height: ey(298) - ey(336), fill: "#2e3338", stroke: "#6b737b" }, s);
+  txt(s, 738, ey(336) + 13, "POWERHOUSE", { "font-size": 10, "font-weight": 700, fill: "#858e96", "letter-spacing": ".1em" });
+  ["Unit1", "Unit2", "Unit3"].forEach((u, i) => {
+    const cx = 790 + i * 75;
+    const g = el("g", { class: "ov-unit", "data-unit": u, style: "cursor:pointer" }, s);
+    el("line", { x1: cx, x2: cx, y1: ey(312), y2: ey(326), stroke: "#6b737b", "stroke-width": 3 }, g);
+    el("circle", { id: `ov-gen-${u}`, cx, cy: ey(328), r: 13, fill: "#2e3338", stroke: "#9aa2aa", "stroke-width": 2 }, g);
+    txt(g, cx, ey(328) + 4, `G${i + 1}`, { "font-size": 10, fill: "#cfd4d9", "text-anchor": "middle", "font-weight": 700 });
+    el("rect", { id: `ov-tur-${u}`, x: cx - 12, y: ey(314), width: 24, height: 10, fill: "#2e3338", stroke: "#9aa2aa" }, g);
+    el("path", { d: `M${cx} ${ey(310)} V${ey(301)} H${cx + 26}`, stroke: "#6b737b", "stroke-width": 5, fill: "none" }, g);
+    el("rect", { x: cx - 34, y: ey(337) - 64, width: 68, height: 60, fill: "transparent" }, g);
+    const db = el("g", { transform: `translate(${cx - 34},${ey(337) - 66})` }, g);
+    el("rect", { x: 0, y: 0, width: 68, height: 58, fill: "#1d2023", stroke: "#3a4046", id: `ov-ub-${u}` }, db);
+    txt(db, 34, 13, `UNIT ${i + 1}`, { "font-size": 10, "font-weight": 700, fill: "#9aa2aa", "text-anchor": "middle" });
+    const st = txt(db, 34, 27, "—", { "font-size": 9.5, "font-family": "var(--mono)", fill: "#cfd4d9", "text-anchor": "middle", id: `ov-us-${u}` });
+    const mw = txt(db, 34, 42, "—", { "font-size": 12, "font-family": "var(--mono)", "font-weight": 600, fill: "#f3f5f6", "text-anchor": "middle" });
+    mw.dataset.v = `Powerhouse/${u}/MW`; mw.dataset.fmt = "d1";
+    txt(db, 34, 54, "MW", { "font-size": 9, fill: "#858e96", "text-anchor": "middle" });
+    g.addEventListener("click", () => go(`unit/${u}`));
+  });
+  // data blocks
+  dataBlock(s, 24, 14, 190, [["Level", "Reservoir/Level", "m"], ["Inflow", "Reservoir/Inflow", "m³/s"], ["Volume", "Reservoir/Volume", "hm³"]], "RESERVOIR");
+  dataBlock(s, 250, ey(366) + 6, 170, [["Trash rack ΔP", "Intake/TrashRackDP", "m"], ["Intake gate", "Intake/GatePosition", "%"], ["Raker", "Intake/RakerRunning", "", "running"]], "INTAKE");
+  dataBlock(s, 545, 14, 230, [["Gate 01 position", "Spillway/Gate01/Position", "%"], ["Gate 01 flow", "Spillway/Gate01/Flow", "m³/s"], ["Gate 02 position", "Spillway/Gate02/Position", "%"], ["Gate 02 flow", "Spillway/Gate02/Flow", "m³/s"]], "SPILLWAY · 2 RADIAL GATES");
+  dataBlock(s, 575, ey(352) - 66, 160, [["Pressure", "Penstock/Pressure", "bar"], ["Flow", "Penstock/Flow", "m³/s"]], "PENSTOCK");
+  dataBlock(s, 470, ey(298) + 10, 200, [["Valve", "BottomOutlet/ValvePosition", "%"], ["Flow", "BottomOutlet/Flow", "m³/s"], ["Mode", "BottomOutlet/Mode", ""]], "BOTTOM OUTLET");
+  dataBlock(s, 1010, ey(330) - 50, 175, [["Tailwater", "River/TailwaterLevel", "m"], ["River flow", "River/Flow", "m³/s"]], "RIVER");
+  dataBlock(s, 1010, 14, 175, [["Gross head", "Plant/GrossHead", "m"], ["Total", "Plant/TotalMW", "MW"], ["Setpoint", "Plant/MWSetpoint", "MW"]], "PLANT");
+  // 150 kV line
+  el("path", { d: `M990 ${ey(330)} H1000 V170 H1200`, stroke: "#6b737b", "stroke-width": 1.5, fill: "none", "stroke-dasharray": "6 3" }, s);
+  txt(s, 1190, 162, "150 kV line · 50 Hz grid", { "font-size": 10, fill: "#858e96", "text-anchor": "end" });
+  txt(s, 700, ey(298) + 4 - 14, "", {});
+}
+function updateOverview() {
+  const lvl = val("Reservoir/Level"), tw = val("River/TailwaterLevel");
+  if (lvl !== undefined) { $("ov-water").setAttribute("y", ey(lvl)); $("ov-wline").setAttribute("y1", ey(lvl)); $("ov-wline").setAttribute("y2", ey(lvl)); }
+  if (tw !== undefined) { $("ov-river").setAttribute("y", ey(tw)); $("ov-twline").setAttribute("y1", ey(tw)); $("ov-twline").setAttribute("y2", ey(tw)); }
+  const spill = (val("Spillway/Gate01/Flow") || 0) + (val("Spillway/Gate02/Flow") || 0);
+  $("ov-spillwater").setAttribute("opacity", spill > 1 ? 0.9 : 0);
+  const sp = Math.max(val("Spillway/Gate01/Position") || 0, val("Spillway/Gate02/Position") || 0);
+  $("ov-spillgap").setAttribute("height", 0); $("ov-spillgap").setAttribute("opacity", spill > 1 ? 1 : 0);
+  $("ov-spillgap").setAttribute("height", spill > 1 ? Math.min(30, 3 + sp / 4) : 0);
+  $("ov-penwater").setAttribute("opacity", (val("Penstock/Flow") || 0) > 1 ? 1 : 0.25);
+  $("ov-bowater").setAttribute("opacity", (val("BottomOutlet/Flow") || 0) > 0.5 ? 1 : 0.25);
+  const ig = val("Intake/GatePosition") ?? 100;
+  $("ov-intakegate").setAttribute("height", (ey(366) - ey(380)) * (1 - ig / 100) + 1);
+  for (const u of CFG.units) {
+    const st = val(`Powerhouse/${u}/State`) || "—", br = val(`Powerhouse/${u}/BreakerClosed`);
+    const t = $(`ov-us-${u}`); t.textContent = st.toUpperCase().slice(0, 13);
+    const codes = val(`Powerhouse/${u}/ActiveAlarms`) || [];
+    const trip = codes.some(c => c.startsWith("TRIP_"));
+    t.setAttribute("fill", trip ? "var(--p1)" : "#cfd4d9");
+    $(`ov-ub-${u}`).setAttribute("stroke", trip ? "var(--p1)" : (codes.length ? "var(--p2)" : "#3a4046"));
+    $(`ov-gen-${u}`).setAttribute("fill", br ? "#4a5056" : "#2e3338");
+  }
+  // plant bars
+  setBar($("bar-plantmw"), val("Plant/TotalMW"), val("Plant/MWSetpoint"));
+  setBar($("bar-river"), val("River/Flow"));
+  // unit cards
+  for (const u of CFG.units) {
+    const card = document.querySelector(`.ucard[data-unit="${u}"]`); if (!card) continue;
+    const st = val(`Powerhouse/${u}/State`) || "—";
+    const s = card.querySelector(".state"); s.textContent = st; s.className = "state " + st;
+    const head = val(`Powerhouse/${u}/NetHead`), z = zoneAt(head);
+    setBar(card.querySelector(".bar"), val(`Powerhouse/${u}/MW`), val(`Powerhouse/${u}/MWSetpoint`), z ? [z.rough_lo, z.rough_hi] : null);
+    renderCodes(card.querySelector(".codes"), val(`Powerhouse/${u}/ActiveAlarms`) || []);
+  }
+}
+function buildUnitCards() {
+  const host = $("ov-units"); host.innerHTML = "";
+  for (const u of CFG.units) {
+    const p = `Powerhouse/${u}`;
+    const d = document.createElement("div");
+    d.className = "panel ucard"; d.dataset.unit = u;
+    d.innerHTML = `<h3>${u.replace("Unit", "Unit ")}<span class="r"><span class="state">—</span></span></h3>
+      <div class="pbody">
+        <div class="barwrap"><div class="barlab"><span class="l">MW <span class="note">(▼ sp)</span></span><span><span class="v" data-v="${p}/MW"></span><span class="u">MW</span></span></div><div class="bar"></div></div>
+        <div class="rows">
+          <span class="l">Gate</span><span class="v"><span data-v="${p}/GatePosition"></span><span class="u">%</span></span>
+          <span class="l">Flow</span><span class="v"><span data-v="${p}/Flow"></span><span class="u">m³/s</span></span>
+          <span class="l">Breaker · mode</span><span class="v"><span data-v="${p}/BreakerClosed" data-fmt="breaker"></span> · <span data-v="${p}/ControlMode"></span></span>
+          <span class="l">TGB temp</span><span class="v"><span data-v="${p}/TurbineGuideBearingTemp"></span><span class="u">°C</span></span>
+        </div>
+        <div class="codes" style="margin-top:6px"></div>
+      </div>`;
+    d.addEventListener("click", e => { if (!e.target.closest("button,input")) go(`unit/${u}`); });
+    host.appendChild(d);
+    buildBar(d.querySelector(".bar"), { lo: 0, hi: 45, marks: [[0, "0"], [20, "20"], [40, "40"]] });
+  }
+}
+function renderCodes(host, codes) {
+  const key = codes.join("|");
+  if (host._k === key) return; host._k = key;
+  host.innerHTML = codes.length ? codes.map(c => {
+    const pr = (CFG.unit_codes[c] || { priority: 3 }).priority;
+    return `<span class="code p${pr}" title="${esc((CFG.unit_codes[c] || {}).text || c)}">${esc(c)}</span>`;
+  }).join("") : `<span class="note">none</span>`;
+}
+
+// ------------------------------------------------------------------ reservoir
+function buildReservoir() {
+  const s = $("lvl-svg"); s.innerHTML = "";
+  const lo = 380, hi = 428, Y = m => 400 - (m - lo) / (hi - lo) * 380;
+  el("rect", { x: 70, y: Y(hi), width: 80, height: Y(lo) - Y(hi), fill: "#1d2023", stroke: "#4a5056" }, s);
+  el("rect", { id: "lv-fill", x: 71, y: Y(412), width: 78, height: Y(lo) - Y(412), fill: "var(--water-fill)" }, s);
+  el("line", { id: "lv-line", x1: 71, x2: 149, y1: Y(412), y2: Y(412), stroke: "var(--water-line)", "stroke-width": 2 }, s);
+  for (let m = 380; m <= 428; m += 4) { el("line", { x1: 62, x2: 70, y1: Y(m), y2: Y(m), stroke: "#6b737b" }, s); txt(s, 58, Y(m) + 4, m, { "font-size": 10, fill: "#858e96", "text-anchor": "end", "font-family": "var(--mono)" }); }
+  const marks = [[425, "dam crest", "#9aa2aa"], [420.5, "HH 420.5", "var(--p1)"], [420, "max. operating", "#9aa2aa"], [419, "H 419 · spillway AUTO opens", "var(--p2)"], [410, "spillway crest", "#9aa2aa"], [387, "L 387", "var(--p2)"], [385, "LL 385 · min. operating", "var(--p1)"], [384, "start permissive", "#858e96"]];
+  // labels pushed apart (min. 13 px) with a leader line to their tick
+  let lastY = -99;
+  for (const [m, lab, c] of marks) {
+    const ty = Math.max(Y(m), lastY + 13); lastY = ty;
+    el("line", { x1: 150, x2: 160, y1: Y(m), y2: Y(m), stroke: c, "stroke-width": 2 }, s);
+    el("polyline", { points: `160,${Y(m)} 166,${ty} 172,${ty}`, stroke: "#4a5056", fill: "none" }, s);
+    txt(s, 176, ty + 4, lab, { "font-size": 10, fill: "#9aa2aa" });
+  }
+  el("rect", { x: 70, y: Y(420), width: 4, height: Y(385) - Y(420), fill: "#6b737b" }, s);
+  const t = txt(s, 110, 416, "—", { "font-size": 14, "font-weight": 700, fill: "#f3f5f6", "text-anchor": "middle", "font-family": "var(--mono)" });
+  t.dataset.v = "Reservoir/Level";
+  s._Y = Y;
+  // spillway & bottom outlet panels
+  let h = "";
+  for (const g of ["Gate01", "Gate02"]) {
+    const p = `Spillway/${g}`;
+    h += `<div style="margin-bottom:12px"><div class="barlab"><b style="color:var(--value)">${g}</b><span class="note">mode <span data-v="${p}/Mode"></span></span></div>
+      <div class="barwrap"><div class="barlab"><span class="l">Position</span><span><span class="v" data-v="${p}/Position"></span><span class="u">%</span></span></div><div class="bar" id="bar-${g}"></div></div>
+      <div class="rows"><span class="l">Flow</span><span class="v"><span data-v="${p}/Flow"></span><span class="u">m³/s</span></span></div>
+      <div class="cmdrow"><span class="lab">Mode</span><button data-cmd="${p}/Cmd/Mode" data-val="AUTO" data-sel="${p}/Mode">AUTO</button><button data-cmd="${p}/Cmd/Mode" data-val="MAN" data-sel="${p}/Mode">MAN</button>
+        <span class="lab" style="min-width:0;margin-left:8px">Position</span><input type="number" id="in-${g}" min="0" max="100" step="5" placeholder="%"><button data-cmd="${p}/Cmd/Position" data-input="in-${g}">Send</button></div></div>`;
+  }
+  $("spill").innerHTML = h + `<p class="note" style="margin:0">AUTO: the gates open from 419 m and are fully open at 420 m a.s.l. A position command switches the gate to MAN.</p>`;
+  $("bottom").innerHTML = `<div class="barwrap"><div class="barlab"><span class="l">Valve position</span><span><span class="v" data-v="BottomOutlet/ValvePosition"></span><span class="u">%</span></span></div><div class="bar" id="bar-bo"></div></div>
+    <div class="rows"><span class="l">Flow</span><span class="v"><span data-v="BottomOutlet/Flow"></span><span class="u">m³/s</span></span></div>
+    <div class="cmdrow"><span class="lab">Mode</span><button data-cmd="BottomOutlet/Cmd/Mode" data-val="AUTO" data-sel="BottomOutlet/Mode">AUTO</button><button data-cmd="BottomOutlet/Cmd/Mode" data-val="MAN" data-sel="BottomOutlet/Mode">MAN</button>
+      <span class="lab" style="min-width:0;margin-left:8px">Position</span><input type="number" id="in-bo" min="0" max="100" step="5" placeholder="%"><button data-cmd="BottomOutlet/Cmd/Position" data-input="in-bo">Send</button></div>
+    <p class="note" style="margin:8px 0 0">AUTO keeps the river at ≥ 10 m³/s when the units don't.</p>`;
+  for (const id of ["bar-Gate01", "bar-Gate02", "bar-bo"]) buildBar($(id), { lo: 0, hi: 100, marks: [[0, "0"], [50, "50"], [100, "100 %"]] });
+}
+function updateReservoir() {
+  const s = $("lvl-svg"), Y = s._Y, lvl = val("Reservoir/Level");
+  if (Y && lvl !== undefined) {
+    $("lv-fill").setAttribute("y", Y(lvl)); $("lv-fill").setAttribute("height", Math.max(0, Y(380) - Y(lvl)));
+    $("lv-line").setAttribute("y1", Y(lvl)); $("lv-line").setAttribute("y2", Y(lvl));
+  }
+  setBar($("bar-Gate01"), val("Spillway/Gate01/Position"));
+  setBar($("bar-Gate02"), val("Spillway/Gate02/Position"));
+  setBar($("bar-bo"), val("BottomOutlet/ValvePosition"));
+}
+// mode buttons show the current mode
+function patchSel() {
+  document.querySelectorAll("[data-sel]").forEach(b => b.classList.toggle("sel", val(b.dataset.sel) === b.dataset.val));
+}
+
+// ------------------------------------------------------------------ unit detail
+let UD = null;
+const SEQ = ["Stopped", "Starting", "SpeedNoLoad", "Synchronising", "Generating", "Stopping"];
+const SEQ_LAB = { Stopped: "STOPPED", Starting: "STARTING", SpeedNoLoad: "SPEED-NO-LOAD", Synchronising: "SYNC", Generating: "GENERATING", Stopping: "STOPPING" };
+function buildUnit(u) {
+  UD = u;
+  const p = `Powerhouse/${u}`;
+  $("unitnav").innerHTML = CFG.units.map(x => `<a href="#unit/${x}" class="${x === u ? "on" : ""}">${x.replace("Unit", "Unit ")}</a>`).join("");
+  $("ud-title").innerHTML = `${u.replace("Unit", "Unit ")} · CH-Francis vertical turbine-generator, 40 MW<span class="r note">inlet valve → spiral case → wicket gates → runner → draft tube</span>`;
+  $("ud-seq").innerHTML = SEQ.map(s => `<span data-s="${s}">${SEQ_LAB[s]}</span>`).join("");
+  $("ud-rows").innerHTML = [
+    ["MW setpoint", `${p}/MWSetpoint`, "MW"], ["MVAr", `${p}/MVAr`, "MVAr"], ["Speed", `${p}/Speed`, "rpm"],
+    ["Turbine flow", `${p}/Flow`, "m³/s"], ["Net head", `${p}/NetHead`, "m"], ["Gate setpoint", `${p}/GateSetpoint`, "%"],
+    ["Breaker", `${p}/BreakerClosed`, "", "breaker"], ["Inlet valve", `${p}/InletValveOpen`, "", "valve"], ["Control mode", `${p}/ControlMode`, ""]
+  ].map(([l, path, unit, f]) => `<span class="l">${l}</span><span class="v"><span data-v="${path}"${f ? ` data-fmt="${f}"` : ""}></span>${unit ? `<span class="u">${unit}</span>` : ""}</span>`).join("");
+  $("ud-brg").innerHTML = [
+    ["Thrust bearing", "ThrustBearingTemp"], ["Upper guide bearing", "UpperGuideBearingTemp"],
+    ["Lower guide bearing", "LowerGuideBearingTemp"], ["Turbine guide bearing", "TurbineGuideBearingTemp"]
+  ].map(([l, k]) => `<div class="barwrap" style="margin-bottom:10px"><div class="barlab"><span class="l">${l}</span><span><span class="v" data-v="${p}/${k}"></span><span class="u">°C</span></span></div><div class="bar" data-brg="${p}/${k}"></div></div>`).join("")
+    + `<div class="barwrap"><div class="barlab"><span class="l">Cooling water flow</span><span><span class="v" data-v="${p}/CoolingWaterFlow"></span><span class="u">L/s</span></span></div><div class="bar" id="ud-bar-cw"></div></div>
+       <div class="barwrap"><div class="barlab"><span class="l">Governor oil pressure</span><span><span class="v" data-v="${p}/GovernorOilPressure"></span><span class="u">bar</span></span></div><div class="bar" id="ud-bar-oil"></div></div>`;
+  document.querySelectorAll("[data-brg]").forEach(b => buildBar(b, { lo: 20, hi: 100, zones: [[75, 80, "z1"], [80, 90, "z2"], [90, 100, "z2"]], marks: [[20, "20"], [75, "75"], [90, "90 trip"]] }));
+  buildBar($("ud-bar-cw"), { lo: 0, hi: 100, zones: [[0, 56, "z1"]], marks: [[0, "0"], [56, "56 low"], [80, "80 nom."]] });
+  buildBar($("ud-bar-oil"), { lo: 30, hi: 70, zones: [[30, 48, "z2"], [48, 52, "z1"]], marks: [[48, "48 trip"], [55, "55"], [63, "63"]] });
+  buildBar($("ud-bar-mw"), { lo: 0, hi: 45, marks: [[0, "0"], [10, "10"], [20, "20"], [30, "30"], [40, "40 MW"]] });
+  buildBar($("ud-bar-gate"), { lo: 0, hi: 100, marks: [[0, "0"], [50, "50"], [100, "100 %"]] });
+  $("ud-start").onclick = () => cmd(`${p}/Cmd/Start`, true);
+  $("ud-stop").onclick = () => cmd(`${p}/Cmd/Stop`, true);
+  $("ud-reset").onclick = () => cmd(`${p}/Cmd/Reset`, true);
+  $("ud-mode-plant").onclick = () => cmd(`${p}/Cmd/ControlMode`, "PLANT");
+  $("ud-mode-local").onclick = () => cmd(`${p}/Cmd/ControlMode`, "LOCAL");
+  $("ud-mwsp-send").onclick = () => { const v = $("ud-mwsp").value; if (v === "") return toast("enter a value first"); $("ud-mwsp").value = ""; cmd(`${p}/Cmd/MWSetpoint`, +v); };
+  const es = $("ud-estop"); es.classList.remove("armed"); es.textContent = "Emergency stop"; clearTimeout(es._t);
+  es.onclick = () => {
+    if (!es.classList.contains("armed")) {
+      es.classList.add("armed"); es.textContent = "Confirm E-STOP";
+      es._t = setTimeout(() => { es.classList.remove("armed"); es.textContent = "Emergency stop"; }, 4000);
+    } else { clearTimeout(es._t); es.classList.remove("armed"); es.textContent = "Emergency stop"; cmd(`${p}/Cmd/EmergencyStop`, true); }
+  };
+  buildUnitSvg(u);
+  miniTrend($("ud-mini-mw"), [`${p}/MW`, `${p}/MWSetpoint`], 30, true);
+  miniTrend($("ud-mini-brg"), ["ThrustBearingTemp", "UpperGuideBearingTemp", "LowerGuideBearingTemp", "TurbineGuideBearingTemp"].map(k => `${p}/${k}`), 30, true);
+}
+function buildUnitSvg(u) {
+  const s = $("ud-svg"); s.innerHTML = "";
+  const p = `Powerhouse/${u}`;
+  const cy = 300, sx = 420;    // spiral case centre
+  // penstock in
+  el("path", { d: `M10 ${cy} H${sx - 92}`, stroke: "#6b737b", "stroke-width": 26, fill: "none" }, s);
+  el("path", { id: "ud-pw", d: `M10 ${cy} H${sx - 92}`, stroke: "var(--water)", "stroke-width": 18, fill: "none" }, s);
+  txt(s, 18, cy - 20, "PENSTOCK", { "font-size": 10, "font-weight": 700, fill: "#858e96", "letter-spacing": ".08em" });
+  // inlet valve (butterfly)
+  const vx = 190;
+  el("circle", { cx: vx, cy, r: 20, fill: "#2e3338", stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  el("line", { id: "ud-disc", x1: vx, y1: cy - 18, x2: vx, y2: cy + 18, stroke: "#f3f5f6", "stroke-width": 4 }, s);
+  txt(s, vx, cy + 40, "INLET VALVE", { "font-size": 10, "font-weight": 700, fill: "#858e96", "text-anchor": "middle", "letter-spacing": ".06em" });
+  const iv = txt(s, vx, cy + 54, "—", { "font-size": 11, "font-family": "var(--mono)", fill: "#f3f5f6", "text-anchor": "middle" }); iv.dataset.v = `${p}/InletValveOpen`; iv.dataset.fmt = "valve";
+  // spiral case
+  el("path", { d: `M${sx - 92} ${cy - 14} A 92 92 0 1 1 ${sx} ${cy + 92} A 78 78 0 0 1 ${sx - 78} ${cy}`, fill: "none", stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  el("circle", { id: "ud-spiral", cx: sx, cy, r: 70, fill: "var(--water-fill)", stroke: "#6b737b" }, s);
+  txt(s, sx + 70, cy - 82, "SPIRAL CASE", { "font-size": 10, "font-weight": 700, fill: "#858e96", "letter-spacing": ".06em" });
+  // wicket gates: 20 blades, rotate with opening
+  const gg = el("g", { id: "ud-gates" }, s);
+  for (let i = 0; i < 20; i++) {
+    const a = i / 20 * 2 * Math.PI, gx = sx + 52 * Math.cos(a), gy = cy + 52 * Math.sin(a);
+    const b = el("line", { x1: gx - 7, y1: gy, x2: gx + 7, y2: gy, stroke: "#cfd4d9", "stroke-width": 3, "stroke-linecap": "round" }, gg);
+    b._a = a; b._x = gx; b._y = gy;
+  }
+  // runner
+  el("circle", { cx: sx, cy, r: 30, fill: "#2e3338", stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  const rg = el("g", { id: "ud-runner" }, s);
+  for (let i = 0; i < 13; i++) { const a = i / 13 * 2 * Math.PI; el("line", { x1: sx + 8 * Math.cos(a), y1: cy + 8 * Math.sin(a), x2: sx + 27 * Math.cos(a + .5), y2: cy + 27 * Math.sin(a + .5), stroke: "#9aa2aa", "stroke-width": 2 }, rg); }
+  txt(s, sx, cy + 4, "", {});
+  // draft tube: down and right to tailwater
+  el("path", { d: `M${sx + 24} ${cy + 34} L${sx + 40} ${cy + 96} H780`, stroke: "#6b737b", "stroke-width": 22, fill: "none", "stroke-linejoin": "round" }, s);
+  el("path", { id: "ud-dw", d: `M${sx + 24} ${cy + 34} L${sx + 40} ${cy + 96} H780`, stroke: "var(--water)", "stroke-width": 14, fill: "none", "stroke-linejoin": "round" }, s);
+  txt(s, 560, cy + 82, "DRAFT TUBE → TAILWATER", { "font-size": 10, "font-weight": 700, fill: "#858e96", "letter-spacing": ".06em" });
+  el("rect", { x: 780, y: cy + 74, width: 110, height: 52, fill: "var(--water-fill)" }, s);
+  el("line", { x1: 780, x2: 890, y1: cy + 74, y2: cy + 74, stroke: "var(--water-line)", "stroke-width": 2 }, s);
+  const tw = txt(s, 835, cy + 104, "—", { "font-size": 11, "font-family": "var(--mono)", fill: "#f3f5f6", "text-anchor": "middle" }); tw.dataset.v = "River/TailwaterLevel";
+  // shaft + generator + bearings
+  el("line", { x1: sx, y1: cy - 30, x2: sx, y2: 120, stroke: "#9aa2aa", "stroke-width": 6 }, s);
+  el("rect", { id: "ud-gen", x: sx - 70, y: 40, width: 140, height: 80, fill: "#2e3338", stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  txt(s, sx, 70, "GENERATOR", { "font-size": 11, "font-weight": 700, fill: "#cfd4d9", "text-anchor": "middle", "letter-spacing": ".08em" });
+  const sp = txt(s, sx, 92, "—", { "font-size": 12, "font-family": "var(--mono)", fill: "#f3f5f6", "text-anchor": "middle" }); sp.dataset.v = `${p}/Speed`;
+  txt(s, sx, 108, "rpm", { "font-size": 9.5, fill: "#858e96", "text-anchor": "middle" });
+  // bearings on the shaft
+  const brg = [["UGB", 30, "UpperGuideBearingTemp"], ["Thrust", 128, "ThrustBearingTemp"], ["LGB", 150, "LowerGuideBearingTemp"], ["TGB", 205, "TurbineGuideBearingTemp"]];
+  el("line", { x1: sx, y1: 40, x2: sx, y2: 22, stroke: "#9aa2aa", "stroke-width": 6 }, s);
+  for (const [lab, y, k] of brg) {
+    el("rect", { x: sx - 14, y: y - 4, width: 28, height: 8, fill: "#4a5056", stroke: "#9aa2aa" }, s);
+    el("line", { x1: sx - 14, y1: y, x2: sx - 120, y2: y, stroke: "#4a5056" }, s);
+    txt(s, sx - 196, y + 4, lab, { "font-size": 10.5, fill: "#858e96" });
+    const t = txt(s, sx - 126, y + 4, "—", { "font-size": 11.5, "font-family": "var(--mono)", "font-weight": 600, fill: "#f3f5f6", "text-anchor": "end" }); t.dataset.v = `${p}/${k}`;
+    t.dataset.brgtxt = "1";
+  }
+  txt(s, sx - 196, 236, "customer RTDs (pad 1), °C", { "font-size": 9.5, fill: "#6b737b" });
+  // breaker + grid
+  el("line", { x1: sx + 70, y1: 70, x2: 640, y2: 70, stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  el("rect", { id: "ud-brk", x: 640, y: 58, width: 24, height: 24, fill: "#2e3338", stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  el("line", { x1: 664, y1: 70, x2: 890, y2: 70, stroke: "#9aa2aa", "stroke-width": 2 }, s);
+  txt(s, 652, 50, "BREAKER", { "font-size": 10, "font-weight": 700, fill: "#858e96", "text-anchor": "middle" });
+  const bt = txt(s, 652, 100, "—", { "font-size": 11, "font-family": "var(--mono)", fill: "#f3f5f6", "text-anchor": "middle" }); bt.dataset.v = `${p}/BreakerClosed`; bt.dataset.fmt = "breaker";
+  txt(s, 885, 62, "150 kV", { "font-size": 10, fill: "#858e96", "text-anchor": "end" });
+  // data blocks
+  dataBlock(s, 690, 120, 200, [["Active power", `${p}/MW`, "MW"], ["Reactive power", `${p}/MVAr`, "MVAr"], ["Setpoint", `${p}/MWSetpoint`, "MW"]], "OUTPUT");
+  dataBlock(s, 700, 205, 190, [["Gate position", `${p}/GatePosition`, "%"], ["Gate setpoint", `${p}/GateSetpoint`, "%"], ["Flow", `${p}/Flow`, "m³/s"], ["Net head", `${p}/NetHead`, "m"]], "WICKET GATES · TURBINE");
+  dataBlock(s, 18, 340, 230, [["Penstock pressure", "Penstock/Pressure", "bar"], ["Cooling water", `${p}/CoolingWaterFlow`, "L/s"], ["Governor oil", `${p}/GovernorOilPressure`, "bar"]], "AUXILIARIES");
+}
+function updateUnit() {
+  const u = UD; if (!u) return;
+  const p = `Powerhouse/${u}`;
+  const st = val(`${p}/State`) || "—";
+  const s = $("ud-state"); s.textContent = st; s.className = "state " + st;
+  const idx = SEQ.indexOf(st);
+  document.querySelectorAll("#ud-seq span").forEach((n, i) => {
+    n.className = st === "Tripped" ? (n.dataset.s === "Stopped" ? "trip" : "") : (i === idx ? "on" : (i < idx && st !== "Stopping" ? "done" : ""));
+    if (st === "Tripped" && n.dataset.s === "Stopped") n.textContent = "TRIPPED"; else n.textContent = SEQ_LAB[n.dataset.s];
+  });
+  const mw = val(`${p}/MW`), gate = val(`${p}/GatePosition`);
+  $("ud-mw").textContent = num(mw, 2); $("ud-gate").textContent = num(gate, 1);
+  $("ud-mw").classList.toggle("stale", isStale(`${p}/MW`));
+  const z = zoneAt(val(`${p}/NetHead`));
+  setBar($("ud-bar-mw"), mw, val(`${p}/MWSetpoint`), z ? [z.rough_lo, z.rough_hi] : null);
+  setBar($("ud-bar-gate"), gate, val(`${p}/GateSetpoint`), [35, 70]);
+  document.querySelectorAll("[data-brg]").forEach(b => setBar(b, val(b.dataset.brg)));
+  setBar($("ud-bar-cw"), val(`${p}/CoolingWaterFlow`));
+  setBar($("ud-bar-oil"), val(`${p}/GovernorOilPressure`));
+  renderCodes($("ud-codes"), val(`${p}/ActiveAlarms`) || []);
+  const mode = val(`${p}/ControlMode`);
+  $("ud-mode-plant").classList.toggle("sel", mode === "PLANT"); $("ud-mode-local").classList.toggle("sel", mode === "LOCAL");
+  $("ud-start").disabled = st !== "Stopped"; $("ud-stop").disabled = ["Stopped", "Stopping", "Tripped"].includes(st);
+  $("ud-reset").disabled = st !== "Tripped"; $("ud-estop").disabled = st === "Stopped";
+  // mimic
+  const open = !!val(`${p}/InletValveOpen`);
+  $("ud-disc").setAttribute("transform", `rotate(${open ? 90 : 0} 190 300)`);
+  const flow = val(`${p}/Flow`) || 0;
+  $("ud-pw").setAttribute("opacity", open || flow > 0.5 ? 1 : 0.3);
+  $("ud-dw").setAttribute("opacity", flow > 0.5 ? 1 : 0.3);
+  $("ud-spiral").setAttribute("fill", open ? "var(--water-fill)" : "#24292d");
+  const g = (gate || 0) / 100;
+  document.querySelectorAll("#ud-gates line").forEach(b => {
+    const ang = b._a + Math.PI / 2 - g * 1.1;   // closed: blades tangent; open: turned towards the runner
+    const dx = 7 * Math.cos(ang), dy = 7 * Math.sin(ang);
+    b.setAttribute("x1", b._x - dx); b.setAttribute("y1", b._y - dy); b.setAttribute("x2", b._x + dx); b.setAttribute("y2", b._y + dy);
+  });
+  const rpm = val(`${p}/Speed`) || 0;
+  const ang = (performance.now() / 1000 * rpm / 60 * 360 / 60) % 360;  // slowed 60x for display
+  $("ud-runner").setAttribute("transform", `rotate(${ang} 420 300)`);
+  const br = !!val(`${p}/BreakerClosed`);
+  $("ud-brk").setAttribute("fill", br ? "#9aa2aa" : "#2e3338");
+  $("ud-gen").setAttribute("fill", br ? "#3a4046" : "#2e3338");
+  document.querySelectorAll("#ud-svg [data-brgtxt]").forEach(t => {
+    const v = val(t.dataset.v);
+    t.setAttribute("fill", v >= 90 ? "var(--p1)" : v >= 80 ? "var(--p2)" : v >= 75 ? "var(--p3)" : "#f3f5f6");
+  });
+  // last event from this unit (refused commands, state changes)
+  const ev = (ST.events || []).find(e => e.source === u);
+  const le = $("ud-lastev");
+  if (ev) { le.textContent = `${hhmmss(Date.parse(ev.timestamp) / 1000 || ev.t)}  ${ev.text}`; le.className = "lastev" + (ev.kind === "refused" ? " refused" : ""); }
+  else le.textContent = "";
+}
+
+// ------------------------------------------------------------------ governor
+function buildGovernor() {
+  const host = $("gov"); host.innerHTML = "";
+  for (const u of CFG.units) {
+    const p = `Powerhouse/${u}`;
+    const d = document.createElement("div"); d.className = "panel";
+    d.innerHTML = `<h3>${u.replace("Unit", "Unit ")} · governor &amp; HPU<span class="r"><span class="state" data-govst="${p}/State">—</span></span></h3>
+      <div class="pbody">
+        <div class="barwrap"><div class="barlab"><span class="l">Gate position <span class="note">(▼ governor setpoint)</span></span><span><span class="v" data-v="${p}/GatePosition"></span><span class="u">%</span></span></div><div class="bar" data-govg="${p}"></div></div>
+        <div class="rows"><span class="l">Gate setpoint</span><span class="v"><span data-v="${p}/GateSetpoint"></span><span class="u">%</span></span>
+          <span class="l">Speed</span><span class="v"><span data-v="${p}/Speed"></span><span class="u">rpm</span></span></div>
+        <div class="barwrap" style="margin-top:10px"><div class="barlab"><span class="l">Governor oil pressure</span><span><span class="v" data-v="${p}/GovernorOilPressure"></span><span class="u">bar</span></span></div><div class="bar" data-govo="${p}"></div></div>
+        <div class="mini" data-mini="${p}/GatePosition,${p}/GateSetpoint" data-min="30"></div>
+        <div class="mini" style="margin-top:8px" data-mini="${p}/GovernorOilPressure" data-min="30"></div>
+      </div>`;
+    host.appendChild(d);
+    buildBar(d.querySelector("[data-govg]"), { lo: 0, hi: 100, zones: [[35, 70, "z1"]], marks: [[0, "0"], [35, "35"], [70, "70"], [100, "100 %"]] });
+    buildBar(d.querySelector("[data-govo]"), { lo: 30, hi: 70, zones: [[30, 48, "z2"], [48, 52, "z1"]], marks: [[48, "48 trip"], [52, "52"], [55, "55 start"], [63, "63"]] });
+  }
+}
+function updateGovernor() {
+  document.querySelectorAll("[data-govg]").forEach(b => { const p = b.dataset.govg; setBar(b, val(`${p}/GatePosition`), val(`${p}/GateSetpoint`)); });
+  document.querySelectorAll("[data-govo]").forEach(b => setBar(b, val(`${b.dataset.govo}/GovernorOilPressure`)));
+  document.querySelectorAll("[data-govst]").forEach(n => { const s = val(n.dataset.govst) || "—"; n.textContent = s; n.className = "state " + s; });
+}
+
+// ------------------------------------------------------------------ alarms
+function updateBanner() {
+  const al = (ST.alarms || []);
+  const un = al.filter(a => !a.acked);
+  const b = $("banner");
+  const key = un.map(a => a.id + a.active).join("|");
+  if (b._k !== key) {
+    b._k = key;
+    if (!un.length) b.innerHTML = `<span class="none">No unacknowledged alarms</span>` + (al.length ? `<span class="more">· ${al.length} acknowledged active</span>` : "");
+    else b.innerHTML = un.slice(0, 3).map(a => `<span class="al p${a.priority}"><b class="tp${a.priority}">P${a.priority}</b> ${esc(a.text)}${a.active ? "" : " (RTN)"}</span>`).join("")
+      + (un.length > 3 ? `<span class="more">+${un.length - 3} more</span>` : "") + `<span class="spacer"></span><button id="ban-ack">Ack all</button> <a href="#alarms" style="color:var(--muted);font:11px var(--mono)">alarm list →</a>`;
+    const ba = $("ban-ack"); if (ba) ba.onclick = ackAll;
+  }
+  const badge = $("al-badge");
+  if (al.filter(a => a.active).length) {
+    const top = Math.min(...al.filter(a => a.active).map(a => a.priority));
+    badge.hidden = false; badge.textContent = al.filter(a => a.active).length; badge.className = "badge bgp" + top;
+  } else badge.hidden = true;
+}
+async function ack(id) { await fetch("/api/alarms/ack", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(id ? { id } : { all: true }) }); poll(); }
+function ackAll() { ack(null); }
+$("ack-all").onclick = ackAll;
+function updateAlarms() {
+  const al = ST.alarms || [];
+  const key = al.map(a => `${a.id}${a.active}${a.acked}`).join("|");
+  const body = $("al-body");
+  if (body._k !== key) {
+    body._k = key;
+    body.innerHTML = al.length ? al.map(a => `<tr class="${a.acked ? "" : "unack"} ${a.active ? "" : "rtn"}">
+      <td class="pri"><span class="code p${a.priority}">P${a.priority}</span></td><td>${hhmmss(a.since)}</td><td>${esc(a.text)}</td>
+      <td>${a.active ? "ACTIVE" : "RTN"}${a.acked ? " · ack" : ""}</td><td>${a.acked ? "" : `<button data-ack="${esc(a.id)}">Ack</button>`}</td></tr>`).join("")
+      : `<tr><td colspan="5" class="note">No alarms.</td></tr>`;
+    body.querySelectorAll("[data-ack]").forEach(b => b.onclick = () => ack(b.dataset.ack));
+  }
+}
+let EVENTS = [];
+async function loadEvents() { try { const r = await fetch("/api/events?limit=200"); EVENTS = (await r.json()).events || []; renderEvents(); } catch (e) { } }
+function renderEvents() {
+  const evs = EVENTS.length ? EVENTS : (ST ? ST.events : []);
+  const body = $("ev-body");
+  const key = evs.length + "|" + (evs[0] ? evs[0].t : "");
+  if (body._k === key) return; body._k = key;
+  body.innerHTML = evs.map(e => {
+    const t = Date.parse(e.timestamp) / 1000 || e.t;
+    return `<tr><td>${hhmmss(t)}</td><td class="kind k-${esc(e.kind)}">${esc(e.kind)}</td><td>${esc(e.source)}</td><td>${esc(e.text)}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="note">No events yet.</td></tr>`;
+}
+
+// ------------------------------------------------------------------ trends
+async function fetchTrend(paths, minutes, points = 300) {
+  const r = await fetch(`/api/trend?paths=${encodeURIComponent(paths.join(","))}&minutes=${minutes}&points=${points}`);
+  return r.json();
+}
+function drawChart(svg, data, paths, W, H, opts = {}) {
+  svg.innerHTML = "";
+  const L = opts.compact ? 36 : 64, R = 10, T = 8, B = opts.compact ? 16 : 28;
+  const pw = W - L - R, ph = H - T - B;
+  const now = Date.now() / 1000, t0 = now - opts.minutes * 60;
+  const X = t => L + (t - t0) / (now - t0) * pw;
+  // scale: shared over all pens (they share units in compact mode), own per pen otherwise
+  const shared = opts.shared;
+  const ranges = paths.map(p => {
+    const vs = (data.series[p] || []).filter(v => v !== null);
+    let lo = Math.min(...vs), hi = Math.max(...vs);
+    if (!vs.length) { lo = 0; hi = 1; }
+    if (hi - lo < 1e-6) { lo -= 0.5; hi += 0.5; }
+    const pad = (hi - lo) * 0.08; return [lo - pad, hi + pad];
+  });
+  if (shared && ranges.length) { const lo = Math.min(...ranges.map(r => r[0])), hi = Math.max(...ranges.map(r => r[1])); ranges.forEach(r => { r[0] = lo; r[1] = hi; }); }
+  el("rect", { x: L, y: T, width: pw, height: ph, fill: "none", stroke: "#3a4046" }, svg);
+  for (let i = 0; i <= 4; i++) {
+    const y = T + ph * i / 4;
+    el("line", { x1: L, x2: L + pw, y1: y, y2: y, stroke: "#2c3136" }, svg);
+    if (ranges[0]) { const sp = ranges[0][1] - ranges[0][0], v = ranges[0][1] - sp * i / 4; txt(svg, L - 4, y + 4, v.toFixed(sp < 0.5 ? 3 : sp < 5 ? 2 : sp < 50 ? 1 : 0), { "font-size": opts.compact ? 9 : 10.5, fill: PENS[0], "text-anchor": "end", "font-family": "var(--mono)" }); }
+  }
+  const nt = opts.compact ? 3 : 6;
+  for (let i = 0; i <= nt; i++) {
+    const t = t0 + (now - t0) * i / nt, x = X(t);
+    el("line", { x1: x, x2: x, y1: T, y2: T + ph, stroke: "#2c3136" }, svg);
+    const d = new Date(t * 1000);
+    txt(svg, x, H - (opts.compact ? 3 : 8), d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), { "font-size": opts.compact ? 9 : 10.5, fill: "#858e96", "text-anchor": i === 0 ? "start" : i === nt ? "end" : "middle", "font-family": "var(--mono)" });
+  }
+  paths.forEach((p, k) => {
+    const [lo, hi] = ranges[k], Y = v => T + ph - (v - lo) / (hi - lo) * ph;
+    let d = "", pen = false;
+    (data.series[p] || []).forEach((v, i) => {
+      if (v === null) { pen = false; return; }
+      d += (pen ? "L" : "M") + X(data.t[i]).toFixed(1) + " " + Y(v).toFixed(1); pen = true;
+    });
+    el("path", { d, stroke: PENS[k % PENS.length], "stroke-width": opts.compact ? 1.4 : 1.8, fill: "none", "vector-effect": "non-scaling-stroke" }, svg);
+    const pts = (data.series[p] || []).filter(v => v !== null);
+    if (pts.length === 1) { const i = data.series[p].findIndex(v => v !== null); el("circle", { cx: X(data.t[i]), cy: Y(pts[0]), r: 2.5, fill: PENS[k % PENS.length] }, svg); }
+  });
+  return ranges;
+}
+const MINIS = new Set();
+function miniTrend(host, paths, minutes, shared = true) {
+  host.innerHTML = "";
+  const svg = el("svg", { viewBox: "0 0 400 90", preserveAspectRatio: "none" }, host);
+  host._mini = { svg, paths, minutes, shared };
+  MINIS.add(host);
+  refreshMini(host);
+}
+async function refreshMini(host) {
+  const m = host._mini; if (!m) return;
+  try { const d = await fetchTrend(m.paths, m.minutes, 120); drawChart(m.svg, d, m.paths, 400, 90, { compact: true, minutes: m.minutes, shared: m.shared }); } catch (e) { }
+}
+function initMinis(scope) {
+  scope.querySelectorAll("[data-mini]").forEach(h => { if (!h._mini) miniTrend(h, h.dataset.mini.split(","), +h.dataset.min || 30, true); });
+}
+function refreshVisibleMinis() {
+  for (const h of MINIS) { if (!document.body.contains(h)) { MINIS.delete(h); continue; } if (h.offsetParent) refreshMini(h); }
+}
+
+let TR = { paths: ["Plant/TotalMW", "Plant/MWSetpoint", "Reservoir/Level"], minutes: 60 };
+const RANGES = [[5, "5 min"], [15, "15 min"], [60, "1 h"], [120, "2 h"], [1440, "24 h"]];
+function buildTrends() {
+  const numeric = CFG.tags.filter(t => t.type === "float" || t.type === "bool");
+  $("tr-pick").innerHTML = numeric.map(t => `<option value="${t.path}">${t.path}${t.unit ? " [" + t.unit + "]" : ""}</option>`).join("");
+  $("tr-add").onclick = () => { const p = $("tr-pick").value; if (!TR.paths.includes(p) && TR.paths.length < 6) { TR.paths.push(p); renderTrendCtl(); drawTrend(); } else if (TR.paths.length >= 6) toast("max. 6 pens"); };
+  $("tr-ranges").innerHTML = RANGES.map(([m, l]) => `<button data-range="${m}">${l}</button>`).join(" ");
+  $("tr-ranges").querySelectorAll("button").forEach(b => b.onclick = () => { TR.minutes = +b.dataset.range; renderTrendCtl(); drawTrend(); });
+  renderTrendCtl();
+}
+function renderTrendCtl() {
+  $("tr-chips").innerHTML = TR.paths.map((p, k) => `<span class="chip"><i style="background:${PENS[k]}"></i>${p}<button data-rm="${k}">×</button></span>`).join("");
+  $("tr-chips").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { TR.paths.splice(+b.dataset.rm, 1); renderTrendCtl(); drawTrend(); });
+  $("tr-ranges").querySelectorAll("button").forEach(b => b.classList.toggle("sel", +b.dataset.range === TR.minutes));
+}
+async function drawTrend() {
+  if (!TR.paths.length) { $("tr-svg").innerHTML = ""; $("tr-legend").innerHTML = ""; return; }
+  try {
+    const d = await fetchTrend(TR.paths, TR.minutes, 400);
+    const ranges = drawChart($("tr-svg"), d, TR.paths, 1200, 460, { minutes: TR.minutes });
+    $("tr-legend").innerHTML = TR.paths.map((p, k) => {
+      const vs = (d.series[p] || []).filter(v => v !== null), last = vs[vs.length - 1];
+      const t = TAG[p] || {};
+      return `<span><i style="background:${PENS[k]}"></i>${p}: <b style="color:var(--value)">${last === undefined ? "—" : (+last).toFixed(Math.min(t.dec ?? 2, 3))}</b> ${t.unit || ""} <span class="note">· scale ${ranges[k][0].toFixed(1)}…${ranges[k][1].toFixed(1)}</span></span>`;
+    }).join("") + `<span class="note">Each pen has its own scale (axis labels: first pen).</span>`;
+  } catch (e) { }
+}
+
+// ------------------------------------------------------------------ routing
+function route() {
+  let h = location.hash.replace(/^#/, "") || "overview";
+  if (h === "unit") h = "unit/Unit1";
+  const [scr, arg] = h.split("/");
+  const name = ["overview", "reservoir", "unit", "governor", "alarms", "trends"].includes(scr) ? scr : "overview";
+  ROUTE = name;
+  document.querySelectorAll("section.screen").forEach(s => s.classList.toggle("on", s.id === "s-" + name));
+  document.querySelectorAll("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.r === (name === "unit" ? `unit/${arg || "Unit1"}` : name)));
+  if (name === "unit") { const u = CFG.units.includes(arg) ? arg : "Unit1"; if (UD !== u) buildUnit(u); }
+  if (name === "alarms") loadEvents();
+  if (name === "trends") drawTrend();
+  initMinis(document.getElementById("s-" + name));
+  setTimeout(refreshVisibleMinis, 50);
+  if (ST) render();
+}
+function go(h) { location.hash = h; }
+window.addEventListener("hashchange", route);
+
+// ------------------------------------------------------------------ poll + render
+function render() {
+  patchAll(); patchSel(); updateBanner();
+  if (ROUTE === "overview") updateOverview();
+  if (ROUTE === "reservoir") updateReservoir();
+  if (ROUTE === "unit") updateUnit();
+  if (ROUTE === "governor") updateGovernor();
+  if (ROUTE === "alarms") { updateAlarms(); renderEvents(); }
+}
+let failed = 0;
+async function poll() {
+  try {
+    const r = await fetch("/api/state"); ST = await r.json(); failed = 0;
+    $("led").className = "led " + (ST.connected ? "ok" : "bad");
+    $("conn").textContent = ST.connected ? "MQTT connected" : "MQTT disconnected";
+    render();
+  } catch (e) {
+    if (++failed > 2) { $("led").className = "led bad"; $("conn").textContent = "server unreachable"; }
+  }
+}
+function tickClock() { $("clock").textContent = new Date().toLocaleTimeString("en-GB", { hour12: false }); }
+
+async function init() {
+  CFG = await (await fetch("/api/config")).json();
+  CFG.tags.forEach(t => TAG[t.path] = t);
+  const q = new URLSearchParams(location.search);
+  if (q.get("trend")) TR.paths = q.get("trend").split(",").filter(Boolean).slice(0, 6);
+  if (q.get("range")) TR.minutes = +q.get("range");
+  buildOverview(); buildUnitCards(); buildReservoir(); buildGovernor(); buildTrends();
+  buildBar($("bar-plantmw"), { lo: 0, hi: 130, marks: [[0, "0"], [40, "40"], [80, "80"], [120, "120 MW"]] });
+  buildBar($("bar-river"), { lo: 0, hi: 200, zones: [[0, 10, "z2"]], marks: [[10, "10 min."], [100, "100"], [200, "200"]] });
+  $("go-sp-send").onclick = () => { const v = $("go-sp").value; if (v === "") return toast("enter a value first"); $("go-sp").value = ""; cmd("Plant/Cmd/MWSetpoint", +v); };
+  $("go-agc-on").onclick = () => cmd("Plant/Cmd/AGC", true);
+  $("go-agc-off").onclick = () => cmd("Plant/Cmd/AGC", false);
+  route();
+  await poll();
+  setInterval(poll, 1000);
+  setInterval(() => { refreshVisibleMinis(); if (ROUTE === "trends") drawTrend(); }, 10000);
+  setInterval(() => { if (ROUTE === "alarms") loadEvents(); }, 5000);
+  setInterval(() => { if (ROUTE === "unit" && ST) { const rpm = val(`Powerhouse/${UD}/Speed`) || 0; const a = (performance.now() / 1000 * rpm / 60 * 6) % 360; $("ud-runner").setAttribute("transform", `rotate(${a} 420 300)`); } }, 100);
+  tickClock(); setInterval(tickClock, 1000);
+}
+init();
+</script>
+</body>
+</html>
