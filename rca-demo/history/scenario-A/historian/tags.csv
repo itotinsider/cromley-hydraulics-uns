@@ -1,0 +1,157 @@
+files,column,topic,unit,description
+customer_*,Reservoir/Level,v1.0/DRWPA/CopperCanyon/Reservoir/Level,m a.s.l.,Reservoir water level
+customer_*,Reservoir/Inflow,v1.0/DRWPA/CopperCanyon/Reservoir/Inflow,m³/s,River inflow into the reservoir (estimated)
+customer_*,Reservoir/Volume,v1.0/DRWPA/CopperCanyon/Reservoir/Volume,hm³,Stored volume above the dead storage at 380 m a.s.l.
+customer_*,River/TailwaterLevel,v1.0/DRWPA/CopperCanyon/River/TailwaterLevel,m a.s.l.,Tailwater level below the powerhouse
+customer_*,River/Flow,v1.0/DRWPA/CopperCanyon/River/Flow,m³/s,Total release to the river (units + spillway + bottom outlet)
+customer_*,Plant/GrossHead,v1.0/DRWPA/CopperCanyon/Plant/GrossHead,m,Reservoir level - tailwater level
+customer_*,Plant/TotalMW,v1.0/DRWPA/CopperCanyon/Plant/TotalMW,MW,Sum of the unit outputs
+customer_*,Plant/MWSetpoint,v1.0/DRWPA/CopperCanyon/Plant/MWSetpoint,MW,Plant MW setpoint from the grid operator (incl. AGC)
+customer_*,Plant/MWSetpointReachable,v1.0/DRWPA/CopperCanyon/Plant/MWSetpointReachable,,False when the online units can't make the setpoint
+customer_*,Plant/AGCEnabled,v1.0/DRWPA/CopperCanyon/Plant/AGCEnabled,,The grid operator's AGC adds small setpoint changes
+customer_*,Plant/GridFrequency,v1.0/DRWPA/CopperCanyon/Plant/GridFrequency,Hz,Grid frequency at the 150 kV busbar
+customer_*,Intake/GatePosition,v1.0/DRWPA/CopperCanyon/Intake/GatePosition,%,"Intake (emergency) gate position, 100 = open"
+customer_*,Intake/TrashRackDP,v1.0/DRWPA/CopperCanyon/Intake/TrashRackDP,m,Head loss across the trash rack (clogging)
+customer_*,Intake/RakerRunning,v1.0/DRWPA/CopperCanyon/Intake/RakerRunning,,Trash rack raker cleaning cycle active
+customer_*,Penstock/Pressure,v1.0/DRWPA/CopperCanyon/Penstock/Pressure,bar,Penstock pressure at the powerhouse manifold
+customer_*,Penstock/Flow,v1.0/DRWPA/CopperCanyon/Penstock/Flow,m³/s,Total penstock flow (all three units)
+customer_*,Spillway/Gate01/Position,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Position,%,Spillway radial gate 01 position
+customer_*,Spillway/Gate01/Flow,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Flow,m³/s,Flow over spillway gate 01
+customer_*,Spillway/Gate01/Mode,v1.0/DRWPA/CopperCanyon/Spillway/Gate01/Mode,,AUTO (opens near 420 m a.s.l.) or MAN
+customer_*,Spillway/Gate02/Position,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Position,%,Spillway radial gate 02 position
+customer_*,Spillway/Gate02/Flow,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Flow,m³/s,Flow over spillway gate 02
+customer_*,Spillway/Gate02/Mode,v1.0/DRWPA/CopperCanyon/Spillway/Gate02/Mode,,AUTO (opens near 420 m a.s.l.) or MAN
+customer_*,BottomOutlet/ValvePosition,v1.0/DRWPA/CopperCanyon/BottomOutlet/ValvePosition,%,Fixed-cone valve position
+customer_*,BottomOutlet/Flow,v1.0/DRWPA/CopperCanyon/BottomOutlet/Flow,m³/s,Bottom outlet flow
+customer_*,BottomOutlet/Mode,v1.0/DRWPA/CopperCanyon/BottomOutlet/Mode,,AUTO (keeps the minimum river flow) or MAN
+customer_*,Powerhouse/Unit1/State,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/State,,"Unit state: Stopped, Starting, SpeedNoLoad, Synchronising, Generating, Stopping, Tripped"
+customer_*,Powerhouse/Unit1/BreakerClosed,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/BreakerClosed,,Generator breaker closed
+customer_*,Powerhouse/Unit1/ControlMode,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ControlMode,,PLANT (plant controller) or LOCAL (own MW setpoint)
+customer_*,Powerhouse/Unit1/MWSetpoint,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/MWSetpoint,MW,Unit MW setpoint (from the plant controller or local)
+customer_*,Powerhouse/Unit1/MW,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/MW,MW,Active power
+customer_*,Powerhouse/Unit1/MVAr,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/MVAr,MVAr,Reactive power
+customer_*,Powerhouse/Unit1/GatePosition,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/GatePosition,%,Wicket gate position
+customer_*,Powerhouse/Unit1/GateSetpoint,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/GateSetpoint,%,Governor gate setpoint
+customer_*,Powerhouse/Unit1/Speed,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Speed,rpm,Shaft speed
+customer_*,Powerhouse/Unit1/Flow,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Flow,m³/s,Turbine flow
+customer_*,Powerhouse/Unit1/NetHead,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/NetHead,m,Net head at the unit (gross head - penstock losses)
+customer_*,Powerhouse/Unit1/InletValveOpen,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/InletValveOpen,,Butterfly inlet valve fully open
+customer_*,Powerhouse/Unit1/ActiveAlarms,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ActiveAlarms,,Unit controller alarms and trip causes (list of codes)
+customer_*,Powerhouse/Unit1/ThrustBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ThrustBearingTemp,°C,Thrust bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit1/UpperGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/UpperGuideBearingTemp,°C,Upper guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit1/LowerGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/LowerGuideBearingTemp,°C,Lower guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit1/TurbineGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/TurbineGuideBearingTemp,°C,Turbine guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit1/CoolingWaterFlow,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/CoolingWaterFlow,L/s,Total unit cooling water flow
+customer_*,Powerhouse/Unit1/GovernorOilPressure,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/GovernorOilPressure,bar,Governor HPU accumulator pressure
+customer_*,Powerhouse/Unit2/State,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/State,,"Unit state: Stopped, Starting, SpeedNoLoad, Synchronising, Generating, Stopping, Tripped"
+customer_*,Powerhouse/Unit2/BreakerClosed,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/BreakerClosed,,Generator breaker closed
+customer_*,Powerhouse/Unit2/ControlMode,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ControlMode,,PLANT (plant controller) or LOCAL (own MW setpoint)
+customer_*,Powerhouse/Unit2/MWSetpoint,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/MWSetpoint,MW,Unit MW setpoint (from the plant controller or local)
+customer_*,Powerhouse/Unit2/MW,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/MW,MW,Active power
+customer_*,Powerhouse/Unit2/MVAr,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/MVAr,MVAr,Reactive power
+customer_*,Powerhouse/Unit2/GatePosition,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/GatePosition,%,Wicket gate position
+customer_*,Powerhouse/Unit2/GateSetpoint,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/GateSetpoint,%,Governor gate setpoint
+customer_*,Powerhouse/Unit2/Speed,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Speed,rpm,Shaft speed
+customer_*,Powerhouse/Unit2/Flow,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Flow,m³/s,Turbine flow
+customer_*,Powerhouse/Unit2/NetHead,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/NetHead,m,Net head at the unit (gross head - penstock losses)
+customer_*,Powerhouse/Unit2/InletValveOpen,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/InletValveOpen,,Butterfly inlet valve fully open
+customer_*,Powerhouse/Unit2/ActiveAlarms,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ActiveAlarms,,Unit controller alarms and trip causes (list of codes)
+customer_*,Powerhouse/Unit2/ThrustBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ThrustBearingTemp,°C,Thrust bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit2/UpperGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/UpperGuideBearingTemp,°C,Upper guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit2/LowerGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/LowerGuideBearingTemp,°C,Lower guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit2/TurbineGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/TurbineGuideBearingTemp,°C,Turbine guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit2/CoolingWaterFlow,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/CoolingWaterFlow,L/s,Total unit cooling water flow
+customer_*,Powerhouse/Unit2/GovernorOilPressure,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/GovernorOilPressure,bar,Governor HPU accumulator pressure
+customer_*,Powerhouse/Unit3/State,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/State,,"Unit state: Stopped, Starting, SpeedNoLoad, Synchronising, Generating, Stopping, Tripped"
+customer_*,Powerhouse/Unit3/BreakerClosed,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/BreakerClosed,,Generator breaker closed
+customer_*,Powerhouse/Unit3/ControlMode,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ControlMode,,PLANT (plant controller) or LOCAL (own MW setpoint)
+customer_*,Powerhouse/Unit3/MWSetpoint,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/MWSetpoint,MW,Unit MW setpoint (from the plant controller or local)
+customer_*,Powerhouse/Unit3/MW,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/MW,MW,Active power
+customer_*,Powerhouse/Unit3/MVAr,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/MVAr,MVAr,Reactive power
+customer_*,Powerhouse/Unit3/GatePosition,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/GatePosition,%,Wicket gate position
+customer_*,Powerhouse/Unit3/GateSetpoint,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/GateSetpoint,%,Governor gate setpoint
+customer_*,Powerhouse/Unit3/Speed,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Speed,rpm,Shaft speed
+customer_*,Powerhouse/Unit3/Flow,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Flow,m³/s,Turbine flow
+customer_*,Powerhouse/Unit3/NetHead,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/NetHead,m,Net head at the unit (gross head - penstock losses)
+customer_*,Powerhouse/Unit3/InletValveOpen,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/InletValveOpen,,Butterfly inlet valve fully open
+customer_*,Powerhouse/Unit3/ActiveAlarms,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ActiveAlarms,,Unit controller alarms and trip causes (list of codes)
+customer_*,Powerhouse/Unit3/ThrustBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ThrustBearingTemp,°C,Thrust bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit3/UpperGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/UpperGuideBearingTemp,°C,Upper guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit3/LowerGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/LowerGuideBearingTemp,°C,Lower guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit3/TurbineGuideBearingTemp,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/TurbineGuideBearingTemp,°C,Turbine guide bearing pad 1 temperature (customer RTD element)
+customer_*,Powerhouse/Unit3/CoolingWaterFlow,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/CoolingWaterFlow,L/s,Total unit cooling water flow
+customer_*,Powerhouse/Unit3/GovernorOilPressure,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/GovernorOilPressure,bar,Governor HPU accumulator pressure
+<serial>_*,Context/MW,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/MW,MW,Active power (copied from the customer tree)
+<serial>_*,Context/MVAr,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/MVAr,MVAr,Reactive power (copied from the customer tree)
+<serial>_*,Context/GatePosition_pct,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/GatePosition_pct,%,Wicket gate position (copied)
+<serial>_*,Context/NetHead_m,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/NetHead_m,m,Net head (copied)
+<serial>_*,Context/Speed_rpm,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/Speed_rpm,rpm,Shaft speed (copied)
+<serial>_*,Context/UnitState,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/UnitState,,Customer unit state (copied)
+<serial>_*,Context/TailwaterLevel_m,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Context/TailwaterLevel_m,m a.s.l.,Tailwater level (copied)
+<serial>_*,Bearings/Thrust/PadTemp01,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/PadTemp01,°C,Thrust bearing pad 1 temperature
+<serial>_*,Bearings/Thrust/PadTemp02,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/PadTemp02,°C,Thrust bearing pad 2 temperature
+<serial>_*,Bearings/Thrust/PadTemp03,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/PadTemp03,°C,Thrust bearing pad 3 temperature
+<serial>_*,Bearings/Thrust/PadTemp04,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/PadTemp04,°C,Thrust bearing pad 4 temperature
+<serial>_*,Bearings/Thrust/PadTemp05,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/PadTemp05,°C,Thrust bearing pad 5 temperature
+<serial>_*,Bearings/Thrust/PadTemp06,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/PadTemp06,°C,Thrust bearing pad 6 temperature
+<serial>_*,Bearings/Thrust/OilBathTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/OilBathTemp,°C,Thrust bearing oil bath temperature
+<serial>_*,Bearings/Thrust/OilLevel,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/OilLevel,%,Thrust bearing oil level
+<serial>_*,Bearings/Thrust/HPLiftPressure,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/Thrust/HPLiftPressure,bar,High-pressure oil lift (jacking) pressure
+<serial>_*,Bearings/UGB/PadTemp01,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/UGB/PadTemp01,°C,UGB pad 1 temperature
+<serial>_*,Bearings/UGB/PadTemp02,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/UGB/PadTemp02,°C,UGB pad 2 temperature
+<serial>_*,Bearings/UGB/PadTemp03,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/UGB/PadTemp03,°C,UGB pad 3 temperature
+<serial>_*,Bearings/UGB/PadTemp04,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/UGB/PadTemp04,°C,UGB pad 4 temperature
+<serial>_*,Bearings/UGB/OilTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/UGB/OilTemp,°C,UGB oil temperature
+<serial>_*,Bearings/UGB/OilLevel,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/UGB/OilLevel,%,UGB oil level
+<serial>_*,Bearings/LGB/PadTemp01,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/LGB/PadTemp01,°C,LGB pad 1 temperature
+<serial>_*,Bearings/LGB/PadTemp02,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/LGB/PadTemp02,°C,LGB pad 2 temperature
+<serial>_*,Bearings/LGB/PadTemp03,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/LGB/PadTemp03,°C,LGB pad 3 temperature
+<serial>_*,Bearings/LGB/PadTemp04,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/LGB/PadTemp04,°C,LGB pad 4 temperature
+<serial>_*,Bearings/LGB/OilTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/LGB/OilTemp,°C,LGB oil temperature
+<serial>_*,Bearings/LGB/OilLevel,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/LGB/OilLevel,%,LGB oil level
+<serial>_*,Bearings/TGB/PadTemp01,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/TGB/PadTemp01,°C,TGB pad 1 temperature
+<serial>_*,Bearings/TGB/PadTemp02,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/TGB/PadTemp02,°C,TGB pad 2 temperature
+<serial>_*,Bearings/TGB/PadTemp03,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/TGB/PadTemp03,°C,TGB pad 3 temperature
+<serial>_*,Bearings/TGB/PadTemp04,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/TGB/PadTemp04,°C,TGB pad 4 temperature
+<serial>_*,Bearings/TGB/OilTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/TGB/OilTemp,°C,TGB oil temperature
+<serial>_*,Bearings/TGB/OilLevel,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Bearings/TGB/OilLevel,%,TGB oil level
+<serial>_*,Cooling/WaterInletTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Cooling/WaterInletTemp,°C,Cooling water inlet temperature (seasonal)
+<serial>_*,Cooling/WaterFlow_TB,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Cooling/WaterFlow_TB,L/s,"Cooling water flow, turbine bearing circuit"
+<serial>_*,Cooling/WaterFlow_GB,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Cooling/WaterFlow_GB,L/s,"Cooling water flow, generator bearing circuit"
+<serial>_*,Cooling/WaterFlow_AirCoolers,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Cooling/WaterFlow_AirCoolers,L/s,"Cooling water flow, generator air coolers"
+<serial>_*,Cooling/OilCoolerOutletTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Cooling/OilCoolerOutletTemp,°C,"Cooling water outlet temperature, oil coolers"
+<serial>_*,Governor/HPU/AccumulatorPressure,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/AccumulatorPressure,bar,Accumulator pressure
+<serial>_*,Governor/HPU/SumpLevel,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/SumpLevel,%,HPU sump oil level
+<serial>_*,Governor/HPU/OilTemp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/OilTemp,°C,HPU oil temperature
+<serial>_*,Governor/HPU/Pump1Running,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/Pump1Running,,Pump 1 (lead) running
+<serial>_*,Governor/HPU/Pump2Running,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/Pump2Running,,Pump 2 (lag) running
+<serial>_*,Governor/HPU/PumpStartsPerHour,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/PumpStartsPerHour,1/h,Pump starts in the last hour (both pumps)
+<serial>_*,Governor/HPU/FilterDP,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/FilterDP,bar,Pressure filter differential pressure
+<serial>_*,Governor/HPU/ServoPositionA,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/ServoPositionA,%,Servomotor A position
+<serial>_*,Governor/HPU/ServoPositionB,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/ServoPositionB,%,Servomotor B position
+<serial>_*,Governor/HPU/GateSetpoint,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Governor/HPU/GateSetpoint,%,Governor gate setpoint (from the customer's governor)
+<serial>_*,Turbine/SpiralCasePressure,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/SpiralCasePressure,bar,Spiral case pressure
+<serial>_*,Turbine/HeadcoverPressure,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/HeadcoverPressure,bar,Headcover pressure (behind the runner crown)
+<serial>_*,Turbine/DraftTubePressure,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/DraftTubePressure,bar,"Draft tube cone pressure, 1 s mean (gauge)"
+<serial>_*,Turbine/ShaftSealWaterFlow,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/ShaftSealWaterFlow,L/min,Shaft seal water flow
+<serial>_*,Turbine/HeadcoverSumpPumpStarts,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/HeadcoverSumpPumpStarts,,Headcover sump pump starts (counter)
+<serial>_*,Turbine/ShearPinStatus,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/ShearPinStatus,,Wicket gate shear pins: OK or BROKEN
+<serial>_*,Turbine/WicketGateBreakawayAlarm,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Turbine/WicketGateBreakawayAlarm,,A wicket gate lags its servo ring (breakaway link)
+<serial>_*,Vibration/UGB/ShaftX/Overall_um_pp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/UGB/ShaftX/Overall_um_pp,µm,"UGB shaft displacement X, overall peak-to-peak"
+<serial>_*,Vibration/UGB/ShaftY/Overall_um_pp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/UGB/ShaftY/Overall_um_pp,µm,"UGB shaft displacement Y, overall peak-to-peak"
+<serial>_*,Vibration/LGB/ShaftX/Overall_um_pp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/LGB/ShaftX/Overall_um_pp,µm,"LGB shaft displacement X, overall peak-to-peak"
+<serial>_*,Vibration/LGB/ShaftY/Overall_um_pp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/LGB/ShaftY/Overall_um_pp,µm,"LGB shaft displacement Y, overall peak-to-peak"
+<serial>_*,Vibration/TGB/ShaftX/Overall_um_pp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/TGB/ShaftX/Overall_um_pp,µm,"TGB shaft displacement X, overall peak-to-peak"
+<serial>_*,Vibration/TGB/ShaftY/Overall_um_pp,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/TGB/ShaftY/Overall_um_pp,µm,"TGB shaft displacement Y, overall peak-to-peak"
+<serial>_*,Vibration/Headcover/Vel_mm_s_rms,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Vibration/Headcover/Vel_mm_s_rms,mm/s,"Headcover vibration velocity, RMS 2-1000 Hz"
+<serial>_*,Generator/AirGapMin_mm,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/AirGapMin_mm,mm,Minimum air gap (rotor to stator)
+<serial>_*,Generator/StatorTemp01,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/StatorTemp01,°C,Stator winding RTD 1
+<serial>_*,Generator/StatorTemp02,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/StatorTemp02,°C,Stator winding RTD 2
+<serial>_*,Generator/StatorTemp03,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/StatorTemp03,°C,Stator winding RTD 3
+<serial>_*,Generator/StatorTemp04,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/StatorTemp04,°C,Stator winding RTD 4
+<serial>_*,Generator/StatorTemp05,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/StatorTemp05,°C,Stator winding RTD 5
+<serial>_*,Generator/StatorTemp06,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Generator/StatorTemp06,°C,Stator winding RTD 6
+<serial>_*,Counters/Starts,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Counters/Starts,,Unit starts since commissioning
+<serial>_*,Counters/RunHours,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Counters/RunHours,h,Generating hours since commissioning
+<serial>_*,Counters/EmergencyStops,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Counters/EmergencyStops,,Emergency stops (trips) since commissioning
+<serial>_*,Counters/LoadRejections,v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/Counters/LoadRejections,,Breaker openings under load

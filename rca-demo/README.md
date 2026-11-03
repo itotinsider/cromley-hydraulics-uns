@@ -10,8 +10,13 @@ Hydraulics. Everything is fictional and for training only.
 | Folder | For | Give it to the bot? |
 | --- | --- | --- |
 | `library/` | The documents and records the bot reads: supplier manual, schematics and service bulletin; DRWPA asset register, FMECA, PM plan, work orders, oil analysis, MOC register, shift log, procedures and three previous RCA reports | **Yes** (plus the live broker) |
+| `history/<scenario>/historian/` | Recorded historian export for one scenario: weeks of both trees up to and after the failure | **Yes**, only the one being investigated |
+| `history/<scenario>/run.json` | What the recorder did: timeline, fault profile, event time, the prompt | **No**, presenters only |
+| `bot/` | The bot's instructions (`CLAUDE.md`) and the grading prompt | Its `CLAUDE.md` only |
+| `run_rca.sh` | Builds an isolated workspace and runs the bot, optionally grades the report | No |
 | `ANSWER-KEY.md` | Story, people, planted clues and the expected RCA per demo scenario | **No**, presenters only |
-| `build/` | Generators and Markdown sources for the PDFs and CSVs | No |
+| `../Maintenance & Reliability Engineering – Background for the CH RCA Bot.md` | The brief this demo was built from: M&R background and design rules for the bot (kept as written) | No |
+| `build/` | Generators and Markdown sources for the PDFs, CSVs and the historian | No |
 
 Start with `library/README.md`, the library index.
 
@@ -41,8 +46,46 @@ ReportLab as producer instead of the document date and author). Without installi
 Values (limits, normal ranges, rough zone) match the
 simulators (`common/turbine.py`, `chplc/model.py`, `damsim/model.py`); change them together.
 
+## Historian data
+
+`build/record_history.py` runs the dam and CH models coupled in-process (`tools/offline_sim.py`,
+~8 s per plant hour) along the story the library tells: Unit 2's annual inspection 18–22 Oct, the
+Unit 3 strainer after rain on 21 Oct, weekday evening peaks at 120 MW, the Unit 2 rough-zone trial
+from 06:00 on 3 Nov. On top of that it plays one failure and the shift's response.
+
+| Scenario folder | Period (plant time, MST) | Failure | Event |
+| --- | --- | --- | --- |
+| `history/scenario-A/` | 13 Oct – 3 Nov 2026 11:30 | Unit 1 TGB pad 3 loses its oil film: slow creep from 14 Oct, faster from 1 Nov | CH H alarm unseen overnight; HH ~08:50 on 3 Nov; OP-07: load to 34 MW, controlled stop ~09:40 |
+
+The fault follows a severity profile (`SEV_A`, a P-F curve) instead of the scenario's linear ramp.
+Output: 1-minute averages for the whole period and 1-second values from 08:00 on the event day,
+per tree (`customer_*`, `<serial>_*`), gzipped, plus the SCADA event journal, the CH PLC alarm log
+and `tags.csv`. Deterministic for a given `--seed`; `--start 2026-11-02` records only the last day
+(about 5 minutes, for tuning the timing).
+
+```bash
+docker run --rm -v "$PWD":/w -w /w python:3.12-slim python rca-demo/build/record_history.py   # ~75 min
+```
+
+## Running the RCA bot (Claude Code)
+
+```bash
+rca-demo/run_rca.sh scenario-A --interactive   # build the workspace, then chat yourself
+rca-demo/run_rca.sh scenario-A --grade         # headless run, report + score against the answer key
+```
+
+The script copies `library/`, the scenario's `historian/` and `bot/CLAUDE.md` into a new folder
+under `~/ccd-rca/` (outside the repo, so the repo's `CLAUDE.md` with the scenario list is never
+loaded), with a `.claude/settings.json` that denies reading the repo and the web. In it, Claude
+Code reads the PDFs, analyses the CSVs with `python3` and writes `reports/RCA-2026-xxx.md` in
+the DRWPA template. The prompt names only the unit, the alarm and the time (from `run.json`).
+Headless runs also keep `transcript.jsonl` (every tool call) and `answer.md`. `--grade` scores the
+report in a separate call that sees the answer key; the bot's run never does.
+
+The isolation is a convention plus permission rules, not a sandbox: Bash `python3` could still
+read files elsewhere. Check `transcript.jsonl` when a result looks too good.
+
 ## Not included yet
 
-**Historian data.** The broker has live values and the SCADA keeps 48 h of trends in memory;
-an RCA needs the weeks before an event. A recorded dataset (for example from
-`tools/offline_sim.py`) or a small historian service is the next step.
+- Histories for scenarios G and C (same recorder, another failure and response).
+- Live broker access for the bot (an MQTT MCP server), and waveform snapshots at the event.

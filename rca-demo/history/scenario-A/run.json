@@ -1,0 +1,163 @@
+{
+  "scenario": "A tgb_bearing_degradation",
+  "unit": "Unit1",
+  "serial": "CH-FR-1987-0042",
+  "pad": 3,
+  "severity_profile": [
+    [
+      "2026-10-14 00:00",
+      0.0
+    ],
+    [
+      "2026-11-01 00:00",
+      0.42
+    ],
+    [
+      "2026-11-02 18:00",
+      0.5
+    ],
+    [
+      "2026-11-03 09:30",
+      0.73
+    ],
+    [
+      "2026-11-03 14:00",
+      0.85
+    ]
+  ],
+  "seed": 7,
+  "start": "2026-10-13T00:00-07:00",
+  "end": "2026-11-03T11:30-07:00",
+  "hh_alarm": "2026-11-03T08:48:59-07:00",
+  "actions": [
+    [
+      "2026-10-13T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-13T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-14T00:00-07:00",
+      "scenario tgb_bearing_degradation on Unit1"
+    ],
+    [
+      "2026-10-14T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-14T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-15T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-15T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-16T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-16T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-18T06:15-07:00",
+      "Plant/Cmd/MWSetpoint=80: (True, 'Grid operator: plant setpoint 80.0 MW')"
+    ],
+    [
+      "2026-10-18T06:25-07:00",
+      "Powerhouse/Unit2/Cmd/Stop=True: (True, 'Unit2: normal stop')"
+    ],
+    [
+      "2026-10-21T04:00-07:00",
+      "scenario cooling_strainer on Unit3"
+    ],
+    [
+      "2026-10-21T10:30-07:00",
+      "scenario cooling_strainer on Unit3 cleared"
+    ],
+    [
+      "2026-10-22T15:05-07:00",
+      "Powerhouse/Unit2/Cmd/Start=True: (True, 'Unit2: start sequence')"
+    ],
+    [
+      "2026-10-22T15:30-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-23T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-23T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-26T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-26T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-27T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-27T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-28T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-28T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-29T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-29T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-10-30T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-10-30T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-11-02T17:00-07:00",
+      "Plant/Cmd/MWSetpoint=120: (True, 'Grid operator: plant setpoint 120.0 MW')"
+    ],
+    [
+      "2026-11-02T21:00-07:00",
+      "Plant/Cmd/MWSetpoint=110: (True, 'Grid operator: plant setpoint 110.0 MW')"
+    ],
+    [
+      "2026-11-03T06:00-07:00",
+      "scenario agc_rough_zone on Unit2"
+    ],
+    [
+      "2026-11-03T09:02-07:00",
+      "Powerhouse/Unit1/Cmd/MWSetpoint=34: (True, 'Unit1: local MW setpoint 34.0 MW')"
+    ],
+    [
+      "2026-11-03T09:36-07:00",
+      "Powerhouse/Unit1/Cmd/Stop=True: (True, 'Unit1: normal stop')"
+    ]
+  ],
+  "prompt": "Start the Copper Canyon Dam RCA process for Unit 1 (CH-FR-1987-0042): CH PLC alarm TGB pad 3 high-high at 3 Nov 2026 08:48, unit unloaded and stopped by the shift per OP-07."
+}

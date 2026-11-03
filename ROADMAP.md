@@ -89,6 +89,15 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 - **Done when:** library and answer key reviewed by Willem; values match the simulators; `rca-demo/README.md` explains rebuild and use.
 - **Notes:** 2026-11-03 Claude: next step is historian data (weeks of pre-event trends), see `rca-demo/README.md`.
 
+### `rca-history-and-bot-run` — Recorded history and a first RCA bot test run
+- **Status:** 🚧 In progress · **Owner:** Claude (for Willem) · **Branch:** `rca-demo-rebuild` · **PR:** [#2](https://github.com/itotinsider/cromley-hydraulics-uns/pull/2)
+- **Goal:** three weeks of recorded plant history ending in scenario A (Unit 1 TGB pad 3), following the library's story, and a script that runs Claude Code as the RCA bot on it in an isolated workspace and grades the report against the answer key.
+- **Touches:** `rca-demo/` only (`build/record_history.py`, `history/`, `bot/`, `run_rca.sh`, README). No topics, commands or scenarios change; the recorder reuses `tools/offline_sim.py` unchanged.
+- **Reserves:** —
+- **Depends on:** `rca-demo-documents`
+- **Done when:** history recorded and committed (gzipped); a headless bot run produces a DRWPA-template report; the grade is reviewed by Willem.
+- **Notes:** 2026-11-03 Willem: scenario A first; 13 Oct – 3 Nov window; history committed gzipped. G and C to follow with the same recorder.
+
 ## Planned
 
 (nothing yet)
