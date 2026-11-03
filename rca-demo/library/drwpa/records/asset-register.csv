@@ -1,0 +1,76 @@
+functional_location,description,level,parent,equipment_class,manufacturer,model,serial,criticality,in_service,notes
+CCD,Copper Canyon Dam hydropower plant (3 x 40 MW),Plant,,Hydropower plant,,,,A,1987,Operator: Desert River Water & Power Authority (DRWPA)
+CCD-INT,"Intake with emergency gate, trash rack and raker",Equipment unit,CCD,Intake,,,,B,1987,
+CCD-INT-RAK,Trash rack raker,Equipment unit,CCD,Raker,,,,C,1987,Runs automatically at rack DP >= 0.35 m
+CCD-PEN,"Steel penstock DN 5500, branches to Units 1-3",Equipment unit,CCD,Penstock,,,,A,1987,
+CCD-SPW-G01,Spillway radial gate 01 with hydraulic hoist,Equipment unit,CCD,Gate,,,,A,1987,CH-Gate supply 1987
+CCD-SPW-G02,Spillway radial gate 02 with hydraulic hoist,Equipment unit,CCD,Gate,,,,A,1987,CH-Gate supply 1987
+CCD-BOT,Bottom outlet fixed-cone valve,Equipment unit,CCD,Valve,,,,B,1987,Keeps minimum river flow (10 m3/s)
+CCD-SWY,150 kV switchyard,Equipment unit,CCD,Switchyard,,,,A,1987,Not CH supply
+CCD-CTL,"Plant control system: unit controllers, plant controller, SCADA",Equipment unit,CCD,Control system,,,,A,1987,"Not CH supply. Unit protection on bearing element A, governor oil pressure, overspeed"
+CCD-U1,"Unit1 generating unit, 40 MW",Equipment unit,CCD,Hydro generating unit,Cromley Hydraulics,CH-Francis Canyon FC-40/100,CH-FR-1987-0042,A,1987,Major overhaul 2019
+CCD-U1-TUR,"Turbine (runner, wicket gates, spiral case, draft tube)",Subunit,CCD-U1,Turbine,Cromley Hydraulics,,,A,1987,
+CCD-U1-TUR-RUN,"Runner, 13 blades",Maintainable item,CCD-U1,Runner,Cromley Hydraulics,,,A,1987,
+CCD-U1-TUR-WG,Wicket gates (20) with shear pins and regulating ring,Maintainable item,CCD-U1,Wicket gates,Cromley Hydraulics,,,A,1987,
+CCD-U1-TUR-DT,Draft tube cone,Maintainable item,CCD-U1,Draft tube cone,Cromley Hydraulics,,,B,1987,
+CCD-U1-TUR-SEAL,Shaft seal (carbon segments),Maintainable item,CCD-U1,Shaft seal,Cromley Hydraulics,,,B,1987,
+CCD-U1-BRG-THR,"Thrust bearing, 6 tilting pads",Maintainable item,CCD-U1,Thrust bearing,Cromley Hydraulics,,,A,1987,
+CCD-U1-BRG-UGB,Upper guide bearing,Maintainable item,CCD-U1,Upper guide bearing,Cromley Hydraulics,,,A,1987,
+CCD-U1-BRG-LGB,Lower guide bearing,Maintainable item,CCD-U1,Lower guide bearing,Cromley Hydraulics,,,A,1987,
+CCD-U1-BRG-TGB,"Turbine guide bearing, oil bath",Maintainable item,CCD-U1,Turbine guide bearing,Cromley Hydraulics,,,A,1987,"Pads re-babbitted 2019 by Desert Bearing Services. Pad 3 radial clearance measured 0.24 mm (design 0.30 +/- 0.05, tight), accepted on CH concession CH-CON-2019-017: trend pad 3 temperature."
+CCD-U1-LUB,"Bearing lubrication (4 oil pots, ISO VG 68)",Subunit,CCD-U1,Bearing lubrication,Cromley Hydraulics,,,A,1987,
+CCD-U1-CW,Cooling water system,Subunit,CCD-U1,Cooling water system,Cromley Hydraulics,,,A,1987,
+CCD-U1-CW-STR,Unit cooling water strainer (duplex),Maintainable item,CCD-U1,Unit cooling water strainer,Cromley Hydraulics,,,A,1987,
+CCD-U1-CW-TB,Cooling circuit TB (TGB oil cooler),Maintainable item,CCD-U1,Cooling circuit TB,Cromley Hydraulics,,,B,1987,
+CCD-U1-CW-GB,"Cooling circuit GB (thrust, UGB, LGB coolers)",Maintainable item,CCD-U1,Cooling circuit GB,Cromley Hydraulics,,,B,1987,
+CCD-U1-CW-AC,Generator air coolers (6),Maintainable item,CCD-U1,Generator air coolers,Cromley Hydraulics,,,B,1987,
+CCD-U1-GOV-HPU,"Governor hydraulic power unit (2 pumps, accumulator)",Subunit,CCD-U1,Governor hydraulic power unit,Cromley Hydraulics,,,A,1987,
+CCD-U1-GOV-SRV,Wicket gate servomotors A and B,Maintainable item,CCD-U1,Wicket gate servomotors A and B,Cromley Hydraulics,,,A,1987,
+CCD-U1-INV,Butterfly inlet valve DN 3200,Subunit,CCD-U1,Butterfly inlet valve DN 3200,Cromley Hydraulics,,,A,1987,
+CCD-U1-GEN,"Generator (rotor, stator, air coolers)",Subunit,CCD-U1,Generator,,,,A,1987,Not CH supply
+CCD-U1-MON-PLC,CH monitoring PLC (retrofit 2026),Subunit,CCD-U1,CH monitoring PLC,Cromley Hydraulics,,,B,2026,"Commissioned Sep 2026, publishes the CH tree"
+CCD-U1-MON-JB04,"Junction box JB-U1-04, headcover pit (TGB RTDs to CH PLC)",Maintainable item,CCD-U1,Junction box JB-U1-04,Cromley Hydraulics,,,C,2026,Wet area
+CCD-U2,"Unit2 generating unit, 40 MW",Equipment unit,CCD,Hydro generating unit,Cromley Hydraulics,CH-Francis Canyon FC-40/100,CH-FR-1987-0043,A,1987,Major overhaul 2014
+CCD-U2-TUR,"Turbine (runner, wicket gates, spiral case, draft tube)",Subunit,CCD-U2,Turbine,Cromley Hydraulics,,,A,1987,
+CCD-U2-TUR-RUN,"Runner, 13 blades",Maintainable item,CCD-U2,Runner,Cromley Hydraulics,,,A,1987,Unit2: cavitation repair 2025 (RCA-2025-007)
+CCD-U2-TUR-WG,Wicket gates (20) with shear pins and regulating ring,Maintainable item,CCD-U2,Wicket gates,Cromley Hydraulics,,,A,1987,
+CCD-U2-TUR-DT,Draft tube cone,Maintainable item,CCD-U2,Draft tube cone,Cromley Hydraulics,,,B,1987,Unit2: cone stiffener cracks weld-repaired 2025 (RCA-2025-007)
+CCD-U2-TUR-SEAL,Shaft seal (carbon segments),Maintainable item,CCD-U2,Shaft seal,Cromley Hydraulics,,,B,1987,
+CCD-U2-BRG-THR,"Thrust bearing, 6 tilting pads",Maintainable item,CCD-U2,Thrust bearing,Cromley Hydraulics,,,A,1987,
+CCD-U2-BRG-UGB,Upper guide bearing,Maintainable item,CCD-U2,Upper guide bearing,Cromley Hydraulics,,,A,1987,
+CCD-U2-BRG-LGB,Lower guide bearing,Maintainable item,CCD-U2,Lower guide bearing,Cromley Hydraulics,,,A,1987,
+CCD-U2-BRG-TGB,"Turbine guide bearing, oil bath",Maintainable item,CCD-U2,Turbine guide bearing,Cromley Hydraulics,,,A,1987,"Pads re-scraped after wipe 2023 (RCA-2023-004), clearances in tolerance."
+CCD-U2-LUB,"Bearing lubrication (4 oil pots, ISO VG 68)",Subunit,CCD-U2,Bearing lubrication,Cromley Hydraulics,,,A,1987,
+CCD-U2-CW,Cooling water system,Subunit,CCD-U2,Cooling water system,Cromley Hydraulics,,,A,1987,
+CCD-U2-CW-STR,Unit cooling water strainer (duplex),Maintainable item,CCD-U2,Unit cooling water strainer,Cromley Hydraulics,,,A,1987,
+CCD-U2-CW-TB,Cooling circuit TB (TGB oil cooler),Maintainable item,CCD-U2,Cooling circuit TB,Cromley Hydraulics,,,B,1987,
+CCD-U2-CW-GB,"Cooling circuit GB (thrust, UGB, LGB coolers)",Maintainable item,CCD-U2,Cooling circuit GB,Cromley Hydraulics,,,B,1987,
+CCD-U2-CW-AC,Generator air coolers (6),Maintainable item,CCD-U2,Generator air coolers,Cromley Hydraulics,,,B,1987,
+CCD-U2-GOV-HPU,"Governor hydraulic power unit (2 pumps, accumulator)",Subunit,CCD-U2,Governor hydraulic power unit,Cromley Hydraulics,,,A,1987,
+CCD-U2-GOV-SRV,Wicket gate servomotors A and B,Maintainable item,CCD-U2,Wicket gate servomotors A and B,Cromley Hydraulics,,,A,1987,
+CCD-U2-INV,Butterfly inlet valve DN 3200,Subunit,CCD-U2,Butterfly inlet valve DN 3200,Cromley Hydraulics,,,A,1987,
+CCD-U2-GEN,"Generator (rotor, stator, air coolers)",Subunit,CCD-U2,Generator,,,,A,1987,Not CH supply
+CCD-U2-MON-PLC,CH monitoring PLC (retrofit 2026),Subunit,CCD-U2,CH monitoring PLC,Cromley Hydraulics,,,B,2026,"Commissioned Sep 2026, publishes the CH tree"
+CCD-U2-MON-JB04,"Junction box JB-U2-04, headcover pit (TGB RTDs to CH PLC)",Maintainable item,CCD-U2,Junction box JB-U2-04,Cromley Hydraulics,,,C,2026,Wet area
+CCD-U3,"Unit3 generating unit, 40 MW",Equipment unit,CCD,Hydro generating unit,Cromley Hydraulics,CH-Francis Canyon FC-40/100,CH-FR-1989-0051,A,1989,Major overhaul 2017
+CCD-U3-TUR,"Turbine (runner, wicket gates, spiral case, draft tube)",Subunit,CCD-U3,Turbine,Cromley Hydraulics,,,A,1989,
+CCD-U3-TUR-RUN,"Runner, 13 blades",Maintainable item,CCD-U3,Runner,Cromley Hydraulics,,,A,1989,
+CCD-U3-TUR-WG,Wicket gates (20) with shear pins and regulating ring,Maintainable item,CCD-U3,Wicket gates,Cromley Hydraulics,,,A,1989,
+CCD-U3-TUR-DT,Draft tube cone,Maintainable item,CCD-U3,Draft tube cone,Cromley Hydraulics,,,B,1989,
+CCD-U3-TUR-SEAL,Shaft seal (carbon segments),Maintainable item,CCD-U3,Shaft seal,Cromley Hydraulics,,,B,1989,
+CCD-U3-BRG-THR,"Thrust bearing, 6 tilting pads",Maintainable item,CCD-U3,Thrust bearing,Cromley Hydraulics,,,A,1989,
+CCD-U3-BRG-UGB,Upper guide bearing,Maintainable item,CCD-U3,Upper guide bearing,Cromley Hydraulics,,,A,1989,
+CCD-U3-BRG-LGB,Lower guide bearing,Maintainable item,CCD-U3,Lower guide bearing,Cromley Hydraulics,,,A,1989,
+CCD-U3-BRG-TGB,"Turbine guide bearing, oil bath",Maintainable item,CCD-U3,Turbine guide bearing,Cromley Hydraulics,,,A,1989,
+CCD-U3-LUB,"Bearing lubrication (4 oil pots, ISO VG 68)",Subunit,CCD-U3,Bearing lubrication,Cromley Hydraulics,,,A,1989,
+CCD-U3-CW,Cooling water system,Subunit,CCD-U3,Cooling water system,Cromley Hydraulics,,,A,1989,
+CCD-U3-CW-STR,Unit cooling water strainer (duplex),Maintainable item,CCD-U3,Unit cooling water strainer,Cromley Hydraulics,,,A,1989,
+CCD-U3-CW-TB,Cooling circuit TB (TGB oil cooler),Maintainable item,CCD-U3,Cooling circuit TB,Cromley Hydraulics,,,B,1989,
+CCD-U3-CW-GB,"Cooling circuit GB (thrust, UGB, LGB coolers)",Maintainable item,CCD-U3,Cooling circuit GB,Cromley Hydraulics,,,B,1989,
+CCD-U3-CW-AC,Generator air coolers (6),Maintainable item,CCD-U3,Generator air coolers,Cromley Hydraulics,,,B,1989,
+CCD-U3-GOV-HPU,"Governor hydraulic power unit (2 pumps, accumulator)",Subunit,CCD-U3,Governor hydraulic power unit,Cromley Hydraulics,,,A,1989,
+CCD-U3-GOV-SRV,Wicket gate servomotors A and B,Maintainable item,CCD-U3,Wicket gate servomotors A and B,Cromley Hydraulics,,,A,1989,
+CCD-U3-INV,Butterfly inlet valve DN 3200,Subunit,CCD-U3,Butterfly inlet valve DN 3200,Cromley Hydraulics,,,A,1989,
+CCD-U3-GEN,"Generator (rotor, stator, air coolers)",Subunit,CCD-U3,Generator,,,,A,1989,Not CH supply
+CCD-U3-MON-PLC,CH monitoring PLC (retrofit 2026),Subunit,CCD-U3,CH monitoring PLC,Cromley Hydraulics,,,B,2026,"Commissioned Sep 2026, publishes the CH tree"
+CCD-U3-MON-JB04,"Junction box JB-U3-04, headcover pit (TGB RTDs to CH PLC)",Maintainable item,CCD-U3,Junction box JB-U3-04,Cromley Hydraulics,,,C,2026,Wet area

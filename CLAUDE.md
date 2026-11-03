@@ -76,6 +76,7 @@ nodered_data/flows.json  the only tracked file in nodered_data/ (hand-written, 3
 mqtt_explorer_data/settings.json   the seeded "Copper Canyon Dam" connection (only file tracked there)
 data/                    bind mount: ch_plc_counters.json (git-ignored)
 exports/                 bind mount: CSVs Node-RED writes (git-ignored)
+rca-demo/                RCA bot demo: document library (library/), instructor answer key, generators (build/)
 ```
 
 ## Commands
