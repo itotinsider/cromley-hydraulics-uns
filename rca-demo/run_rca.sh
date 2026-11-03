@@ -29,11 +29,11 @@ mkdir -p "$WS/work" "$WS/reports" "$WS/.claude"
 cp -R "$REPO/rca-demo/library" "$WS/library"
 cp -R "$HIST/historian" "$WS/historian"
 cp "$REPO/rca-demo/bot/CLAUDE.md" "$WS/CLAUDE.md"
+# deny rules apply in a new (untrusted) folder; allow rules would not, so headless runs pass
+# --allowedTools and interactive runs ask
 cat > "$WS/.claude/settings.json" <<EOF
 {
   "permissions": {
-    "allow": ["Read", "Glob", "Grep", "Write", "Edit",
-              "Bash(python3:*)", "Bash(ls:*)", "Bash(head:*)", "Bash(wc:*)", "Bash(zcat:*)", "Bash(gzcat:*)"],
     "deny": ["Read(/$REPO/**)", "Grep(/$REPO/**)", "Glob(/$REPO/**)", "WebFetch", "WebSearch"]
   }
 }
@@ -73,6 +73,6 @@ if [ "$GRADE" = 1 ] && [ -n "$REPORT" ]; then
   GP="$(sed -e "s|{answer_key}|$REPO/rca-demo/ANSWER-KEY.md|" -e "s|{scenario}|$LETTER|" -e "s|{report}|$REPORT|" \
         "$REPO/rca-demo/bot/grade-prompt.md")"
   # graded from a neutral directory, so neither CLAUDE.md is loaded
-  (cd "$(mktemp -d)" && claude -p "$GP" --allowedTools "Read" --add-dir "$REPO/rca-demo" --add-dir "$WS") \
+  (cd "$(mktemp -d)" && claude -p "$GP" --allowedTools "Read Bash(python3:*)" --add-dir "$REPO/rca-demo" --add-dir "$WS") \
     | tee "$WS/grade.md"
 fi

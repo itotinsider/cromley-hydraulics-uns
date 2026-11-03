@@ -171,13 +171,18 @@ def main():
     ap.add_argument("--out", default=os.path.join(ROOT, "rca-demo", "history", "scenario-A"))
     ap.add_argument("--start", default=START, help="plant time to start (default %(default)s)")
     ap.add_argument("--end", default=END)
-    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--seed", type=int, default=1,
+                    help="noise and per-pad offsets; the story needs U1 TGB pad 4 warmest (checked)")
     a = ap.parse_args()
     t_start, t_end, t_hires = at(a.start), at(a.end), at(HIRES_FROM)
     hist = os.path.join(a.out, "historian")
     os.makedirs(hist, exist_ok=True)
 
     sim = O.Sim(seed=a.seed, t0=t_start)
+    # the library says U1 TGB pad 4 reads 1-3 K above the other pads (WO-2026-0714): the seed decides
+    pads = sim.turbines["Unit1"].pad_off["TGB"]
+    if max(pads) != pads[3] or pads[3] - max(pads[:3]) < 0.8:
+        sys.exit(f"seed {a.seed}: U1 TGB pad offsets {[round(x, 2) for x in pads]} contradict WO-2026-0714")
     sev_a = profile(SEV_A)
     pp_cache = {}
     for unit, tb in sim.turbines.items():

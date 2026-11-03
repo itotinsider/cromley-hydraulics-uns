@@ -25,10 +25,10 @@
       0.85
     ]
   ],
-  "seed": 7,
+  "seed": 1,
   "start": "2026-10-13T00:00-07:00",
   "end": "2026-11-03T11:30-07:00",
-  "hh_alarm": "2026-11-03T08:48:59-07:00",
+  "hh_alarm": "2026-11-03T09:00:29-07:00",
   "actions": [
     [
       "2026-10-13T17:00-07:00",
@@ -151,13 +151,13 @@
       "scenario agc_rough_zone on Unit2"
     ],
     [
-      "2026-11-03T09:02-07:00",
+      "2026-11-03T09:14-07:00",
       "Powerhouse/Unit1/Cmd/MWSetpoint=34: (True, 'Unit1: local MW setpoint 34.0 MW')"
     ],
     [
-      "2026-11-03T09:36-07:00",
+      "2026-11-03T09:48-07:00",
       "Powerhouse/Unit1/Cmd/Stop=True: (True, 'Unit1: normal stop')"
     ]
   ],
-  "prompt": "Start the Copper Canyon Dam RCA process for Unit 1 (CH-FR-1987-0042): CH PLC alarm TGB pad 3 high-high at 3 Nov 2026 08:48, unit unloaded and stopped by the shift per OP-07."
+  "prompt": "Start the Copper Canyon Dam RCA process for Unit 1 (CH-FR-1987-0042): CH PLC alarm TGB pad 3 high-high at 3 Nov 2026 09:00, unit unloaded and stopped by the shift per OP-07."
 }
