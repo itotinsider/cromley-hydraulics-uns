@@ -17,7 +17,7 @@ CCD-U1-TUR-SEAL,Shaft seal (carbon segments),Maintainable item,CCD-U1,Shaft seal
 CCD-U1-BRG-THR,"Thrust bearing, 6 tilting pads",Maintainable item,CCD-U1,Thrust bearing,Cromley Hydraulics,,,A,1987,
 CCD-U1-BRG-UGB,Upper guide bearing,Maintainable item,CCD-U1,Upper guide bearing,Cromley Hydraulics,,,A,1987,
 CCD-U1-BRG-LGB,Lower guide bearing,Maintainable item,CCD-U1,Lower guide bearing,Cromley Hydraulics,,,A,1987,
-CCD-U1-BRG-TGB,"Turbine guide bearing, oil bath",Maintainable item,CCD-U1,Turbine guide bearing,Cromley Hydraulics,,,A,1987,"Pads re-babbitted 2019 by Desert Bearing Services. Pad 3 radial clearance measured 0.36 mm (design 0.30 +/- 0.05), accepted on CH concession CH-CON-2019-017: trend pad 3 temperature."
+CCD-U1-BRG-TGB,"Turbine guide bearing, oil bath",Maintainable item,CCD-U1,Turbine guide bearing,Cromley Hydraulics,,,A,1987,"Pads re-babbitted 2019 by Desert Bearing Services. Pad 3 radial clearance measured 0.24 mm (design 0.30 +/- 0.05, tight), accepted on CH concession CH-CON-2019-017: trend pad 3 temperature."
 CCD-U1-LUB,"Bearing lubrication (4 oil pots, ISO VG 68)",Subunit,CCD-U1,Bearing lubrication,Cromley Hydraulics,,,A,1987,
 CCD-U1-CW,Cooling water system,Subunit,CCD-U1,Cooling water system,Cromley Hydraulics,,,A,1987,
 CCD-U1-CW-STR,Unit cooling water strainer (duplex),Maintainable item,CCD-U1,Unit cooling water strainer,Cromley Hydraulics,,,A,1987,
@@ -29,7 +29,7 @@ CCD-U1-GOV-SRV,Wicket gate servomotors A and B,Maintainable item,CCD-U1,Wicket g
 CCD-U1-INV,Butterfly inlet valve DN 3200,Subunit,CCD-U1,Butterfly inlet valve DN 3200,Cromley Hydraulics,,,A,1987,
 CCD-U1-GEN,"Generator (rotor, stator, air coolers)",Subunit,CCD-U1,Generator,,,,A,1987,Not CH supply
 CCD-U1-MON-PLC,CH monitoring PLC (retrofit 2026),Subunit,CCD-U1,CH monitoring PLC,Cromley Hydraulics,,,B,2026,"Commissioned Sep 2026, publishes the CH tree"
-CCD-U1-MON-JB04,"Junction box JB-U1-04, headcover pit (TGB RTDs, element B)",Maintainable item,CCD-U1,Junction box JB-U1-04,Cromley Hydraulics,,,C,2026,Wet area
+CCD-U1-MON-JB04,"Junction box JB-U1-04, headcover pit (TGB RTDs to CH PLC)",Maintainable item,CCD-U1,Junction box JB-U1-04,Cromley Hydraulics,,,C,2026,Wet area
 CCD-U2,"Unit2 generating unit, 40 MW",Equipment unit,CCD,Hydro generating unit,Cromley Hydraulics,CH-Francis Canyon FC-40/100,CH-FR-1987-0043,A,1987,Major overhaul 2014
 CCD-U2-TUR,"Turbine (runner, wicket gates, spiral case, draft tube)",Subunit,CCD-U2,Turbine,Cromley Hydraulics,,,A,1987,
 CCD-U2-TUR-RUN,"Runner, 13 blades",Maintainable item,CCD-U2,Runner,Cromley Hydraulics,,,A,1987,Unit2: cavitation repair 2025 (RCA-2025-007)
@@ -51,7 +51,7 @@ CCD-U2-GOV-SRV,Wicket gate servomotors A and B,Maintainable item,CCD-U2,Wicket g
 CCD-U2-INV,Butterfly inlet valve DN 3200,Subunit,CCD-U2,Butterfly inlet valve DN 3200,Cromley Hydraulics,,,A,1987,
 CCD-U2-GEN,"Generator (rotor, stator, air coolers)",Subunit,CCD-U2,Generator,,,,A,1987,Not CH supply
 CCD-U2-MON-PLC,CH monitoring PLC (retrofit 2026),Subunit,CCD-U2,CH monitoring PLC,Cromley Hydraulics,,,B,2026,"Commissioned Sep 2026, publishes the CH tree"
-CCD-U2-MON-JB04,"Junction box JB-U2-04, headcover pit (TGB RTDs, element B)",Maintainable item,CCD-U2,Junction box JB-U2-04,Cromley Hydraulics,,,C,2026,Wet area
+CCD-U2-MON-JB04,"Junction box JB-U2-04, headcover pit (TGB RTDs to CH PLC)",Maintainable item,CCD-U2,Junction box JB-U2-04,Cromley Hydraulics,,,C,2026,Wet area
 CCD-U3,"Unit3 generating unit, 40 MW",Equipment unit,CCD,Hydro generating unit,Cromley Hydraulics,CH-Francis Canyon FC-40/100,CH-FR-1989-0051,A,1989,Major overhaul 2017
 CCD-U3-TUR,"Turbine (runner, wicket gates, spiral case, draft tube)",Subunit,CCD-U3,Turbine,Cromley Hydraulics,,,A,1989,
 CCD-U3-TUR-RUN,"Runner, 13 blades",Maintainable item,CCD-U3,Runner,Cromley Hydraulics,,,A,1989,
@@ -73,4 +73,4 @@ CCD-U3-GOV-SRV,Wicket gate servomotors A and B,Maintainable item,CCD-U3,Wicket g
 CCD-U3-INV,Butterfly inlet valve DN 3200,Subunit,CCD-U3,Butterfly inlet valve DN 3200,Cromley Hydraulics,,,A,1989,
 CCD-U3-GEN,"Generator (rotor, stator, air coolers)",Subunit,CCD-U3,Generator,,,,A,1989,Not CH supply
 CCD-U3-MON-PLC,CH monitoring PLC (retrofit 2026),Subunit,CCD-U3,CH monitoring PLC,Cromley Hydraulics,,,B,2026,"Commissioned Sep 2026, publishes the CH tree"
-CCD-U3-MON-JB04,"Junction box JB-U3-04, headcover pit (TGB RTDs, element B)",Maintainable item,CCD-U3,Junction box JB-U3-04,Cromley Hydraulics,,,C,2026,Wet area
+CCD-U3-MON-JB04,"Junction box JB-U3-04, headcover pit (TGB RTDs to CH PLC)",Maintainable item,CCD-U3,Junction box JB-U3-04,Cromley Hydraulics,,,C,2026,Wet area

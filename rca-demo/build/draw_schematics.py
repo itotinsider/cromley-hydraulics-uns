@@ -240,10 +240,15 @@ def main():
     c = canvas.Canvas(OUT, pagesize=landscape(A4))
     c.setTitle("CH-DOC-DWG-0102 CH-Francis Canyon unit schematics Rev 2")
     c.setAuthor("Cromley Hydraulics")
+    c.setCreator("Cromley Hydraulics Product Engineering")
     for s in (sheet1, sheet2, sheet3):
         s(c)
         c.showPage()
     c.save()
+    import importlib.util, sys as _s
+    spec = importlib.util.spec_from_file_location("render_pdf", os.path.join(HERE, "render_pdf.py"))
+    rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
+    rp.stamp(OUT, "2026-08-14", "Cromley Hydraulics Product Engineering")
     print("drew", os.path.relpath(OUT, os.path.dirname(HERE)))
 
 

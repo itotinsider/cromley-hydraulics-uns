@@ -19,7 +19,7 @@ MQTT broker (customer tree `v1.0/DRWPA/CopperCanyon/…`, CH monitoring PLC tree
 | --- | --- |
 | `supplier/CH-DOC-OM-0101_CH-Francis-Canyon_O-and-M-Manual_Rev4.pdf` | Turbine O&M manual: design data, rough zone, bearings, oil limits, cooling, HPU, troubleshooting, CH monitoring PLC, maintenance recommendations |
 | `supplier/CH-DOC-DWG-0102_CH-Francis-Canyon_Unit-Schematics_Rev2.pdf` | Three schematic sheets: unit arrangement and sensors, cooling water system, bearing RTD wiring |
-| `supplier/CH-SB-2026-03_Service-Bulletin_RTD-Element-B-Connectors.pdf` | Service bulletin on element-B RTD connectors in humid locations |
+| `supplier/CH-SB-2026-03_Service-Bulletin_CH-PLC-RTD-Connectors.pdf` | Service bulletin on CH PLC RTD connectors in humid locations |
 
 ## DRWPA records (`drwpa/records/`, CSV)
 

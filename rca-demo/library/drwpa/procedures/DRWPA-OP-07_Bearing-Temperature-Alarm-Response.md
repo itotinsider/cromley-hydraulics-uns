@@ -40,7 +40,7 @@ Within 15 minutes of an alarm, the shift supervisor (with I&C or the reliability
 | Finding | Action |
 | --- | --- |
 | Single channel moves alone; neighbours, oil, element A and vibration flat | **Instrument fault suspected.** Keep the unit running. Raise an I&C work order (priority 2). Watch neighbours and oil hourly. |
-| Neighbours and/or oil bath rising with it | **Bearing problem.** Reduce load to 30 MW (above the rough zone where head allows), call the reliability engineer, take an oil sample, prepare a controlled stop if the trend continues or HH (85 °C) is reached. |
+| Neighbours and/or oil bath rising with it | **Bearing problem.** Reduce load to the lowest load **above** the rough zone (approx. 34 MW at 106 m net head; see the OP-03 table for the current head), call the reliability engineer, take an oil sample, prepare a controlled stop if the trend continues or HH (85 °C) is reached. |
 | All bearings rising, cooling flow low | **Cooling problem.** Check and change over the strainer immediately. Reduce load. |
 | TGB warm with high TGB vibration and draft tube pulsation | **Rough-zone operation.** Move the unit out of the zone. |
 | Trip level reached on element A | The unit trips automatically. Do not reset before the bearing has been inspected or the measurement has been proven faulty. |

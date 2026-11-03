@@ -38,7 +38,7 @@ Any bypass of the rough-zone table, for any reason (including ancillary-services
 3. shall not be applied to a unit with an open draft-tube or runner finding;
 4. shall be recorded in the shift log when enabled and when removed.
 
-Background: in summer 2025 a bypass (MOC-2025-012) kept units in the rough zone for an estimated 640 h. Unit 2's draft tube cone cracked and its runner suffered cavitation damage (RCA-2025-007).
+Background: in summer 2025 a bypass (MOC-2025-012) kept Unit 2 in the rough zone for an estimated 640 h (all units approx. 1,030 h). Unit 2's draft tube cone cracked and its runner suffered cavitation damage (RCA-2025-007).
 
 ## 5 Records
 

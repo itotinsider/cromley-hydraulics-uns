@@ -7,5 +7,5 @@ PM-HPU-OIL,CCD-U1/U2/U3-GOV-HPU,HPU oil sample,182,CBM,CH-DOC-OM-0101 ch. 10,Act
 PM-HPU-FLT,CCD-U1/U2/U3-GOV-HPU,Change HPU pressure filter element,365,TBM,CH-DOC-OM-0101 ch. 10,Active,
 PM-ACC,CCD-U1/U2/U3-GOV-HPU,Accumulator pre-charge check,365,TBM,CH-DOC-OM-0101 ch. 10,Active,
 PM-ANN,CCD-U1/U2/U3-TUR,"Annual unit inspection: runner, draft tube cone, wicket gates, shear pins, shaft seal",365,Inspection,CH-DOC-OM-0101 ch. 10,Active,Draft tube cone NDT after > 50 h/year in rough zone
-PM-JB,CCD-U1/U2/U3-MON-JB04,Inspect CH element-B RTD connectors and glands in wet areas,182,Inspection,CH-SB-2026-03,Proposed,"PROPOSED 2026-10-12 (FMECA FM-06), not yet scheduled"
+PM-JB,CCD-U1/U2/U3-MON-JB04,Inspect CH PLC RTD connectors and cable glands in wet areas,182,Inspection,CH-SB-2026-03,Proposed,"PROPOSED 2026-10-12 (FMECA FM-06), not yet scheduled"
 PM-RAK,CCD-INT-RAK,Trash rack raker inspection,91,Inspection,DRWPA,Active,Plant level

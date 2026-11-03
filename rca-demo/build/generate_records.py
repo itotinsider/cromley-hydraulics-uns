@@ -79,8 +79,8 @@ def asset_register():
             ("BRG-UGB", "Upper guide bearing", "Maintainable item", "A", ""),
             ("BRG-LGB", "Lower guide bearing", "Maintainable item", "A", ""),
             ("BRG-TGB", "Turbine guide bearing, oil bath", "Maintainable item", "A", {
-                "Unit1": "Pads re-babbitted 2019 by Desert Bearing Services. Pad 3 radial clearance measured 0.36 mm "
-                         "(design 0.30 +/- 0.05), accepted on CH concession CH-CON-2019-017: trend pad 3 temperature.",
+                "Unit1": "Pads re-babbitted 2019 by Desert Bearing Services. Pad 3 radial clearance measured 0.24 mm "
+                         "(design 0.30 +/- 0.05, tight), accepted on CH concession CH-CON-2019-017: trend pad 3 temperature.",
                 "Unit2": "Pads re-scraped after wipe 2023 (RCA-2023-004), clearances in tolerance.",
                 "Unit3": ""}[unit]),
             ("LUB", "Bearing lubrication (4 oil pots, ISO VG 68)", "Subunit", "A", ""),
@@ -94,7 +94,7 @@ def asset_register():
             ("INV", "Butterfly inlet valve DN 3200", "Subunit", "A", ""),
             ("GEN", "Generator (rotor, stator, air coolers)", "Subunit", "A", "Not CH supply"),
             ("MON-PLC", "CH monitoring PLC (retrofit 2026)", "Subunit", "B", "Commissioned Sep 2026, publishes the CH tree"),
-            ("MON-JB04", f"Junction box JB-{u}-04, headcover pit (TGB RTDs, element B)", "Maintainable item", "C",
+            ("MON-JB04", f"Junction box JB-{u}-04, headcover pit (TGB RTDs to CH PLC)", "Maintainable item", "C",
              "Wet area"),
         ]
         for code, d, lvl, crit, note in sub:
@@ -238,7 +238,7 @@ PM = [
     ("PM-ACC", "GOV-HPU", "Accumulator pre-charge check", 365, "TBM", "CH-DOC-OM-0101 ch. 10", ""),
     ("PM-ANN", "TUR", "Annual unit inspection: runner, draft tube cone, wicket gates, shear pins, shaft seal", 365,
      "Inspection", "CH-DOC-OM-0101 ch. 10", "Draft tube cone NDT after > 50 h/year in rough zone"),
-    ("PM-JB", "MON-JB04", "Inspect CH element-B RTD connectors and glands in wet areas", 182, "Inspection",
+    ("PM-JB", "MON-JB04", "Inspect CH PLC RTD connectors and cable glands in wet areas", 182, "Inspection",
      "CH-SB-2026-03", "PROPOSED 2026-10-12 (FMECA FM-06), not yet scheduled"),
     ("PM-RAK", "INT-RAK", "Trash rack raker inspection", 91, "Inspection", "DRWPA", "Plant level"),
 ]
@@ -268,10 +268,10 @@ def sample_dates():
     d = []
     for y in range(2021, 2025):
         for m in (2, 5, 8, 11):
-            d.append(dt.date(y, m, 10 + rng.randint(0, 8)))
+            d.append(dt.date(y, m, 9))
     for y in (2025, 2026):
         for m in (2, 8):
-            d.append(dt.date(y, m, 12 + rng.randint(0, 6)))
+            d.append(dt.date(y, m, 9))
     return d
 
 
@@ -330,6 +330,11 @@ def oil_analysis(wo_log):
                      tin_Sn_ppm=31.5, iron_Fe_ppm=6.2, copper_Cu_ppm=1.4, iso4406="20/18/15", mpc_dE=13,
                      status="Action", lab_comment="Post-event sample. Babbitt particles present (tin 31.5 ppm). "
                                                   "Change oil, flush, inspect bearing."))
+    rows.append(dict(sample_id="MLL-2025-00703", sample_date="2025-09-04", unit="Unit1", serial=UNITS["Unit1"],
+                     compartment="TGB", lab=OIL_LAB, viscosity_40C_cSt=70.1, tan_mgKOH_g=0.31, water_ppm=104,
+                     tin_Sn_ppm=8.3, iron_Fe_ppm=3.9, copper_Cu_ppm=1.1, iso4406="16/14/12", mpc_dE=22,
+                     status="Caution", lab_comment="Resample. Results confirm August: oxidation and tin trend. "
+                                                   "Monitor at next routine sample; consider oil change."))
     rows.sort(key=lambda r: (r["sample_date"], r["unit"], r["compartment"]))
     write("oil-analysis_2021-2026.csv",
           ["sample_id", "sample_date", "unit", "serial", "compartment", "lab", "viscosity_40C_cSt", "tan_mgKOH_g",
@@ -355,7 +360,8 @@ def work_orders():
             cause="", det="", down=0, lab=None, prio="3", rep=None, ass=None, links="", number=None):
         created = created if isinstance(created, dt.date) else dt.date.fromisoformat(created)
         if completed is None and status == "CLOSED":
-            completed = created + dt.timedelta(days=rng.randint(0, 6))
+            same_day = typ == "MOD" or short.startswith(("Bearing oil sampling", "HPU oil sample"))
+            completed = created + dt.timedelta(days=0 if same_day else rng.randint(0, 6))
         rows.append(dict(wo_number=number or wo_no(created.year), created=created.isoformat(),
                          completed=completed.isoformat() if isinstance(completed, dt.date) else (completed or ""),
                          status=status, type=typ, priority=prio, functional_location=fl, unit=unit, short_text=short,
@@ -384,7 +390,7 @@ def work_orders():
                     add(d, "Change HPU pressure filter element", f"CCD-{u}-GOV-HPU", unit, long=f"Filter DP before change {round(rng.uniform(0.6, 1.4), 1)} bar.", lab=2)
                     add(d, "Accumulator pre-charge check", f"CCD-{u}-GOV-HPU", unit, long="Pre-charge in tolerance.", lab=2)
             # annual inspection
-            ann = dt.date(y, {"Unit1": 10, "Unit2": 10, "Unit3": 11}[unit], {"Unit1": 4, "Unit2": 18, "Unit3": 1}[unit])
+            ann = dt.date(y, {"Unit1": 10, "Unit2": 10, "Unit3": 3}[unit], {"Unit1": 4, "Unit2": 18, "Unit3": 2}[unit])
             if ann <= TODAY and not (unit == "Unit2" and y == 2025):
                 add(ann, "Annual unit inspection", f"CCD-{u}-TUR", unit, typ="INS", completed=ann + dt.timedelta(days=4),
                     long="Runner, draft tube cone, wicket gates, shear pins and shaft seal inspected. No findings requiring action."
@@ -460,7 +466,7 @@ def work_orders():
         long="Unit 2 tripped 04:12 on TGB temperature (pad 1 element, 90 C). Cooling water total flow found at 48 L/s, "
              "strainer DP 0.62 bar, basket full of silt (spring runoff). TGB inspected: pads 1-4 lightly wiped, re-scraped "
              "by CH field service. Oil changed and pot flushed. Strainer cleaned. See RCA-2023-004.",
-        fm="OHE", mech="2.7 Overheating", cause="5.1 Blockage (upstream cooling); 3.3 Maintenance error", det="6 Production interference",
+        fm="OHE", mech="2.7 Overheating", cause="3.3 Maintenance error", det="6 Production interference",
         down=238, lab=180, rep=PEOPLE["ssC"], ass=PEOPLE["mech"], links="RCA-2023-004", number="WO-2023-0204")
     add("2023-04-03", "Add monthly strainer cleaning Mar-Jun (MOC-2023-006)", "CCD-U1/U2/U3-CW-STR", typ="MOD",
         long="PM plan updated: monthly strainer cleaning March to June on all units.", links="RCA-2023-004; MOC-2023-006",
@@ -525,22 +531,22 @@ def work_orders():
         "Deferred 2026-09-02: technicians on CH retrofit outages. New date not set.",
         rep=PEOPLE["plan"], ass=PEOPLE["tech2"], lab=0, links="MLL Aug 2026", number="WO-2026-0672")
     # punch list
-    add("2026-09-12", "Punch: U1 TGB pad 4 reads ~1 K above pads 2/3", "CCD-U1-MON-PLC", "Unit1", typ="CM",
+    add("2026-09-12", "Punch: U1 TGB pad 4 reads 1-3 K above the other pads", "CCD-U1-MON-PLC", "Unit1", typ="CM",
         long="Checked loop resistance and calibration: ok. Fixed pad offset, consistent with CH manual 4.3. Accepted.",
         ass=PEOPLE["ic2"], rep=PEOPLE["ch"], lab=2, number="WO-2026-0912")
     add("2026-09-19", "Punch: U2 keyphasor gap adjust", "CCD-U2-MON-PLC", "Unit2", typ="CM", long="Gap set to 1.5 mm.",
         ass=PEOPLE["ic2"], rep=PEOPLE["ch"], lab=1, number="WO-2026-0921")
     # PLANTED: open gland (G)
-    add("2026-09-26", "Punch: U3 JB-U3-04 cable gland TGB elem B not fully tightened", "CCD-U3-MON-JB04", "Unit3",
+    add("2026-09-26", "Punch: U3 JB-U3-04 cable gland TGB RTD cable not fully tightened", "CCD-U3-MON-JB04", "Unit3",
         typ="CM", status="OPEN", prio="4", completed="",
-        long="CH commissioning punch item. Gland for the TGB element-B cable in JB-U3-04 (headcover pit) not fully tightened, "
+        long="CH commissioning punch item. Gland for the TGB RTD cable to the CH PLC (pad 1 element B and pads 2-4) in JB-U3-04 (headcover pit) not fully tightened, "
              "seal insert missing from site stock. Temporary tape. Schedule with next U3 outage.",
         ass=PEOPLE["ic2"], rep=PEOPLE["ch"], lab=0, number="WO-2026-0753")
     add("2026-07-08", "U3 headcover sump pump replaced", "CCD-U3-TUR", "Unit3", typ="CM",
         long="Pump running continuously, impeller worn. Replaced. Pit was flooded to 20 cm for ~2 h.",
         fm="LOO", mech="2.4 Wear", cause="3.4 Expected wear and tear", det="7 Casual observation", lab=6)
     add("2026-10-21", "U3 strainer DP 0.35 bar after rain, cleaned", "CCD-U3-CW-STR", "Unit3", typ="CM",
-        long="DP before 0.35 bar, after 0.05.", fm="PLU", mech="5.1 Blockage/plugged", cause="5.3 Miscellaneous external",
+        long="DP before 0.35 bar, after 0.05.", fm="PLU", mech="5.1 Blockage/plugged", cause="3.4 Expected wear and tear",
         det="3 Inspection", lab=2)
     # PLANTED: bypass enabled again (C)
     add("2026-11-02", "Enable rough-zone bypass U2 for regulation reserve trial (MOC-2026-019)", "CCD-CTL", "Unit2",
@@ -619,12 +625,24 @@ def shift_log():
         "Raker ran twice, rack DP normal.",
         "Quiet shift. All units in PLANT mode.",
     ]
+    outage = [("Unit1", dt.date(2026, 9, 8), dt.date(2026, 9, 12)), ("Unit2", dt.date(2026, 9, 15), dt.date(2026, 9, 19)),
+              ("Unit3", dt.date(2026, 9, 22), dt.date(2026, 9, 26)), ("Unit1", dt.date(2026, 10, 4), dt.date(2026, 10, 8)),
+              ("Unit2", dt.date(2026, 10, 18), dt.date(2026, 10, 22))]
     d = dt.date(2026, 9, 1)
     while d <= TODAY:
+        out = [u for u, a, b in outage if a <= d <= b]
         for shift, hour in (("A", 6), ("B", 14), ("C", 22)):
             if rng.random() < 0.55:
-                rows.append(dict(timestamp=f"{d.isoformat()}T{hour + rng.randint(1, 6):02d}:{rng.randint(0, 59):02d}",
-                                 shift=shift, supervisor=sup[shift], unit="", entry=rng.choice(routine)))
+                t = dt.datetime(d.year, d.month, d.day, hour) + dt.timedelta(minutes=rng.randint(30, 7 * 60))
+                if out:
+                    text = rng.choice([f"{out[0]} out of service (planned). Other units on AGC, no alarms.",
+                                       "Rounds complete. Strainer DPs normal. Nothing to report.",
+                                       "Grid frequency stable. Reservoir level steady."])
+                else:
+                    text = rng.choice(routine)
+                if t.date() <= TODAY and t < dt.datetime(2026, 11, 3, 13, 30):
+                    rows.append(dict(timestamp=t.strftime("%Y-%m-%dT%H:%M"), shift=shift, supervisor=sup[shift],
+                                     unit="", entry=text))
         d += dt.timedelta(days=1)
 
     def e(ts, shift, unit, text):
@@ -633,12 +651,16 @@ def shift_log():
     for unit, s in (("Unit1", 8), ("Unit2", 15), ("Unit3", 22)):
         e(f"2026-09-{s:02d}T06:30", "A", unit, f"{unit} stopped and isolated for CH monitoring PLC retrofit. Plant setpoint reduced to 80 MW.")
         e(f"2026-09-{s + 4:02d}T15:10", "B", unit, f"{unit} returned to service after CH PLC retrofit. CH viewer shows all channels.")
+    e("2026-10-04T06:20", "A", "Unit1", "Unit1 stopped for annual inspection.")
+    e("2026-10-08T14:50", "B", "Unit1", "Unit1 back in service after annual inspection.")
+    e("2026-10-18T06:25", "A", "Unit2", "Unit2 stopped for annual inspection.")
+    e("2026-10-22T15:30", "B", "Unit2", "Unit2 back in service after annual inspection. Draft tube cone checked, no new cracks.")
     e("2026-09-30T23:40", "C", "Unit3", "Heavy rain. U3 headcover sump pump running often, pit humid.")
     e("2026-10-08T09:15", "A", "", "System Ops (K. Doyle) asked whether units can hold part load for the new regulation reserve product. Referred to plant manager.")
     e("2026-10-14T16:20", "B", "Unit3", "U3 headcover pit humid again after rain, condensation on JB covers.")
     e("2026-10-20T07:45", "A", "Unit1", "U1 TGB temperature (control room) 66 C at 38 MW, about 1 C above usual for this load. Within limits.")
     e("2026-10-21T10:30", "A", "Unit3", "U3 strainer DP 0.35 bar after rain, cleaned by L. Ortega.")
-    e("2026-10-27T13:05", "B", "", "MOC-2026-019 raised by System Ops: Unit 2 regulation reserve trial from 3 Nov.")
+    e("2026-10-27T13:05", "A", "", "MOC-2026-019 raised by System Ops: Unit 2 regulation reserve trial from 3 Nov.")
     e("2026-10-29T22:50", "C", "Unit3", "U3 headcover sump pump starts higher than usual tonight. Pit humid.")
     e("2026-11-02T15:40", "B", "Unit2", "D. Whitaker enabled rough-zone bypass for Unit 2 per MOC-2026-019 (active from tomorrow 06:00). "
                                          "Reliability sign-off still pending, plant manager approved.")

@@ -86,7 +86,7 @@ The thrust bearing has a high-pressure oil lift (jacking) system, used during st
 
 ### 4.2 TGB pad clearance
 
-Design radial clearance of the TGB segments: **0.30 mm ± 0.05 mm**. Clearances above 0.35 mm reduce the load capacity of the oil film on that segment and raise its temperature. Any deviation shall be recorded on a CH concession form and the segment's temperature trended.
+Design radial clearance of the TGB segments: **0.30 mm ± 0.05 mm**. A segment set tighter than 0.25 mm runs hotter (more shear heating in a thinner film) and has less margin when the oil degrades. Clearances above 0.35 mm reduce damping and raise shaft vibration. Any deviation shall be recorded on a CH concession form and the segment's temperature trended.
 
 ### 4.3 Normal temperatures
 
@@ -97,7 +97,7 @@ At rated output, cooling water inlet 10–25 °C:
 | Thrust pads | 60 – 70 °C |
 | UGB / LGB pads | 55 – 66 °C |
 | TGB pads | 60 – 68 °C |
-| Oil baths (all bearings) | 50 – 58 °C |
+| Oil baths (all bearings) | 45 – 58 °C |
 | Pad-to-pad spread within one bearing | normally below 3 K; investigate above 5 K |
 
 Temperatures fall with load and rise about 0.7 K per K of cooling water inlet temperature. Pads closer to the oil inlet run slightly cooler; a fixed offset of 1–2 K between pads is normal and stable.
@@ -238,7 +238,7 @@ The PLC alarm limits are those given in sections 4.5, 6, 7 and 8.3, plus stator 
 
 ### 9.4 Installation notes
 
-Element-B RTD extension cables run from each bearing to local junction boxes (JB-x-01 upper bracket, JB-x-02 lower bracket, JB-x-04 headcover pit) and from there to the PLC cabinet. Connectors are M12, IP67 when fully mated and with the cable gland fully tightened. The headcover pit is a wet area; see service bulletin CH-SB-2026-03.
+RTD extension cables to the CH PLC (pad 1 element B and pads 2..n) run from each bearing to local junction boxes (JB-x-01 upper bracket, JB-x-02 lower bracket, JB-x-04 headcover pit) and from there to the PLC cabinet. Connectors are M12, IP67 when fully mated and with the cable gland fully tightened. The headcover pit is a wet area; see service bulletin CH-SB-2026-03.
 
 ## 10 Maintenance recommendations
 

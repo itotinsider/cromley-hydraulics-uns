@@ -91,7 +91,7 @@ def table_flowable(rows, st, h, width):
         data.append([Paragraph(inline(c), st["cell"]) for c in r])
     # column widths from text length, clamped
     lens = [max(len(str(r[i])) if i < len(r) else 0 for r in rows) for i in range(ncol)]
-    lens = [min(max(l, 6), 60) for l in lens]
+    lens = [min(max(l, 12), 60) for l in lens]
     tot = sum(lens)
     widths = [width * l / tot for l in lens]
     t = Table(data, colWidths=widths, repeatRows=1)
@@ -220,7 +220,24 @@ def render(src_path):
         story += [t, Spacer(1, 10)]
     story += build_story(lines, st, h, width)
     doc.build(story, onFirstPage=decorate, onLaterPages=decorate)
+    stamp(out, meta.get("date", ""), h["brand"])
     return out
+
+
+def stamp(path, date, creator):
+    """Set the PDF's creation date to the document date (not the build date)."""
+    try:
+        from pypdf import PdfReader, PdfWriter
+    except ImportError:
+        return
+    if not re.match(r"\d{4}-\d{2}-\d{2}$", date or ""):
+        return
+    r = PdfReader(path)
+    w = PdfWriter(clone_from=r)
+    d = "D:" + date.replace("-", "") + "090000"
+    w.add_metadata({**(r.metadata or {}), "/CreationDate": d, "/ModDate": d, "/Creator": creator, "/Producer": creator})
+    with open(path, "wb") as f:
+        w.write(f)
 
 
 if __name__ == "__main__":

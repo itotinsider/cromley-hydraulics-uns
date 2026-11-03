@@ -50,7 +50,7 @@ HPU, cooling). Commissioning punch list partly open.
 | --- | --- |
 | `supplier/CH-DOC-OM-0101_...O-and-M-Manual_Rev4.pdf` | All: limits, rough zone table, troubleshooting tables |
 | `supplier/CH-DOC-DWG-0102_...Schematics_Rev2.pdf` | All: bearing arrangement, cooling circuits (TGB on its own TB circuit), RTD element A/B wiring |
-| `supplier/CH-SB-2026-03_...Service-Bulletin.pdf` | G: known moisture issue on element-B M12 connectors |
+| `supplier/CH-SB-2026-03_...Service-Bulletin.pdf` | G: known moisture issue on CH PLC RTD M12 connectors |
 | `drwpa/records/asset-register.csv` | All: hierarchy, serials, maintainable items |
 | `drwpa/records/fmeca_ch-francis-unit.csv` | All: hypotheses the bot may test; detection tied to real topics |
 | `drwpa/records/pm-plan.csv` | A: TGB oil change 48 months, sampling 6 months (after MOC-2025-004) |
@@ -81,13 +81,16 @@ Cooling flows, draft tube and gate position stay normal.
   RCA-2023-004); sensor fault (neighbouring pads and oil temperature move with it; OP-07 check passes);
   rough-zone operation (gate ~75 %, outside 35–70 %; no draft-tube pulsation); misalignment/unbalance
   (no 2X, 1X stable).
-- **Physical root:** loss of oil film on TGB pad 3 (babbitt distress starting), on a pad with
-  clearance at the upper tolerance (concession CH-CON-2019-017) running in oxidising oil (TAN 0.38,
+- **Physical root:** loss of oil film on TGB pad 3 (babbitt distress starting), on a pad set
+  tighter than tolerance (0.24 mm, concession CH-CON-2019-017) running in oxidising oil (TAN 0.38,
   MPC 28, tin 14 ppm in August 2026, all at "Caution" per the CH manual).
-- **Human root:** the August 2026 "Caution" oil result asked for a resample in 30 days; the resample
-  work order WO-2026-0672 was deferred during the CH retrofit outage and never rescheduled.
-- **Latent roots:** MOC-2025-004 extended TGB oil change and sampling intervals for cost reasons;
-  the reliability engineer's comment to keep TGB sampling quarterly was not incorporated; no rule to
+- **Human root:** U1 TGB oil has been at "Caution" since February 2025; each result was handled as
+  "monitor" (one resample in September 2025, no oil change). The August 2026 result asked for a
+  resample in 30 days; WO-2026-0672 was deferred during the CH retrofit outages and never rescheduled.
+- **Latent roots:** MOC-2025-004 extended TGB oil change and sampling intervals for cost reasons and
+  cancelled the U1 TGB oil change due in January 2025; it was raised and approved by the same person
+  (Ray Okafor), and the reliability engineer's conditional sign-off (keep TGB sampling quarterly) was not
+  incorporated; the PM interval now deviates from the CH recommendation (quarterly, max 36 months); no rule to
   escalate "Caution" lab results; customer protection only sees pad 1, so pad 3 is invisible to the
   control room.
 - **Good recommendations:** reduce load and plan a stop for TGB inspection; take an oil sample now;
@@ -107,7 +110,7 @@ A and vibration stay flat.
 - **Event:** CH PLC alarm TGB_PAD02_H on Unit 3; no corroborating signals.
 - **Key reasoning:** a real pad problem raises its neighbours and the oil (compare scenario A);
   one channel moving alone points to the measurement. OP-07 says: validate before stopping.
-- **Physical root:** moisture in the element-B M12 connector / cable gland in the humid headcover
+- **Physical root:** moisture in the M12 connector / cable gland of the TGB RTD cable to the CH PLC in the humid headcover
   pit junction box (CH-SB-2026-03 describes this).
 - **Human root:** retrofit punch item WO-2026-0753 (gland not fully tightened, Unit 3 headcover pit)
   left open at handover.
@@ -115,7 +118,7 @@ A and vibration stay flat.
   only reflects communication, not plausibility; no automatic cross-check of RTD elements.
 - **Good recommendations:** do **not** stop the unit (avoid a repeat of RCA-2024-011's 14 h outage);
   dry and reseal the connector, close WO-2026-0753; add a plausibility check (pad vs. neighbours and
-  oil) in the CH PLC or edge; check all element-B glands in wet areas.
+  oil) in the CH PLC or edge; check all CH PLC RTD connectors and glands in wet areas.
 
 ## Scenario C: AGC parks Unit 2 in the rough zone
 
@@ -144,8 +147,10 @@ MW swings; TGB pads a few K warmer. Units 1 and 3 carry the rest at ~42 MW, the 
 
 ## Red herrings and noise (on purpose)
 
-- About 15 % of work orders have missing or vague failure codes and free-text descriptions.
-- Unit 1 TGB pad 4 reads ~1 K above its neighbours (noted at retrofit commissioning and accepted):
+- About a third of the corrective work orders have missing or vague failure codes and free-text descriptions.
+- Unit 1 TGB pad 4 reads 1–3 K above the other pads (noted at retrofit commissioning and accepted):
   true in the data, normal per the CH manual (fixed pad offsets), and not related to A.
-- Unit 3 had a real cooling-water strainer clean in 2026; irrelevant to G.
+- Unit 3 had a real cooling-water strainer clean in October 2026; irrelevant to G.
+- Unit 3's annual inspection is in March, so the open gland punch item ("next U3 outage") has had no
+  outage to be done in.
 - The 2023 TGB event (cooling loss) is the "obvious" explanation for A; the data rules it out.

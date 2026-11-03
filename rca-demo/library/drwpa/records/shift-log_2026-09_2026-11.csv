@@ -1,121 +1,125 @@
 timestamp,shift,supervisor,unit,entry
-2026-09-01T28:38,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
-2026-09-02T07:39,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
-2026-09-02T16:18,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
-2026-09-03T24:48,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
-2026-09-04T11:39,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-04T18:34,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-09-05T27:30,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-06T09:11,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
-2026-09-06T16:36,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-09-07T19:04,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-07T23:12,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-02T01:58,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-09-02T07:06,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-02T14:47,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
+2026-09-03T10:53,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-03T20:00,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-09-04T00:51,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-09-04T10:03,A,Marcus Bell,,"Raker ran twice, rack DP normal."
+2026-09-04T18:15,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-09-05T03:07,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-09-05T12:51,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-06T18:08,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-09-07T03:42,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
 2026-09-08T06:30,A,Marcus Bell,Unit1,Unit1 stopped and isolated for CH monitoring PLC retrofit. Plant setpoint reduced to 80 MW.
-2026-09-08T12:21,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
-2026-09-08T23:57,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-09T15:40,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-09T24:32,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
-2026-09-10T12:22,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
-2026-09-10T19:02,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-09-11T20:41,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-12T10:06,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-09T00:46,C,Jake Lindqvist,,"Unit1 out of service (planned). Other units on AGC, no alarms."
+2026-09-09T11:49,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-09T23:49,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-10T09:13,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-11T08:13,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-12T01:28,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
 2026-09-12T15:10,B,Sofia Reyes,Unit1,Unit1 returned to service after CH PLC retrofit. CH viewer shows all channels.
-2026-09-12T20:53,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-13T09:55,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-14T12:46,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
-2026-09-14T24:49,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-09-13T08:25,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-09-13T17:18,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-09-14T01:58,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
+2026-09-14T12:18,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
 2026-09-15T06:30,A,Marcus Bell,Unit2,Unit2 stopped and isolated for CH monitoring PLC retrofit. Plant setpoint reduced to 80 MW.
-2026-09-15T25:15,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-16T12:35,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-16T16:35,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-16T27:25,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-17T08:08,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
-2026-09-17T20:01,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-17T23:12,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
-2026-09-18T09:14,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-18T15:03,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-18T24:33,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
-2026-09-19T12:36,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-15T07:45,A,Marcus Bell,,"Unit2 out of service (planned). Other units on AGC, no alarms."
+2026-09-16T02:32,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-17T04:45,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-17T12:16,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-17T17:14,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-18T19:14,B,Sofia Reyes,,"Unit2 out of service (planned). Other units on AGC, no alarms."
+2026-09-19T07:36,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
 2026-09-19T15:10,B,Sofia Reyes,Unit2,Unit2 returned to service after CH PLC retrofit. CH viewer shows all channels.
-2026-09-20T11:46,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-20T19:14,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
-2026-09-21T08:47,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-19T16:58,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-20T08:02,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-20T18:58,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
+2026-09-21T00:27,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-09-21T10:17,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
 2026-09-22T06:30,A,Marcus Bell,Unit3,Unit3 stopped and isolated for CH monitoring PLC retrofit. Plant setpoint reduced to 80 MW.
-2026-09-23T24:19,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-09-24T12:52,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-09-24T28:43,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
-2026-09-25T11:07,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-09-25T15:19,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-09-22T11:12,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-22T20:13,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-23T00:08,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-23T10:18,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-23T19:17,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-24T06:57,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-25T00:15,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-25T09:21,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-25T23:15,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-09-26T07:04,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-26T14:43,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
 2026-09-26T15:10,B,Sofia Reyes,Unit3,Unit3 returned to service after CH PLC retrofit. CH viewer shows all channels.
-2026-09-27T07:30,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-27T16:00,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-09-27T26:47,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
-2026-09-28T11:01,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
-2026-09-28T17:21,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
-2026-09-28T25:37,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
-2026-09-29T17:25,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-09-29T24:51,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-09-30T07:20,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-09-27T00:33,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-09-27T06:59,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-09-27T19:25,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
+2026-09-28T04:06,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-09-28T12:04,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-29T02:37,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-09-29T18:43,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-09-30T08:59,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
 2026-09-30T23:40,C,Jake Lindqvist,Unit3,"Heavy rain. U3 headcover sump pump running often, pit humid."
-2026-09-30T27:13,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-01T19:46,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-10-02T27:12,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-03T18:31,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-10-03T28:21,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
-2026-10-04T23:44,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
-2026-10-05T10:43,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
-2026-10-05T24:10,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-07T25:35,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-10-01T11:54,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-10-02T00:11,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-10-03T00:44,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-03T13:00,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-10-03T14:49,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-04T04:24,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-04T06:20,A,Marcus Bell,Unit1,Unit1 stopped for annual inspection.
+2026-10-04T11:16,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-04T23:40,C,Jake Lindqvist,,"Unit1 out of service (planned). Other units on AGC, no alarms."
+2026-10-05T09:06,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-10-05T15:45,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-06T11:41,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-06T22:59,C,Jake Lindqvist,,"Unit1 out of service (planned). Other units on AGC, no alarms."
+2026-10-07T06:46,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-10-07T18:59,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-10-08T03:51,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
 2026-10-08T09:15,A,Marcus Bell,,System Ops (K. Doyle) asked whether units can hold part load for the new regulation reserve product. Referred to plant manager.
-2026-10-08T10:55,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-08T16:32,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
-2026-10-09T09:19,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-09T24:16,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-10T24:52,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-11T07:05,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-12T17:31,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-10-12T27:10,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
-2026-10-13T15:44,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-13T27:38,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-08T14:50,B,Sofia Reyes,Unit1,Unit1 back in service after annual inspection.
+2026-10-08T19:21,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-10-09T03:08,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-10-09T09:23,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-10-09T19:19,B,Sofia Reyes,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-12T23:59,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-10-13T07:21,A,Marcus Bell,,"Raker ran twice, rack DP normal."
+2026-10-14T04:25,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-10-14T11:11,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
 2026-10-14T16:20,B,Sofia Reyes,Unit3,"U3 headcover pit humid again after rain, condensation on JB covers."
-2026-10-14T27:19,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
-2026-10-15T11:44,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-10-15T28:59,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
-2026-10-16T23:52,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-18T12:37,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-18T18:02,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
-2026-10-19T24:21,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-10-14T19:36,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-10-15T00:55,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-10-16T06:52,A,Marcus Bell,,"Raker ran twice, rack DP normal."
+2026-10-17T00:09,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-10-17T09:49,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-10-17T18:59,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-10-18T01:23,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
+2026-10-18T06:25,A,Marcus Bell,Unit2,Unit2 stopped for annual inspection.
+2026-10-18T12:34,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-19T01:38,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-19T09:54,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-19T20:59,B,Sofia Reyes,,"Unit2 out of service (planned). Other units on AGC, no alarms."
+2026-10-20T06:52,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
 2026-10-20T07:45,A,Marcus Bell,Unit1,"U1 TGB temperature (control room) 66 C at 38 MW, about 1 C above usual for this load. Within limits."
-2026-10-20T08:07,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-10-20T18:25,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
-2026-10-21T09:45,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-10-20T22:32,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
 2026-10-21T10:30,A,Marcus Bell,Unit3,"U3 strainer DP 0.35 bar after rain, cleaned by L. Ortega."
-2026-10-21T28:09,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-24T08:10,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
-2026-10-24T20:17,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
-2026-10-24T27:44,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
-2026-10-25T16:27,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
-2026-10-25T23:16,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
-2026-10-26T08:57,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-10-26T23:21,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-27T08:29,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-10-27T13:05,B,Sofia Reyes,,MOC-2026-019 raised by System Ops: Unit 2 regulation reserve trial from 3 Nov.
-2026-10-27T18:50,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
-2026-10-27T26:27,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-29T16:08,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
+2026-10-21T12:45,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-10-21T19:10,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-10-22T15:30,B,Sofia Reyes,Unit2,"Unit2 back in service after annual inspection. Draft tube cone checked, no new cracks."
+2026-10-23T11:18,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-23T17:24,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-10-24T02:45,C,Jake Lindqvist,,"Raker ran twice, rack DP normal."
+2026-10-24T12:11,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-10-25T00:36,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-10-25T12:28,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
+2026-10-25T18:08,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
+2026-10-26T07:49,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
+2026-10-27T13:05,A,Marcus Bell,,MOC-2026-019 raised by System Ops: Unit 2 regulation reserve trial from 3 Nov.
+2026-10-29T08:38,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-10-29T15:33,B,Sofia Reyes,,"Raker ran twice, rack DP normal."
 2026-10-29T22:50,C,Jake Lindqvist,Unit3,U3 headcover sump pump starts higher than usual tonight. Pit humid.
-2026-10-29T24:33,C,Jake Lindqvist,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-30T08:34,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
-2026-10-30T17:40,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-10-30T24:55,C,Jake Lindqvist,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-31T12:38,A,Marcus Bell,,Rounds complete. Strainer DPs normal. Nothing to report.
-2026-10-31T15:43,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
-2026-11-01T12:00,A,Marcus Bell,,Grid frequency stable. Reservoir level steady.
-2026-11-01T17:13,B,Sofia Reyes,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
-2026-11-01T25:19,C,Jake Lindqvist,,Grid frequency stable. Reservoir level steady.
-2026-11-02T11:31,A,Marcus Bell,,Quiet shift. All units in PLANT mode.
+2026-10-30T15:45,B,Sofia Reyes,,Quiet shift. All units in PLANT mode.
+2026-11-01T11:57,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
+2026-11-02T03:30,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
 2026-11-02T15:40,B,Sofia Reyes,Unit2,"D. Whitaker enabled rough-zone bypass for Unit 2 per MOC-2026-019 (active from tomorrow 06:00). Reliability sign-off still pending, plant manager approved."
-2026-11-02T17:19,B,Sofia Reyes,,Grid frequency stable. Reservoir level steady.
 2026-11-03T06:05,A,Marcus Bell,Unit2,Regulation reserve trial started. U2 on part load per plant controller. U1 and U3 near 42 MW.
-2026-11-03T11:40,A,Marcus Bell,,"Raker ran twice, rack DP normal."
-2026-11-03T24:21,C,Jake Lindqvist,,Quiet shift. All units in PLANT mode.
+2026-11-03T07:13,A,Marcus Bell,,"Plant on AGC, setpoint 110 MW. All units generating. No alarms."
