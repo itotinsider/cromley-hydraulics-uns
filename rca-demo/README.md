@@ -35,7 +35,10 @@ python3 rca-demo/build/render_pdf.py         # PDFs from build/src/*.md (ReportL
 python3 rca-demo/build/draw_schematics.py    # CH-DOC-DWG-0102 schematic sheets
 ```
 
-Requires Python 3 with `reportlab`. Values (limits, normal ranges, rough zone) match the
+Requires Python 3 with `reportlab` and `pypdf` (without `pypdf` the PDFs get the build date and
+ReportLab as producer instead of the document date and author). Without installing anything:
+`docker run --rm -v "$PWD":/w -w /w python:3.12-slim sh -c "pip install -q reportlab pypdf && python rca-demo/build/render_pdf.py"`.
+Values (limits, normal ranges, rough zone) match the
 simulators (`common/turbine.py`, `chplc/model.py`, `damsim/model.py`); change them together.
 
 ## Not included yet
