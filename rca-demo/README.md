@@ -55,7 +55,7 @@ from 06:00 on 3 Nov. On top of that it plays one failure and the shift's respons
 
 | Scenario folder | Period (plant time, MST) | Failure | Event |
 | --- | --- | --- | --- |
-| `history/scenario-A/` | 13 Oct – 3 Nov 2026 11:30 | Unit 1 TGB pad 3 loses its oil film: slow creep from 14 Oct, faster from 1 Nov | CH H alarm unseen overnight; HH ~08:50 on 3 Nov; OP-07: load to 34 MW, controlled stop ~09:40 |
+| `history/scenario-A/` | 13 Oct – 3 Nov 2026 11:30 | Unit 1 TGB pad 3 loses its oil film: slow creep from 14 Oct, faster from 1 Nov | CH H alarm unseen overnight; HH 09:00 on 3 Nov; OP-07: load to 34 MW at 09:14, controlled stop 09:48 |
 
 The fault follows a severity profile (`SEV_A`, a P-F curve) instead of the scenario's linear ramp.
 Output: 1-minute averages for the whole period and 1-second values from 08:00 on the event day,
