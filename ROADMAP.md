@@ -80,7 +80,14 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 
 ## In progress
 
-(nothing yet)
+### `rca-demo-documents` — Document set for an RCA bot demo
+- **Status:** 🚧 In progress · **Owner:** Claude (for Willem) · **Branch:** `rca-demo-documents` · **PR:** —
+- **Goal:** a document library for a root cause analysis (RCA) bot used by Copper Canyon Dam's own maintenance and reliability team: supplier O&M manual, schematics and service bulletin (CH); asset register, FMECA, PM plan, work orders, oil analysis, MOC register, shift log, procedures and three previous RCA reports (DRWPA). Clues planted for scenarios A, G and C; answer key kept outside the library.
+- **Touches:** new folder `rca-demo/` only (no code, topics, commands or scenarios change). One line in `CLAUDE.md` (layout).
+- **Reserves:** —
+- **Depends on:** —
+- **Done when:** library and answer key reviewed by Willem; values match the simulators; `rca-demo/README.md` explains rebuild and use.
+- **Notes:** 2026-11-03 Claude: next step is historian data (weeks of pre-event trends), see `rca-demo/README.md`.
 
 ## Planned
 

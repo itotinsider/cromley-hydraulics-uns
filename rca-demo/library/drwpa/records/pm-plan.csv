@@ -1,0 +1,11 @@
+task_id,functional_location,task,interval_days,type,basis,status,notes
+PM-OIL-BRG,CCD-U1/U2/U3-LUB,"Bearing oil sampling, all 4 pots (Thrust, UGB, LGB, TGB)",182,CBM,MOC-2025-004 (was 91 days per CH-DOC-OM-0101),Active,Interval extended Feb 2025
+PM-OIL-CHG,CCD-U1/U2/U3-LUB,Bearing oil change (per pot),1461,TBM,"MOC-2025-004 (was 730 days; CH recommends on condition, max 36 months)",Active,Interval extended Feb 2025
+PM-STR,CCD-U1/U2/U3-CW-STR,"Clean unit cooling water strainer, record DP before/after",91,TBM,CH-DOC-OM-0101 ch. 6,Active,Monthly Mar-Jun (MOC-2023-006)
+PM-CLR,CCD-U1/U2/U3-CW,Inspect/clean bearing oil coolers,730,TBM,CH-DOC-OM-0101 ch. 10,Active,
+PM-HPU-OIL,CCD-U1/U2/U3-GOV-HPU,HPU oil sample,182,CBM,CH-DOC-OM-0101 ch. 10,Active,
+PM-HPU-FLT,CCD-U1/U2/U3-GOV-HPU,Change HPU pressure filter element,365,TBM,CH-DOC-OM-0101 ch. 10,Active,
+PM-ACC,CCD-U1/U2/U3-GOV-HPU,Accumulator pre-charge check,365,TBM,CH-DOC-OM-0101 ch. 10,Active,
+PM-ANN,CCD-U1/U2/U3-TUR,"Annual unit inspection: runner, draft tube cone, wicket gates, shear pins, shaft seal",365,Inspection,CH-DOC-OM-0101 ch. 10,Active,Draft tube cone NDT after > 50 h/year in rough zone
+PM-JB,CCD-U1/U2/U3-MON-JB04,Inspect CH element-B RTD connectors and glands in wet areas,182,Inspection,CH-SB-2026-03,Proposed,"PROPOSED 2026-10-12 (FMECA FM-06), not yet scheduled"
+PM-RAK,CCD-INT-RAK,Trash rack raker inspection,91,Inspection,DRWPA,Active,Plant level
