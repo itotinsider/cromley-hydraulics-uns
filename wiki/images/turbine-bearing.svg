@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" width="1500" height="1000" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>Turbine guide bearing: pads, oil film and sensors</title>
+  <defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#f2f3f5"/><line x1="0" y1="0" x2="0" y2="7" stroke="#8c959f" stroke-width="1"/></pattern>
+    <pattern id="steel" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="7" height="7" fill="#dfe3e8"/><line x1="0" y1="0" x2="0" y2="7" stroke="#a3abb5" stroke-width="1"/></pattern>
+    <marker id="dot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5"><circle cx="5" cy="5" r="4" fill="#57606a"/></marker>
+    <marker id="arrK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#24292f"/></marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b8692e"/></marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="1499" height="999" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="24" y="38" font-size="20" font-weight="700" fill="#24292f">Turbine guide bearing (TGB): pads, oil film and sensors</text>
+  <text x="24" y="60" font-size="13" fill="#57606a">Section A–A from the unit drawing, looking down, and detail B: one pad, unrolled. Not to scale: the oil film is drawn hundreds of times too thick.</text>
+  <text x="24" y="100" font-size="14" font-weight="700" fill="#24292f">SECTION A–A</text>
+
+<circle cx="330" cy="400" r="190" fill="url(#hatch)" stroke="#24292f" stroke-width="2"/>
+<circle cx="330" cy="400" r="166" fill="#fbf1d0" stroke="#24292f" stroke-width="1.5"/>
+<path d="M373.9,256.6 A150,150 0 0 1 473.4,356.1 L441.9,365.8 A117,117 0 0 0 364.2,288.1 Z" fill="url(#steel)" stroke="#24292f" stroke-width="1.6"/>
+<path d="M364.2,288.1 A117,117 0 0 1 441.9,365.8 L434.2,368.1 A109,109 0 0 0 361.9,295.8 Z" fill="#e9c75b" stroke="#24292f" stroke-width="1"/>
+<circle cx="441.7" cy="288.3" r="8" fill="#b9c0c8" stroke="#24292f" stroke-width="1.4"/>
+<text x="446.6" y="335.0" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">1</text>
+<path d="M473.4,443.9 A150,150 0 0 1 373.9,543.4 L364.2,511.9 A117,117 0 0 0 441.9,434.2 Z" fill="url(#steel)" stroke="#24292f" stroke-width="1.6"/>
+<path d="M441.9,434.2 A117,117 0 0 1 364.2,511.9 L361.9,504.2 A109,109 0 0 0 434.2,431.9 Z" fill="#e9c75b" stroke="#24292f" stroke-width="1"/>
+<circle cx="441.7" cy="511.7" r="8" fill="#b9c0c8" stroke="#24292f" stroke-width="1.4"/>
+<text x="400.0" y="521.6" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">2</text>
+<path d="M286.1,543.4 A150,150 0 0 1 186.6,443.9 L222.9,432.7 A112,112 0 0 0 297.3,507.1 Z" fill="url(#steel)" stroke="#24292f" stroke-width="1.6"/>
+<path d="M297.3,507.1 A112,112 0 0 1 222.9,432.7 L230.5,430.4 A104,104 0 0 0 299.6,499.5 Z" fill="#e9c75b" stroke="#24292f" stroke-width="1"/>
+<circle cx="218.3" cy="511.7" r="8" fill="#b9c0c8" stroke="#24292f" stroke-width="1.4"/>
+<text x="213.4" y="475.0" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">3</text>
+<path d="M288.4,545.2 A151,151 0 0 1 184.8,441.6 L231.0,428.4 A103,103 0 0 0 301.6,499.0 Z" fill="none" stroke="#b8692e" stroke-width="2.5" stroke-dasharray="6 3"/>
+<path d="M186.6,356.1 A150,150 0 0 1 286.1,256.6 L295.8,288.1 A117,117 0 0 0 218.1,365.8 Z" fill="url(#steel)" stroke="#24292f" stroke-width="1.6"/>
+<path d="M218.1,365.8 A117,117 0 0 1 295.8,288.1 L298.1,295.8 A109,109 0 0 0 225.8,368.1 Z" fill="#e9c75b" stroke="#24292f" stroke-width="1"/>
+<circle cx="218.3" cy="288.3" r="8" fill="#b9c0c8" stroke="#24292f" stroke-width="1.4"/>
+<text x="260.0" y="288.4" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">4</text>
+<circle cx="330" cy="400" r="100" fill="#ffffff" stroke="#24292f" stroke-width="2"/>
+<text x="330" y="394" text-anchor="middle" font-size="15" font-weight="700" fill="#24292f">SHAFT</text>
+<text x="330" y="414" text-anchor="middle" font-size="12" fill="#57606a">300 rpm</text>
+<path d="M271.7,378.8 A62,62 0 0 1 377.5,360.1" fill="none" stroke="#24292f" stroke-width="1.6" marker-end="url(#arrK)"/>
+<line x1="220" y1="400" x2="440" y2="400" stroke="#57606a" stroke-dasharray="14 4 3 4" stroke-width="0.8"/>
+<line x1="330" y1="290" x2="330" y2="510" stroke="#57606a" stroke-dasharray="14 4 3 4" stroke-width="0.8"/>
+<line x1="330.0" y1="297.0" x2="330.0" y2="178.0" stroke="#ffffff" stroke-width="12"/>
+<line x1="330.0" y1="297.0" x2="330.0" y2="178.0" stroke="#137a7f" stroke-width="8"/>
+<line x1="330.0" y1="297.0" x2="330.0" y2="178.0" stroke="#ffffff" stroke-width="2"/>
+<line x1="433.0" y1="400.0" x2="552.0" y2="400.0" stroke="#ffffff" stroke-width="12"/>
+<line x1="433.0" y1="400.0" x2="552.0" y2="400.0" stroke="#137a7f" stroke-width="8"/>
+<line x1="433.0" y1="400.0" x2="552.0" y2="400.0" stroke="#ffffff" stroke-width="2"/>
+<line x1="227.0" y1="400.0" x2="108.0" y2="400.0" stroke="#ffffff" stroke-width="12"/>
+<line x1="227.0" y1="400.0" x2="108.0" y2="400.0" stroke="#137a7f" stroke-width="8"/>
+<line x1="227.0" y1="400.0" x2="108.0" y2="400.0" stroke="#ffffff" stroke-width="2"/>
+<rect x="230.0" y="395.0" width="9" height="10" fill="#24292f"/>
+<circle cx="410.6" cy="300.5" r="5" fill="#3a6ea5" stroke="#ffffff" stroke-width="1.2"/>
+<circle cx="429.5" cy="319.4" r="5" fill="#137a7f" stroke="#ffffff" stroke-width="1.2"/>
+<circle cx="420.5" cy="490.5" r="5" fill="#137a7f" stroke="#ffffff" stroke-width="1.2"/>
+<circle cx="242.3" cy="487.7" r="5" fill="#137a7f" stroke="#ffffff" stroke-width="1.2"/>
+<circle cx="239.5" cy="309.5" r="5" fill="#137a7f" stroke="#ffffff" stroke-width="1.2"/>
+<path d="M560,140 L334.0,180.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M560,140 L334.0,180.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="566" y="136" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Y proximity probe</text>
+<text x="566" y="154" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#137a7f">Vibration/TGB/ShaftY/Overall_um_pp + /Waveform</text>
+<text x="566" y="172" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">gap to the shaft surface, 1,000 samples/s</text>
+<path d="M560,212 L410.6,300.5" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M560,212 L410.6,300.5" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="566" y="208" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Pad 1: dual-element RTD</text>
+<text x="566" y="226" font-size="12.5"><tspan font-weight="700" fill="#3a6ea5">A</tspan><tspan fill="#57606a"> hardwired to the customer: </tspan><tspan font-family="SFMono-Regular, Menlo, Consolas, monospace" fill="#3a6ea5">TurbineGuideBearingTemp</tspan></text>
+<text x="566" y="244" font-size="12.5"><tspan font-weight="700" fill="#137a7f">B</tspan><tspan fill="#57606a"> to the CH PLC: </tspan><tspan font-family="SFMono-Regular, Menlo, Consolas, monospace" fill="#137a7f">Bearings/TGB/PadTemp01</tspan></text>
+<text x="566" y="262" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">the only TGB temperature the control room (SCADA) sees</text>
+<path d="M560,300 L428.9,367.9" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M560,300 L428.9,367.9" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="566" y="304" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Oil film</text>
+<text x="566" y="322" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">carries the load; a few hundredths of a mm thick</text>
+<path d="M560,370 L554.0,400.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M560,370 L554.0,400.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="566" y="366" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">X proximity probe, 90° from Y</text>
+<text x="566" y="384" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#137a7f">Vibration/TGB/ShaftX/Overall_um_pp + /Waveform</text>
+<path d="M560,432 L496.9,467.4" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M560,432 L496.9,467.4" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="566" y="436" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Housing + oil pot</text>
+<text x="566" y="454" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#137a7f">Bearings/TGB/OilTemp · OilLevel</text>
+<path d="M560,500 L420.5,490.5" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M560,500 L420.5,490.5" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="566" y="496" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Pads 2, 3, 4: one RTD each, CH PLC only</text>
+<text x="566" y="514" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#137a7f">Bearings/TGB/PadTemp02 … PadTemp04</text>
+<text x="566" y="532" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">the customer has no sensor on these pads</text>
+<path d="M70,378 L106.0,397.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M70,378 L106.0,397.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="24" y="334" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Keyphasor</text>
+<text x="24" y="352" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">notch on the shaft:</text>
+<text x="24" y="368" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">one pulse per turn</text>
+<path d="M90,620 L199.2,475.5" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M90,620 L199.2,475.5" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="24" y="636" font-size="13" font-weight="700" fill="#b8692e" text-anchor="start">Pad 3 in scenario A (Unit 1)</text>
+<text x="24" y="656" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">set at 0.24 mm clearance in 2019 (design 0.30 ± 0.05 mm, concession</text>
+<text x="24" y="672" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">CH-CON-2019-017): thinner film, more heat, first to suffer when the oil degrades</text>
+<path d="M100,470 L212.3,507.7" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M100,470 L212.3,507.7" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="24" y="450" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Pivot</text>
+<text x="24" y="476" font-size="12" fill="#57606a">the pad tilts</text>
+<line x1="24" y1="700" x2="1476" y2="700" stroke="#d0d7de"/>
+<text x="24" y="730" font-size="14" font-weight="700" fill="#24292f" text-anchor="start">DETAIL B: ONE PAD, UNROLLED (shaft surface drawn flat)</text>
+<rect x="300" y="742" width="760" height="34" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+<path d="M716,776 Q740,800 764,776 Z" fill="#b9c0c8" stroke="#24292f" stroke-width="1.4"/>
+<path d="M340,790 L1020,806 L1020,882 L340,856 Z" fill="url(#steel)" stroke="#24292f" stroke-width="1.6"/>
+<path d="M340,856 L1020,882 L1020,896 L340,870 Z" fill="#e9c75b" stroke="#24292f" stroke-width="1.2"/>
+<path d="M340,870 L1020,896 L1020,912 L340,912 Z" fill="#fbf1d0"/>
+<rect x="250" y="912" width="860" height="40" fill="url(#hatch)" stroke="#24292f" stroke-width="1.6"/>
+<line x1="300" y1="932" x2="460" y2="932" stroke="#24292f" stroke-width="2" marker-end="url(#arrK)"/>
+<text x="470" y="937" font-size="12" font-weight="400" fill="#24292f" text-anchor="start">shaft surface moves</text>
+<line x1="250" y1="900" x2="290" y2="900" stroke="#b8692e" stroke-width="1.6" marker-end="url(#arrO)"/>
+<line x1="300" y1="900" x2="340" y2="900" stroke="#b8692e" stroke-width="1.6" marker-end="url(#arrO)"/>
+<line x1="420" y1="905" x2="470" y2="905" stroke="#b8692e" stroke-width="1.2" marker-end="url(#arrO)"/>
+<line x1="560" y1="905" x2="610" y2="905" stroke="#b8692e" stroke-width="1.2" marker-end="url(#arrO)"/>
+<line x1="700" y1="905" x2="750" y2="905" stroke="#b8692e" stroke-width="1.2" marker-end="url(#arrO)"/>
+<line x1="840" y1="905" x2="890" y2="905" stroke="#b8692e" stroke-width="1.2" marker-end="url(#arrO)"/>
+<rect x="902" y="800" width="10" height="70" fill="#ffffff" stroke="#24292f"/>
+<circle cx="907" cy="869" r="5.5" fill="#137a7f" stroke="#ffffff" stroke-width="1.2"/>
+<path d="M907,800 V742" fill="none" stroke="#137a7f" stroke-width="1.6"/>
+<path d="M1110,752 L1060.0,758.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M1110,752 L1060.0,758.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="1116" y="756" font-size="13" font-weight="700" fill="#24292f" text-anchor="start">Housing (fixed)</text>
+<path d="M1110,784 L762.0,786.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M1110,784 L762.0,786.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="1116" y="788" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Pivot: the pad tilts freely and finds its own wedge angle</text>
+<path d="M1110,822 L1020.0,830.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M1110,822 L1020.0,830.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="1116" y="826" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Steel pad</text>
+<path d="M1110,864 L912.0,862.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M1110,864 L912.0,862.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="1116" y="860" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">RTD in a drilled hole, tip just behind the babbitt</text>
+<text x="1116" y="876" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">(where the heat is made)</text>
+<path d="M1110,890 L1020.0,889.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M1110,890 L1020.0,889.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="1116" y="898" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Babbitt: a few mm of soft tin-based white metal.</text>
+<text x="1116" y="914" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">Wear shows as tin in the oil analysis.</text>
+<path d="M1110,940 L1020.0,904.0" stroke="#ffffff" stroke-width="3.5" fill="none"/>
+<path d="M1110,940 L1020.0,904.0" stroke="#57606a" stroke-width="1" fill="none" marker-end="url(#dot)"/>
+<text x="1116" y="944" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Oil film: the moving shaft drags oil into the</text>
+<text x="1116" y="960" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">narrowing gap; the pressure there carries the load.</text>
+<text x="1116" y="976" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">Thinner film or oxidised oil: more heat, then metal contact.</text>
+<text x="36" y="772" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">wide gap</text>
+<text x="36" y="788" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">(oil in)</text>
+<path d="M100,780 Q200,790 336,866" fill="none" stroke="#57606a" stroke-width="1" marker-end="url(#dot)"/>
+<text x="130" y="980" font-size="12" font-weight="400" fill="#57606a" text-anchor="start">narrow gap: the film is thinnest and hottest here →</text>
+<path d="M420,975 Q900,975 1012,906" fill="none" stroke="#57606a" stroke-width="1" marker-end="url(#dot)"/>
+<rect x="1000" y="84" width="476" height="512" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="1016" y="110" font-size="14" font-weight="700" fill="#24292f" text-anchor="start">Limits on a pad temperature</text>
+<text x="1016" y="134" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">normal at full load: pads 60–70 °C, oil 50–60 °C</text>
+<text x="1016" y="153" font-size="13" font-weight="400" fill="#137a7f" text-anchor="start">CH PLC (every pad): H 75 °C, HH 85 °C</text>
+<text x="1016" y="172" font-size="13" font-weight="400" fill="#3a6ea5" text-anchor="start">customer (pad 1 only): alarm 80 °C, trip 90 °C</text>
+<text x="1016" y="191" font-size="13" font-weight="400" fill="#57606a" text-anchor="start">babbitt softens from about 120–130 °C</text>
+<text x="1016" y="225" font-size="14" font-weight="700" fill="#24292f" text-anchor="start">How a pad fails</text>
+<text x="1016" y="249" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">1. The film thins: tight clearance, more load, or oil</text>
+<text x="1016" y="268" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">   that has oxidised (TAN, varnish up).</text>
+<text x="1016" y="287" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">2. More shear heat in the thinner film: the pad warms</text>
+<text x="1016" y="306" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">   a few K over weeks, its neighbours less.</text>
+<text x="1016" y="325" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">3. Babbitt starts to smear: tin appears in the oil.</text>
+<text x="1016" y="344" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">4. Then fast: tens of K in hours, and a wiped bearing</text>
+<text x="1016" y="363" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">   if the unit keeps running.</text>
+<text x="1016" y="397" font-size="14" font-weight="700" fill="#b8692e" text-anchor="start">Scenario A on Unit 1</text>
+<text x="1016" y="421" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Pad 3 crossed 75 °C at 23:54 and 85 °C at 09:00.</text>
+<text x="1016" y="440" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Pads 2 and 4 rose a few K, the oil about 2 K.</text>
+<text x="1016" y="459" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">Pad 1, the customer's sensor, stayed near 70 °C:</text>
+<text x="1016" y="478" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">no SCADA alarm. Only the CH viewer showed it.</text>
+<text x="1016" y="512" font-size="14" font-weight="700" fill="#24292f" text-anchor="start">Why a sensor on every pad</text>
+<text x="1016" y="536" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">A real pad problem warms its neighbours and the oil.</text>
+<text x="1016" y="555" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">One pad moving alone, with flat neighbours, points to</text>
+<text x="1016" y="574" font-size="13" font-weight="400" fill="#24292f" text-anchor="start">the sensor instead (scenario G).</text>
+</svg>

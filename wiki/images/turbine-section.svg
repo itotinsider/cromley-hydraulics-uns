@@ -1,0 +1,318 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1020" width="1500" height="1020" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>CH-Francis unit: parts and measurements</title>
+  <defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#f2f3f5"/><line x1="0" y1="0" x2="0" y2="7" stroke="#8c959f" stroke-width="1"/>
+    </pattern>
+    <pattern id="concrete" width="14" height="14" patternUnits="userSpaceOnUse">
+      <rect width="14" height="14" fill="#eceae4"/><circle cx="3" cy="4" r="1" fill="#a8a294"/><circle cx="10" cy="10" r="1.3" fill="#a8a294"/><circle cx="11" cy="3" r="0.7" fill="#a8a294"/>
+    </pattern>
+    <pattern id="core" width="6" height="4" patternUnits="userSpaceOnUse">
+      <rect width="6" height="4" fill="#e6e8eb"/><line x1="0" y1="0" x2="6" y2="0" stroke="#8c959f" stroke-width="0.8"/>
+    </pattern>
+    <marker id="dot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5"><circle cx="5" cy="5" r="4" fill="#57606a"/></marker>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f7fb5"/></marker>
+    <marker id="arrK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#24292f"/></marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="1499" height="1019" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="24" y="38" font-size="20" font-weight="700" fill="#24292f">CH-Francis "Canyon" vertical unit: parts and measurements</text>
+  <text x="24" y="60" font-size="13" fill="#57606a">Section through the unit axis, not to scale · left: the parts · right: what is measured there, and in which tree</text>
+
+  <g transform="translate(120,0)" stroke-linejoin="round">
+    <!-- ============ DRAWING ============ -->
+    <!-- concrete around the draft tube -->
+    <path d="M30,704 H372 L330,880 H30 Z" fill="url(#concrete)" stroke="#8c959f"/>
+    <path d="M508,704 H630 V880 H550 Z" fill="url(#concrete)" stroke="#8c959f"/>
+    <!-- water: distributor passage and draft tube -->
+    <rect x="238" y="622" width="404" height="70" fill="#e4f1fa"/>
+    <path d="M372,702 H508 L550,880 H330 Z" fill="#e4f1fa" stroke="#24292f" stroke-width="2"/>
+    <line x1="440" y1="790" x2="440" y2="860" stroke="#2f7fb5" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="452" y="852" font-size="12" fill="#2f7fb5">to the tailwater</text>
+
+    <!-- spiral case (two cuts through the scroll) -->
+    <circle cx="180" cy="656" r="58" fill="#e4f1fa" stroke="#24292f" stroke-width="3"/>
+    <circle cx="700" cy="656" r="46" fill="#e4f1fa" stroke="#24292f" stroke-width="3"/>
+    <circle cx="180" cy="656" r="11" fill="none" stroke="#2f7fb5" stroke-width="1.6"/>
+    <path d="M172,648 L188,664 M188,648 L172,664" stroke="#2f7fb5" stroke-width="1.6"/>
+    <!-- stay vanes -->
+    <rect x="236" y="618" width="14" height="76" fill="url(#hatch)" stroke="#24292f"/>
+    <rect x="630" y="618" width="14" height="76" fill="url(#hatch)" stroke="#24292f"/>
+    <!-- wicket gates -->
+    <rect x="266" y="626" width="16" height="62" rx="3" fill="#b9c0c8" stroke="#24292f"/>
+    <rect x="598" y="626" width="16" height="62" rx="3" fill="#b9c0c8" stroke="#24292f"/>
+    <line x1="274" y1="604" x2="274" y2="626" stroke="#24292f" stroke-width="2"/>
+    <line x1="606" y1="604" x2="606" y2="626" stroke="#24292f" stroke-width="2"/>
+    <!-- headcover and bottom ring -->
+    <path d="M236,606 H404 V622 H236 Z M476,606 H644 V622 H476 Z" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <path d="M236,690 H352 V704 H236 Z M528,690 H644 V704 H528 Z" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <!-- gate operating ring + servomotor (right) -->
+    <rect x="262" y="592" width="28" height="12" fill="#b9c0c8" stroke="#24292f"/>
+    <rect x="590" y="592" width="28" height="12" fill="#b9c0c8" stroke="#24292f"/>
+    <rect x="636" y="568" width="64" height="18" rx="3" fill="#ffffff" stroke="#24292f" stroke-width="1.5"/>
+    <line x1="612" y1="577" x2="636" y2="577" stroke="#24292f" stroke-width="3"/>
+    <line x1="612" y1="577" x2="606" y2="592" stroke="#24292f" stroke-width="2"/>
+    
+    <!-- oil lines servo to HPU -->
+    <path d="M700,573 H762 V742" fill="none" stroke="#b8692e" stroke-width="1.6"/>
+    <path d="M700,581 H754 V742" fill="none" stroke="#b8692e" stroke-width="1.6" stroke-dasharray="4 2"/>
+
+    <!-- runner -->
+    <path d="M342,628 H538 Q544,672 508,702 H476 Q462,690 456,646 H424 Q418,690 404,702 H372 Q336,672 342,628 Z" fill="#d3d8de" stroke="#24292f" stroke-width="1.8"/>
+    <path d="M362,634 Q368,672 390,700 M388,634 Q392,668 412,694 M518,634 Q512,672 490,700 M492,634 Q488,668 468,694" fill="none" stroke="#57606a" stroke-width="1.2"/>
+    <path d="M424,640 Q440,716 456,640 Z" fill="#b9c0c8" stroke="#24292f" stroke-width="1.5"/>
+
+    <!-- shaft -->
+    <rect x="420" y="92" width="40" height="548" fill="#ffffff" stroke="#24292f" stroke-width="1.8"/>
+    <!-- coupling -->
+    <rect x="394" y="492" width="92" height="14" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+
+    <!-- upper bracket + thrust/UGB oil pot -->
+    <path d="M220,200 H414 V212 H220 Z M466,200 H660 V212 H466 Z" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="340" y="104" width="200" height="96" fill="#fbf1d0"/>
+    <line x1="342" y1="110" x2="538" y2="110" stroke="#b8692e" stroke-dasharray="6 3"/>
+    <rect x="420" y="104" width="40" height="96" fill="#ffffff" stroke="#24292f" stroke-width="1.8"/>
+    <rect x="350" y="118" width="180" height="14" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="356" y="134" width="54" height="18" fill="#c7ccd2" stroke="#24292f"/>
+    <rect x="470" y="134" width="54" height="18" fill="#c7ccd2" stroke="#24292f"/>
+    <line x1="356" y1="135" x2="410" y2="135" stroke="#d4a72c" stroke-width="3"/>
+    <line x1="470" y1="135" x2="524" y2="135" stroke="#d4a72c" stroke-width="3"/>
+    <path d="M350,152 H414 V160 H350 Z M466,152 H530 V160 H466 Z" fill="url(#hatch)" stroke="#24292f"/>
+    <rect x="402" y="168" width="14" height="26" fill="#c7ccd2" stroke="#24292f"/>
+    <rect x="464" y="168" width="14" height="26" fill="#c7ccd2" stroke="#24292f"/>
+    <line x1="415" y1="168" x2="415" y2="194" stroke="#d4a72c" stroke-width="2.5"/>
+    <line x1="465" y1="168" x2="465" y2="194" stroke="#d4a72c" stroke-width="2.5"/>
+    <g fill="none" stroke="#2f7fb5" stroke-width="1.4"><circle cx="360" cy="184" r="5"/><circle cx="374" cy="184" r="5"/><circle cx="506" cy="184" r="5"/><circle cx="520" cy="184" r="5"/></g>
+    <rect x="340" y="104" width="200" height="96" fill="none" stroke="#24292f" stroke-width="2"/>
+    <path d="M540,180 H562 M540,190 H562" stroke="#2f7fb5" stroke-width="2"/>
+
+    <!-- generator: frame, stator, rotor -->
+    <rect x="220" y="212" width="16" height="188" fill="url(#hatch)" stroke="#24292f"/>
+    <rect x="644" y="212" width="16" height="188" fill="url(#hatch)" stroke="#24292f"/>
+    <rect x="236" y="240" width="52" height="130" fill="url(#core)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="592" y="240" width="52" height="130" fill="url(#core)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="242" y="226" width="40" height="14" rx="6" fill="#e3b778" stroke="#24292f"/>
+    <rect x="242" y="370" width="40" height="14" rx="6" fill="#e3b778" stroke="#24292f"/>
+    <rect x="598" y="226" width="40" height="14" rx="6" fill="#e3b778" stroke="#24292f"/>
+    <rect x="598" y="370" width="40" height="14" rx="6" fill="#e3b778" stroke="#24292f"/>
+    <rect x="294" y="236" width="30" height="138" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="556" y="236" width="30" height="138" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <g fill="#c94f4f" stroke="#24292f" stroke-width="0.8"><rect x="288" y="246" width="6" height="34"/><rect x="288" y="288" width="6" height="34"/><rect x="288" y="330" width="6" height="34"/><rect x="586" y="246" width="6" height="34"/><rect x="586" y="288" width="6" height="34"/><rect x="586" y="330" width="6" height="34"/></g>
+    <path d="M324,266 H404 V282 H324 Z M324,326 H404 V342 H324 Z M476,266 H556 V282 H476 Z M476,326 H556 V342 H476 Z" fill="url(#hatch)" stroke="#24292f"/>
+    <rect x="404" y="250" width="72" height="110" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="420" y="250" width="40" height="110" fill="#ffffff" stroke="#24292f" stroke-width="1.8"/>
+    <!-- air coolers -->
+    <g stroke="#24292f"><rect x="186" y="260" width="30" height="90" fill="#ffffff" stroke-width="1.5"/><rect x="664" y="260" width="30" height="90" fill="#ffffff" stroke-width="1.5"/></g>
+    <path d="M190,272 H212 M190,284 H212 M190,296 H212 M190,308 H212 M190,320 H212 M190,332 H212 M668,272 H690 M668,284 H690 M668,296 H690 M668,308 H690 M668,320 H690 M668,332 H690" stroke="#2f7fb5" stroke-width="1.2"/>
+    <path d="M694,282 H716 M694,328 H716" stroke="#2f7fb5" stroke-width="2"/>
+
+    <!-- lower bracket + LGB -->
+    <path d="M220,400 H404 V412 H220 Z M476,400 H660 V412 H476 Z" fill="url(#hatch)" stroke="#24292f" stroke-width="1.5"/>
+    <rect x="380" y="412" width="120" height="56" fill="#fbf1d0"/>
+    <line x1="382" y1="420" x2="498" y2="420" stroke="#b8692e" stroke-dasharray="6 3"/>
+    <rect x="420" y="412" width="40" height="56" fill="#ffffff" stroke="#24292f" stroke-width="1.8"/>
+    <rect x="402" y="426" width="14" height="30" fill="#c7ccd2" stroke="#24292f"/>
+    <rect x="464" y="426" width="14" height="30" fill="#c7ccd2" stroke="#24292f"/>
+    <line x1="415" y1="426" x2="415" y2="456" stroke="#d4a72c" stroke-width="2.5"/>
+    <line x1="465" y1="426" x2="465" y2="456" stroke="#d4a72c" stroke-width="2.5"/>
+    <g fill="none" stroke="#2f7fb5" stroke-width="1.4"><circle cx="390" cy="458" r="4.5"/><circle cx="490" cy="458" r="4.5"/></g>
+    <rect x="380" y="412" width="120" height="56" fill="none" stroke="#24292f" stroke-width="2"/>
+    <path d="M500,452 H522 M500,462 H522" stroke="#2f7fb5" stroke-width="2"/>
+
+    <!-- keyphasor -->
+    <rect x="466" y="511" width="24" height="8" fill="#ffffff" stroke="#24292f"/>
+    <rect x="456" y="512" width="4" height="6" fill="#24292f"/>
+
+    <!-- TGB -->
+    <rect x="370" y="528" width="140" height="56" fill="#fbf1d0"/>
+    <line x1="372" y1="536" x2="508" y2="536" stroke="#b8692e" stroke-dasharray="6 3"/>
+    <rect x="420" y="528" width="40" height="56" fill="#ffffff" stroke="#24292f" stroke-width="1.8"/>
+    <rect x="402" y="542" width="14" height="30" fill="#c7ccd2" stroke="#24292f"/>
+    <rect x="464" y="542" width="14" height="30" fill="#c7ccd2" stroke="#24292f"/>
+    <line x1="415" y1="542" x2="415" y2="572" stroke="#d4a72c" stroke-width="2.5"/>
+    <line x1="465" y1="542" x2="465" y2="572" stroke="#d4a72c" stroke-width="2.5"/>
+    <g fill="none" stroke="#2f7fb5" stroke-width="1.4"><circle cx="384" cy="574" r="4.5"/><circle cx="496" cy="574" r="4.5"/></g>
+    <rect x="370" y="528" width="140" height="56" fill="none" stroke="#24292f" stroke-width="2"/>
+    <path d="M510,566 H532 M510,576 H532" stroke="#2f7fb5" stroke-width="2"/>
+    <!-- section mark A-A through the TGB -->
+    <g stroke="#24292f" stroke-width="2.5" fill="none"><path d="M346,557 H362"/><path d="M518,557 H534"/></g>
+    <path d="M350,557 V566" stroke="#24292f" stroke-width="1.4" marker-end="url(#arrK)"/>
+    <path d="M530,557 V566" stroke="#24292f" stroke-width="1.4" marker-end="url(#arrK)"/>
+    <text x="340" y="552" font-size="13" font-weight="700" fill="#24292f">A</text>
+    <text x="534" y="552" font-size="13" font-weight="700" fill="#24292f">A</text>
+
+    <!-- shaft seal -->
+    <rect x="404" y="590" width="72" height="16" fill="#ffffff" stroke="#24292f" stroke-width="1.5"/>
+    <path d="M404,590 L420,606 M420,590 L404,606 M460,590 L476,606 M476,590 L460,606" stroke="#57606a"/>
+
+    <!-- HPU -->
+    <rect x="644" y="742" width="128" height="122" rx="4" fill="#ffffff" stroke="#24292f" stroke-width="1.8"/>
+    <rect x="648" y="826" width="120" height="34" fill="#fbf1d0" stroke="#8c959f"/>
+    <circle cx="672" cy="808" r="11" fill="#ffffff" stroke="#24292f" stroke-width="1.4"/><text x="672" y="812" text-anchor="middle" font-size="10" fill="#24292f">P1</text>
+    <circle cx="700" cy="808" r="11" fill="#ffffff" stroke="#24292f" stroke-width="1.4"/><text x="700" y="812" text-anchor="middle" font-size="10" fill="#24292f">P2</text>
+    <rect x="728" y="752" width="22" height="58" rx="11" fill="#ffffff" stroke="#24292f" stroke-width="1.4"/>
+    <path d="M664,768 L676,756 L688,768 L676,780 Z" fill="#ffffff" stroke="#24292f" stroke-width="1.2"/>
+    <text x="708" y="850" text-anchor="middle" font-size="11" fill="#57606a">sump</text>
+    <text x="739" y="826" text-anchor="middle" font-size="9" fill="#57606a">acc.</text>
+    <text x="708" y="882" text-anchor="middle" font-size="12" font-weight="600" fill="#24292f">Governor HPU</text>
+
+    <!-- centreline -->
+    <line x1="440" y1="78" x2="440" y2="896" stroke="#57606a" stroke-width="1" stroke-dasharray="18 4 3 4"/>
+    <text x="446" y="88" font-size="11" fill="#57606a">℄ unit axis, 300 rpm</text>
+
+    <!-- ============ SENSOR POINTS (CH teal, DRWPA blue) ============ -->
+    <g stroke="#ffffff" stroke-width="1.2">
+      <circle cx="368" cy="144" r="4.5" fill="#3a6ea5"/><circle cx="382" cy="144" r="4.5" fill="#137a7f"/><circle cx="497" cy="144" r="4.5" fill="#137a7f"/>
+      <circle cx="409" cy="176" r="4" fill="#3a6ea5"/><circle cx="409" cy="187" r="4" fill="#137a7f"/><circle cx="471" cy="181" r="4" fill="#137a7f"/>
+      <circle cx="409" cy="434" r="4" fill="#3a6ea5"/><circle cx="409" cy="446" r="4" fill="#137a7f"/><circle cx="471" cy="441" r="4" fill="#137a7f"/>
+      <circle cx="409" cy="550" r="4" fill="#3a6ea5"/><circle cx="409" cy="562" r="4" fill="#137a7f"/><circle cx="471" cy="557" r="4" fill="#137a7f"/>
+      <circle cx="618" cy="305" r="4.5" fill="#137a7f"/><circle cx="589" cy="355" r="4" fill="#137a7f"/>
+      <circle cx="486" cy="515" r="4" fill="#137a7f"/>
+      <circle cx="516" cy="457" r="4" fill="#137a7f"/><circle cx="526" cy="571" r="4" fill="#137a7f"/><circle cx="708" cy="282" r="4" fill="#137a7f"/>
+      <rect x="546" y="597" width="9" height="9" fill="#137a7f"/>
+      <circle cx="520" cy="625" r="4" fill="#137a7f"/><circle cx="468" cy="598" r="4" fill="#137a7f"/>
+      <circle cx="736" cy="633" r="4.5" fill="#137a7f"/><circle cx="604" cy="598" r="4" fill="#137a7f"/>
+      <circle cx="522" cy="760" r="4.5" fill="#137a7f"/>
+      <circle cx="762" cy="700" r="4.5" fill="#3a6ea5"/>
+    </g>
+
+    <!-- ============ LEFT: PART NAMES ============ -->
+    <g font-size="13" fill="#24292f" text-anchor="end">
+      <text x="100" y="147">Thrust bearing</text>
+      <text x="100" y="185">Upper guide bearing (UGB)</text>
+      <text x="100" y="248">Stator</text>
+      <text x="100" y="304">Air cooler</text>
+      <text x="100" y="352">Rotor (rim + poles)</text>
+      <text x="100" y="444">Lower guide bearing (LGB)</text>
+      <text x="100" y="503">Coupling</text>
+      <text x="100" y="528">Shaft</text>
+      <text x="100" y="560">Turbine guide bearing (TGB)</text>
+      <text x="100" y="590">Shaft seal</text>
+      <text x="100" y="614">Headcover</text>
+      <text x="100" y="640">Spiral case</text>
+      <text x="100" y="664">Wicket gate</text>
+      <text x="100" y="688">Runner</text>
+      <text x="100" y="800">Draft tube</text>
+    </g>
+    <g fill="none" stroke-width="3.5" stroke="#ffffff">
+      <path id="lead" d="M106,143 L356,143 M106,181 L402,181 M106,244 L262,256 M106,300 L186,300 M106,348 L306,348 M106,440 L402,440 M106,499 L394,499 M106,524 L420,524 M106,556 L346,556 M106,586 L406,598 M106,610 L300,614 M106,636 L124,640 M106,660 L268,660 M106,684 L360,680 M106,796 L344,796"/>
+    </g>
+    <path d="M106,143 L356,143 M106,181 L402,181 M106,244 L262,256 M106,300 L186,300 M106,348 L306,348 M106,440 L402,440 M106,499 L394,499 M106,524 L420,524 M106,556 L346,556 M106,586 L406,598 M106,610 L300,614 M106,636 L124,640 M106,660 L268,660 M106,684 L360,680 M106,796 L344,796" fill="none" stroke="#57606a" stroke-width="1" marker-end="url(#dot)"/>
+
+    <!-- ============ RIGHT: MEASUREMENTS ============ -->
+    <!-- leaders first (white halo, then grey) -->
+    <g fill="none" stroke="#ffffff" stroke-width="3.5">
+      <path d="M780,82 L500,143 M780,180 L620,305 M780,196 L592,355 M780,276 L474,181 M780,290 L474,441 M780,304 L474,557 M780,380 L489,515 M780,470 L712,282 M780,478 L519,457 M780,486 L529,571 M780,560 L555,601 M780,568 L523,625 M780,576 L471,598 M780,650 L739,633 M780,666 L607,598 M780,690 L765,700 M780,746 L525,760 M780,838 L774,818"/>
+    </g>
+    <path d="M780,82 L500,143 M780,180 L620,305 M780,196 L592,355 M780,276 L474,181 M780,290 L474,441 M780,304 L474,557 M780,380 L489,515 M780,470 L712,282 M780,478 L519,457 M780,486 L529,571 M780,560 L555,601 M780,568 L523,625 M780,576 L471,598 M780,650 L739,633 M780,666 L607,598 M780,690 L765,700 M780,746 L525,760 M780,838 L774,818" fill="none" stroke="#57606a" stroke-width="1"/>
+
+    <g font-size="13">
+      <!-- A thrust -->
+      <rect x="780" y="40" width="580" height="86" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="60" font-weight="700" fill="#24292f">Thrust bearing <tspan font-weight="400" fill="#57606a">· carries the rotor weight and the water thrust · 6 pads</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="80">Bearings/Thrust/PadTemp01…06 (one RTD per pad)</text>
+        <text x="850" y="98">Bearings/Thrust/OilBathTemp · OilLevel · HPLiftPressure</text>
+        <text x="850" y="116">ThrustBearingTemp <tspan font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#57606a">pad 1 only, element A: alarm 80, trip 90 °C</tspan></text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="80" fill="#137a7f">CH</text><text x="794" y="98" fill="#137a7f">CH</text><text x="794" y="116" fill="#3a6ea5">DRWPA</text></g>
+
+      <!-- B generator -->
+      <rect x="780" y="136" width="580" height="86" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="156" font-weight="700" fill="#24292f">Generator <tspan font-weight="400" fill="#57606a">· stator winding, air gap (rotor to stator), air coolers</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="176">Generator/StatorTemp01…06 · Generator/AirGapMin_mm</text>
+        <text x="850" y="194">Cooling/WaterFlow_AirCoolers</text>
+        <text x="850" y="212">MW · MVAr · BreakerClosed · State</text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="176" fill="#137a7f">CH</text><text x="794" y="194" fill="#137a7f">CH</text><text x="794" y="212" fill="#3a6ea5">DRWPA</text></g>
+
+      <!-- C guide bearings -->
+      <rect x="780" y="232" width="580" height="104" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="252" font-weight="700" fill="#24292f">Guide bearings UGB, LGB, TGB <tspan font-weight="400" fill="#57606a">· keep the shaft centred · 4 pads each</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="272">Bearings/&lt;b&gt;/PadTemp01…04 · OilTemp · OilLevel</text>
+        <text x="850" y="290">Vibration/&lt;b&gt;/ShaftX|ShaftY/Overall_um_pp + …/Waveform</text>
+        <text x="850" y="308">UpperGuide- · LowerGuide- · TurbineGuideBearingTemp</text>
+        <text x="850" y="326" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#57606a">&lt;b&gt; = UGB, LGB or TGB · pad 1 only for DRWPA · X/Y probes: see section A–A</text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="272" fill="#137a7f">CH</text><text x="794" y="290" fill="#137a7f">CH</text><text x="794" y="308" fill="#3a6ea5">DRWPA</text></g>
+
+      <!-- D shaft -->
+      <rect x="780" y="346" width="580" height="68" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="366" font-weight="700" fill="#24292f">Shaft speed and keyphasor <tspan font-weight="400" fill="#57606a">· a notch, seen once per turn</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="386">keyphasorIdx in every waveform block · Context/Speed_rpm</text>
+        <text x="850" y="404">Speed <tspan font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#57606a">300 rpm = 5 Hz = "1X"</tspan></text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="386" fill="#137a7f">CH</text><text x="794" y="404" fill="#3a6ea5">DRWPA</text></g>
+
+      <!-- E cooling -->
+      <rect x="780" y="424" width="580" height="86" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="444" font-weight="700" fill="#24292f">Cooling water <tspan font-weight="400" fill="#57606a">· from the river, through coils in each oil pot and the air coolers</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="464">Cooling/WaterFlow_GB (thrust, UGB, LGB) · WaterFlow_TB (TGB)</text>
+        <text x="850" y="482">Cooling/WaterInletTemp · OilCoolerOutletTemp</text>
+        <text x="850" y="500">CoolingWaterFlow <tspan font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#57606a">the total, element A: alarm below 56 L/s</tspan></text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="464" fill="#137a7f">CH</text><text x="794" y="482" fill="#137a7f">CH</text><text x="794" y="500" fill="#3a6ea5">DRWPA</text></g>
+
+      <!-- F headcover -->
+      <rect x="780" y="520" width="580" height="86" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="540" font-weight="700" fill="#24292f">Headcover and shaft seal <tspan font-weight="400" fill="#57606a">· the lid over the runner</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="560">Vibration/Headcover/Vel_mm_s_rms + Accel/Waveform (cavitation)</text>
+        <text x="850" y="578">Turbine/HeadcoverPressure · ShaftSealWaterFlow</text>
+        <text x="850" y="596">Turbine/HeadcoverSumpPumpStarts</text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="560" fill="#137a7f">CH</text><text x="794" y="578" fill="#137a7f">CH</text><text x="794" y="596" fill="#137a7f">CH</text></g>
+
+      <!-- G spiral case + gates -->
+      <rect x="780" y="616" width="580" height="104" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="636" font-weight="700" fill="#24292f">Spiral case, wicket gates, servomotors <tspan font-weight="400" fill="#57606a">· set the flow</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="656">Turbine/SpiralCasePressure</text>
+        <text x="850" y="674">Turbine/ShearPinStatus · WicketGateBreakawayAlarm</text>
+        <text x="850" y="692">GatePosition · GateSetpoint · Flow · NetHead</text>
+        <text x="850" y="710">GovernorOilPressure <tspan font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#57606a">accumulator, element A: trip below 48 bar</tspan></text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="656" fill="#137a7f">CH</text><text x="794" y="674" fill="#137a7f">CH</text><text x="794" y="692" fill="#3a6ea5">DRWPA</text><text x="794" y="710" fill="#3a6ea5">DRWPA</text></g>
+
+      <!-- H draft tube -->
+      <rect x="780" y="730" width="580" height="68" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="750" font-weight="700" fill="#24292f">Draft tube <tspan font-weight="400" fill="#57606a">· the vortex rope at part load shows here first</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="770">Turbine/DraftTubePressure (1 s mean)</text>
+        <text x="850" y="788">Vibration/DraftTube/Pressure/Waveform (100 S/s)</text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="770" fill="#137a7f">CH</text><text x="794" y="788" fill="#137a7f">CH</text></g>
+
+      <!-- I HPU -->
+      <rect x="780" y="808" width="580" height="86" rx="6" fill="#ffffff" stroke="#8c959f"/>
+      <text x="794" y="828" font-weight="700" fill="#24292f">Governor HPU <tspan font-weight="400" fill="#57606a">· pumps, accumulator, filter, sump: oil for the servomotors</tspan></text>
+      <g font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#24292f">
+        <text x="850" y="848">Governor/HPU/AccumulatorPressure · SumpLevel · OilTemp · FilterDP</text>
+        <text x="850" y="866">Governor/HPU/Pump1Running · Pump2Running · PumpStartsPerHour</text>
+        <text x="850" y="884">Governor/HPU/ServoPositionA · ServoPositionB · GateSetpoint</text>
+      </g>
+      <g font-size="11" font-weight="700"><text x="794" y="848" fill="#137a7f">CH</text><text x="794" y="866" fill="#137a7f">CH</text><text x="794" y="884" fill="#137a7f">CH</text></g>
+    </g>
+  </g>
+
+  <!-- legend + title block -->
+  <g font-size="12" fill="#24292f">
+    <rect x="24" y="912" width="836" height="86" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+    <circle cx="44" cy="934" r="5" fill="#137a7f"/><text x="56" y="938"><tspan font-weight="700" fill="#137a7f">CH</tspan> sensor of the CH monitoring PLC · <tspan font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">v1.0/CH/Fleet/DRWPA/CopperCanyon/&lt;serial&gt;/…</tspan></text>
+    <circle cx="44" cy="956" r="5" fill="#3a6ea5"/><text x="56" y="960"><tspan font-weight="700" fill="#3a6ea5">DRWPA</tspan> customer's unit controller · <tspan font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">v1.0/DRWPA/CopperCanyon/Powerhouse/&lt;unit&gt;/…</tspan></text>
+    <text x="56" y="984" fill="#57606a">Blue + teal pair = one dual-element RTD on pad 1 (A to the customer, B to CH) · ⊗ water from the inlet valve, into the page</text>
+    <rect x="610" y="926" width="18" height="12" fill="url(#hatch)" stroke="#8c959f"/><text x="634" y="936">steel (section)</text>
+    <rect x="610" y="946" width="18" height="12" fill="#fbf1d0" stroke="#8c959f"/><text x="634" y="956">oil</text>
+    <rect x="700" y="946" width="18" height="12" fill="#e4f1fa" stroke="#8c959f"/><text x="724" y="956">water</text>
+    <line x1="760" y1="932" x2="778" y2="932" stroke="#d4a72c" stroke-width="3"/><text x="784" y="936">babbitt</text>
+    <rect x="880" y="912" width="600" height="86" rx="6" fill="#ffffff" stroke="#8c959f"/>
+    <line x1="880" y1="940" x2="1480" y2="940" stroke="#d0d7de"/>
+    <text x="894" y="932" font-weight="700">Cromley Hydraulics · CH-Francis "Canyon" · Copper Canyon Dam Units 1–3</text>
+    <text x="894" y="960">3 × 40 MW · 100 m rated head · 300 rpm · 13 runner blades · 20 wicket gates</text>
+    <text x="894" y="982" fill="#57606a">Training drawing, fictional, not to scale · ITOT.Academy demo environment</text>
+  </g>
+</svg>
