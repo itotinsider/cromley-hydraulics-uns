@@ -24,7 +24,7 @@ scope**: they are what the edge / IIoT vendors bring in the next step of the cas
 Keep this file current. It is the main knowledge carrier between sessions.
 
 **Other docs to keep current:**
-- **The wiki (`wiki/*.md`):** the user documentation (18 pages). Update the page whose topic you
+- **The wiki (`wiki/*.md`):** the user documentation (19 pages). Update the page whose topic you
   change (new topic, scenario, screen, env var), and keep its examples working.
   - **Source in the repo, published by script:** `tools/publish_wiki.py [--dry-run]` copies
     `wiki/*.md` and `wiki/images/*.png` to `<repo>.wiki.git`. `.github/workflows/wiki.yml` runs it
@@ -76,7 +76,9 @@ nodered_data/flows.json  the only tracked file in nodered_data/ (hand-written, 3
 mqtt_explorer_data/settings.json   the seeded "Copper Canyon Dam" connection (only file tracked there)
 data/                    bind mount: ch_plc_counters.json (git-ignored)
 exports/                 bind mount: CSVs Node-RED writes (git-ignored)
-rca-demo/                RCA bot demo: document library (library/), instructor answer key, generators (build/)
+rca-demo/                RCA bot demo: document library (library/), instructor answer key, generators (build/),
+                         recorded historian per scenario (history/), bot instructions (bot/), run_rca.sh,
+                         replay.sh (plays a recorded history on the stack: the control room's view)
 ```
 
 ## Commands
