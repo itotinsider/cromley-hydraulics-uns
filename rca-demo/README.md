@@ -12,7 +12,7 @@ Hydraulics. Everything is fictional and for training only.
 | `library/` | The documents and records the bot reads: supplier manual, schematics and service bulletin; DRWPA asset register, FMECA, PM plan, work orders, oil analysis, MOC register, shift log, procedures and three previous RCA reports | **Yes** (plus the live broker) |
 | `history/<scenario>/historian/` | Recorded historian export for one scenario: weeks of both trees up to and after the failure | **Yes**, only the one being investigated |
 | `history/<scenario>/run.json` | What the recorder did: timeline, fault profile, event time, the prompt | **No**, presenters only |
-| `bot/` | The bot's instructions (`CLAUDE.md`) and the grading prompt | Its `CLAUDE.md` only |
+| `bot/` | The bot's instructions (`CLAUDE.md`), the grading prompt and an example run (`example-scenario-A/`: chat answer, report, grade) | Its `CLAUDE.md` only |
 | `run_rca.sh` | Builds an isolated workspace and runs the bot, optionally grades the report | No |
 | `replay.sh` | Replays a recorded history on the running stack: the operator's view in the SCADA and the CH viewer | No |
 | `ANSWER-KEY.md` | Story, people, planted clues and the expected RCA per demo scenario | **No**, presenters only |
@@ -70,6 +70,9 @@ docker run --rm -v "$PWD":/w -w /w python:3.12-slim python rca-demo/build/record
 
 ## Walkthrough: what the control room saw (scenario A)
 
+The full walkthrough with screenshots, documents and the bot's answer is the wiki page
+[RCA demo walkthrough](https://github.com/itotinsider/cromley-hydraulics-uns/wiki/RCA-demo-walkthrough).
+
 ```bash
 docker compose up -d --build     # if the stack is not running
 rca-demo/replay.sh               # ~19 min; Ctrl-C stops, the simulators start again either way
@@ -97,7 +100,8 @@ The point: the control room's only TGB reading is pad 1, which never left the no
 that mattered was on a screen nobody was assigned to watch.
 
 Options: `--from/--to` (plant time), `--speed`, `--slow-from/--slow-to/--slow-speed`, e.g.
-`rca-demo/replay.sh --from "2026-11-03 08:50" --slow-speed 1` for the event in real time. Not
+`rca-demo/replay.sh --from "2026-11-03 08:50" --slow-speed 1` for the event in real time. `--pause-at
+"2026-11-03 09:01,2026-11-03 09:52" --pause-s 60` holds the screens at those moments. Not
 replayed: waveforms (the viewer shows the last live blocks) and the CH nameplates (retained from the
 live stack). SCADA trends mix the live data from before the replay with the replay's.
 

@@ -47,6 +47,7 @@ device management are what the vendors bring: see the [Edge vendor brief](Edge-v
 | Find a topic | [Namespace](Namespace), [Interface reference](Interface-reference) |
 | Use the screens | [Dam SCADA](Dam-SCADA), [CH asset viewer](CH-asset-viewer), [Instructor station](Instructor-station) |
 | Show your edge platform on it | [Edge vendor brief](Edge-vendor-brief), [Failure modes](Failure-modes) |
+| Follow a failure from the control room to an AI-assisted RCA | [RCA demo walkthrough](RCA-demo-walkthrough) |
 | Discuss the business case | [Business model](Business-model) |
 | Change the code | [Development](Development) |
 

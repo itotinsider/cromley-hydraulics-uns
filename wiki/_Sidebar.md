@@ -9,6 +9,7 @@
 - [Architecture](Architecture)
 - [Customer data vs. machine-builder data](Customer-data-vs-machine-builder-data)
 - [Failure modes](Failure-modes)
+- [RCA demo walkthrough](RCA-demo-walkthrough)
 
 **Use**
 - [Dam SCADA](Dam-SCADA)

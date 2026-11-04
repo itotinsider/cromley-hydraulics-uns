@@ -333,8 +333,8 @@ local time (MST, UTC-07:00, no daylight saving). Period: {a.start} to {a.end}.
 - One column per tag, named by its path below the tree prefix; `tags.csv` gives the full topic.
   CH columns are the same for every turbine.
 - Waveforms are not archived; the overall vibration values (µm pp) are.
-- CH PLC alarms are not shown in the control room; the SCADA journal only has the customer's own
-  alarms and events.
+- CH PLC alarms are not in the SCADA alarm list or journal (they show in the CH asset viewer); the
+  SCADA journal only has the customer's own alarms and events.
 """
     with open(os.path.join(hist, "README.md"), "w") as f:
         f.write(text)

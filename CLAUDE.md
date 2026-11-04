@@ -24,7 +24,7 @@ scope**: they are what the edge / IIoT vendors bring in the next step of the cas
 Keep this file current. It is the main knowledge carrier between sessions.
 
 **Other docs to keep current:**
-- **The wiki (`wiki/*.md`):** the user documentation (18 pages). Update the page whose topic you
+- **The wiki (`wiki/*.md`):** the user documentation (19 pages). Update the page whose topic you
   change (new topic, scenario, screen, env var), and keep its examples working.
   - **Source in the repo, published by script:** `tools/publish_wiki.py [--dry-run]` copies
     `wiki/*.md` and `wiki/images/*.png` to `<repo>.wiki.git`. `.github/workflows/wiki.yml` runs it

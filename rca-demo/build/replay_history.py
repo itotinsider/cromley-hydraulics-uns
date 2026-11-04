@@ -11,6 +11,7 @@ shift log entries as they come up.
 
   python rca-demo/build/replay_history.py [--history DIR] [--from T] [--to T] [--speed N]
                                           [--slow-from T --slow-to T --slow-speed N] [--host H --port P]
+                                          [--pause-at T,T,... --pause-s N]
 
 Defaults (scenario A): 2 Nov 22:00 to 3 Nov 10:15, 120x, 08:55-10:00 at 5x: about 19 minutes.
 """
@@ -97,6 +98,8 @@ def main():
     ap.add_argument("--slow-from", default="2026-11-03 08:55")
     ap.add_argument("--slow-to", default="2026-11-03 10:00")
     ap.add_argument("--slow-speed", type=float, default=5)
+    ap.add_argument("--pause-at", default="", help="comma-separated plant times to hold at (screenshots, talking)")
+    ap.add_argument("--pause-s", type=float, default=30, help="wall seconds per pause")
     ap.add_argument("--host", default=os.environ.get("MQTT_HOST", "mosquitto"))
     ap.add_argument("--port", type=int, default=int(os.environ.get("MQTT_PORT", "1883")))
     a = ap.parse_args()
@@ -153,6 +156,8 @@ def main():
     print(f"replaying {plant(t0)} → {plant(t1)} MST, {a.speed:g}x ({plant(s0)}–{plant(s1)} at {a.slow_speed:g}x), "
           f"about {dur / 60:.0f} min. Ctrl-C stops.", flush=True)
 
+    pauses = sorted(at(x.strip()) for x in a.pause_at.split(",") if x.strip())
+    hold = 0
     t, prev, wall, last_status = t0, t0 - 1, time.time(), 0
     try:
         while t <= t1:
@@ -199,8 +204,18 @@ def main():
                 print(f"{plant(t)}  ...  U1 {row.get('Powerhouse/Unit1/MW', '?')} MW, SCADA TGB "
                       f"{row.get('Powerhouse/Unit1/TurbineGuideBearingTemp', '?')} °C | CH TGB pad 3 "
                       f"{u1.get('Bearings/TGB/PadTemp03', '?')} °C", flush=True)
-            speed = a.slow_speed if s0 <= t < s1 else a.speed
-            prev, t = t, t + speed
+            if pauses and t >= pauses[0]:
+                pauses.pop(0)
+                hold = int(a.pause_s)
+                print(f"{plant(t)}  PAUSED for {hold} s", flush=True)
+            if hold > 0:
+                hold -= 1
+                prev = t                   # same snapshot again, no events
+            else:
+                nt = t + (a.slow_speed if s0 <= t < s1 else a.speed)
+                if pauses and t < pauses[0] < nt:
+                    nt = pauses[0]
+                prev, t = t, nt
             wall += 1.0
             time.sleep(max(0.0, wall - time.time()))
     except KeyboardInterrupt:
