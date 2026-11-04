@@ -51,20 +51,7 @@ Then take the [15-minute first tour](https://github.com/itotinsider/cromley-hydr
 
 ## Architecture
 
-```
- dam-sim ──────── customer tree  v1.0/DRWPA/CopperCanyon/…  ──────┐      ┌── dam-scada (:8120)
- (reservoir, spillway,                                            │      │   reads the customer tree,
-  bottom outlet, 3 units,  ◄── Cmd topics ───────────────────────┤      │   sends Cmd topics
-  plant controller)                                               ▼      │
-      ▲  hardwired (element A, "copper")                   ┌────────────┐├── ch-viewer (:8122)
-      │                                                    │ Mosquitto  ││   reads the CH tree
- ch-plc-sim ───── CH tree  v1.0/CH/Fleet/DRWPA/…/<serial>/… │   :1884    │├── Node-RED (:1881)
- (one CH PLC per turbine:  1 s values + raw waveforms ───► └────────────┘└── MQTT Explorer (:4001)
-  thermal, HPU, vibration)   context ◄── (subscribe only)        ┊
-                                                                 ┊  next step: edge / IIoT vendors
- instructor (:8121) ── HTTP, never MQTT ──► dam-sim, ch-plc-sim   ┊  (analytics, transport, buffering,
-                                                                    security, device management)
-```
+![Architecture: dam-sim and ch-plc-sim publish the customer tree and the CH tree to one Mosquitto broker; the dam SCADA reads the customer tree, the CH viewer the CH tree, Node-RED and MQTT Explorer both](wiki/images/architecture.svg)
 
 More: [Architecture](https://github.com/itotinsider/cromley-hydraulics-uns/wiki/Architecture),
 [Namespace](https://github.com/itotinsider/cromley-hydraulics-uns/wiki/Namespace),

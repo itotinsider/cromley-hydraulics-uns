@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" width="1000" height="580" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>Copper Canyon Dam architecture: one broker, two trees</title>
+  <defs>
+    <marker id="aBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3a6ea5"/></marker>
+    <marker id="aTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#137a7f"/></marker>
+    <marker id="aViolet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b4fa0"/></marker>
+    <marker id="aCopper" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b8692e"/></marker>
+    <marker id="aGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+
+  <!-- own background, so it reads the same in GitHub's light and dark themes -->
+  <rect x="0.5" y="0.5" width="999" height="579" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- column headings -->
+  <text x="175" y="30" text-anchor="middle" font-size="13" font-weight="600" fill="#57606a">SIMULATORS (THE PLANT)</text>
+  <text x="520" y="30" text-anchor="middle" font-size="13" font-weight="600" fill="#57606a">ONE BROKER, TWO TREES</text>
+  <text x="860" y="30" text-anchor="middle" font-size="13" font-weight="600" fill="#57606a">SCREENS AND TOOLS</text>
+
+  <!-- instructor -->
+  <rect x="40" y="46" width="270" height="56" rx="8" fill="#f3effa" stroke="#6b4fa0" stroke-width="1.5"/>
+  <text x="56" y="70" font-size="15" font-weight="600" fill="#24292f">instructor <tspan font-weight="400" fill="#57606a">:8121</tspan></text>
+  <text x="56" y="90" font-size="12" fill="#57606a">hidden faults, over HTTP, never MQTT</text>
+  <line x1="130" y1="102" x2="130" y2="136" stroke="#6b4fa0" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#aViolet)"/>
+  <path d="M40,74 H22 V420 H38" fill="none" stroke="#6b4fa0" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#aViolet)"/>
+
+  <!-- dam-sim -->
+  <rect x="40" y="138" width="270" height="112" rx="8" fill="#eef3f9" stroke="#3a6ea5" stroke-width="1.5"/>
+  <text x="56" y="162" font-size="15" font-weight="600" fill="#24292f">dam-sim</text>
+  <text x="56" y="182" font-size="12" fill="#57606a">reservoir, spillway, bottom outlet,</text>
+  <text x="56" y="198" font-size="12" fill="#57606a">3 units, governor, unit protection,</text>
+  <text x="56" y="214" font-size="12" fill="#57606a">plant controller</text>
+  <text x="56" y="236" font-size="11" fill="#3a6ea5">owner's side · publishes the customer tree</text>
+
+  <!-- hardwired link -->
+  <line x1="100" y1="330" x2="100" y2="254" stroke="#b8692e" stroke-width="2.2" marker-end="url(#aCopper)"/>
+  <text x="110" y="276" font-size="12" font-weight="600" fill="#b8692e">hardwired: element A</text>
+  <text x="110" y="292" font-size="11" fill="#57606a">("copper", for protection)</text>
+
+  <!-- ch-plc-sim -->
+  <rect x="40" y="332" width="270" height="118" rx="8" fill="#e9f5f5" stroke="#137a7f" stroke-width="1.5"/>
+  <text x="56" y="356" font-size="15" font-weight="600" fill="#24292f">ch-plc-sim</text>
+  <text x="56" y="376" font-size="12" fill="#57606a">one CH PLC per turbine:</text>
+  <text x="56" y="392" font-size="12" fill="#57606a">bearings, cooling, HPU, generator,</text>
+  <text x="56" y="408" font-size="12" fill="#57606a">vibration + raw waveforms</text>
+  <text x="56" y="436" font-size="11" fill="#137a7f">machine builder's side · publishes the CH tree</text>
+
+  <!-- broker -->
+  <rect x="400" y="96" width="240" height="370" rx="10" fill="#f6f8fa" stroke="#57606a" stroke-width="1.5"/>
+  <text x="520" y="120" text-anchor="middle" font-size="15" font-weight="600" fill="#24292f">Mosquitto</text>
+  <text x="520" y="138" text-anchor="middle" font-size="12" fill="#57606a">mqtt://localhost:1884</text>
+
+  <rect x="416" y="156" width="208" height="134" rx="7" fill="#eef3f9" stroke="#3a6ea5" stroke-width="1.5"/>
+  <text x="430" y="178" font-size="13" font-weight="600" fill="#3a6ea5">Customer tree (DRWPA)</text>
+  <text x="430" y="198" font-size="11.5" font-family="Menlo, Consolas, monospace" fill="#24292f">v1.0/DRWPA/CopperCanyon/…</text>
+  <text x="430" y="220" font-size="12" fill="#57606a">ISA-95: area / unit / tag</text>
+  <text x="430" y="238" font-size="12" fill="#57606a">+ Cmd topics, Plant/Events</text>
+  <text x="430" y="256" font-size="12" fill="#57606a">1 s, retained</text>
+  <text x="430" y="276" font-size="11" fill="#3a6ea5">owned by the dam operator</text>
+
+  <rect x="416" y="314" width="208" height="134" rx="7" fill="#e9f5f5" stroke="#137a7f" stroke-width="1.5"/>
+  <text x="430" y="336" font-size="13" font-weight="600" fill="#137a7f">CH tree (Cromley Hydraulics)</text>
+  <text x="430" y="356" font-size="11.5" font-family="Menlo, Consolas, monospace" fill="#24292f">v1.0/CH/Fleet/…/&lt;serial&gt;/…</text>
+  <text x="430" y="378" font-size="12" fill="#57606a">asset-centric, keyed by serial</text>
+  <text x="430" y="396" font-size="12" fill="#57606a">values + quality + seq, alarms,</text>
+  <text x="430" y="414" font-size="12" fill="#57606a">waveforms, nameplate</text>
+  <text x="430" y="434" font-size="11" fill="#137a7f">owned by the machine builder</text>
+
+  <!-- simulators <-> broker -->
+  <line x1="310" y1="172" x2="414" y2="190" stroke="#3a6ea5" stroke-width="1.8" marker-end="url(#aBlue)"/>
+  <text x="318" y="168" font-size="11" fill="#3a6ea5">publish</text>
+  <line x1="414" y1="228" x2="312" y2="216" stroke="#3a6ea5" stroke-width="1.8" marker-end="url(#aBlue)"/>
+  <text x="330" y="236" font-size="11" fill="#3a6ea5">Cmd</text>
+  <path d="M414,282 H362 V308 H280 V328" fill="none" stroke="#3a6ea5" stroke-width="1.6" stroke-dasharray="6 3" marker-end="url(#aBlue)"/>
+  <text x="286" y="324" font-size="10.5" fill="#3a6ea5">context (subscribe only)</text>
+  <line x1="310" y1="384" x2="414" y2="384" stroke="#137a7f" stroke-width="1.8" marker-end="url(#aTeal)"/>
+  <text x="318" y="376" font-size="11" fill="#137a7f">publish</text>
+
+  <!-- dam-scada -->
+  <rect x="740" y="96" width="240" height="92" rx="8" fill="#eef3f9" stroke="#3a6ea5" stroke-width="1.5"/>
+  <text x="756" y="120" font-size="15" font-weight="600" fill="#24292f">dam-scada <tspan font-weight="400" fill="#57606a">:8120</tspan></text>
+  <text x="756" y="140" font-size="12" fill="#57606a">hub + the dam SCADA HMI</text>
+  <text x="756" y="156" font-size="12" fill="#57606a">alarms, journal, trends</text>
+  <text x="756" y="176" font-size="11" fill="#3a6ea5">customer tree only</text>
+  <line x1="626" y1="178" x2="738" y2="140" stroke="#3a6ea5" stroke-width="1.8" marker-end="url(#aBlue)"/>
+  <line x1="738" y1="166" x2="628" y2="206" stroke="#3a6ea5" stroke-width="1.8" marker-end="url(#aBlue)"/>
+  <text x="672" y="216" font-size="11" fill="#3a6ea5">Cmd</text>
+
+  <!-- Node-RED and MQTT Explorer: both trees -->
+  <rect x="740" y="222" width="240" height="50" rx="8" fill="#f6f8fa" stroke="#57606a" stroke-width="1.5"/>
+  <text x="756" y="244" font-size="15" font-weight="600" fill="#24292f">Node-RED <tspan font-weight="400" fill="#57606a">:1881</tspan></text>
+  <text x="756" y="262" font-size="12" fill="#57606a">example flows</text>
+  <rect x="740" y="286" width="240" height="50" rx="8" fill="#f6f8fa" stroke="#57606a" stroke-width="1.5"/>
+  <text x="756" y="308" font-size="15" font-weight="600" fill="#24292f">MQTT Explorer <tspan font-weight="400" fill="#57606a">:4001</tspan></text>
+  <text x="756" y="326" font-size="12" fill="#57606a">browse every topic</text>
+  <path d="M626,262 L684,298" fill="none" stroke="#3a6ea5" stroke-width="1.6"/>
+  <path d="M626,340 L684,302" fill="none" stroke="#137a7f" stroke-width="1.6"/>
+  <circle cx="686" cy="300" r="3" fill="#555"/>
+  <line x1="688" y1="299" x2="738" y2="250" stroke="#555" stroke-width="1.6" marker-end="url(#aGrey)"/>
+  <line x1="688" y1="301" x2="738" y2="310" stroke="#555" stroke-width="1.6" marker-end="url(#aGrey)"/>
+  <text x="636" y="312" font-size="11" fill="#555">both</text>
+
+  <!-- ch-viewer -->
+  <rect x="740" y="358" width="240" height="92" rx="8" fill="#e9f5f5" stroke="#137a7f" stroke-width="1.5"/>
+  <text x="756" y="382" font-size="15" font-weight="600" fill="#24292f">ch-viewer <tspan font-weight="400" fill="#57606a">:8122</tspan></text>
+  <text x="756" y="402" font-size="12" fill="#57606a">the machine builder's view:</text>
+  <text x="756" y="418" font-size="12" fill="#57606a">nameplates, values, alarms, waveforms</text>
+  <text x="756" y="438" font-size="11" fill="#137a7f">CH tree only</text>
+  <line x1="626" y1="404" x2="738" y2="404" stroke="#137a7f" stroke-width="1.8" marker-end="url(#aTeal)"/>
+
+  <!-- next step band -->
+  <rect x="20" y="488" width="960" height="72" rx="8" fill="#fbfbfb" stroke="#8c959f" stroke-width="1.3" stroke-dasharray="7 4"/>
+  <text x="40" y="516" font-size="14" font-weight="600" fill="#24292f">Next step, out of scope here: the edge / IIoT vendors</text>
+  <text x="40" y="540" font-size="12.5" fill="#57606a">edge devices on the same broker: analytics, transport off site, buffering, security, data scoping, device management</text>
+
+  <!-- legend -->
+  <g font-size="11" fill="#57606a">
+    <line x1="402" y1="56" x2="428" y2="56" stroke="#3a6ea5" stroke-width="2"/><text x="434" y="60">customer tree</text>
+    <line x1="530" y1="56" x2="556" y2="56" stroke="#137a7f" stroke-width="2"/><text x="562" y="60">CH tree</text>
+    <line x1="402" y1="76" x2="428" y2="76" stroke="#6b4fa0" stroke-width="2" stroke-dasharray="5 3"/><text x="434" y="80">HTTP, not MQTT</text>
+    <line x1="530" y1="76" x2="556" y2="76" stroke="#b8692e" stroke-width="2.2"/><text x="562" y="80">hardwired</text>
+  </g>
+</svg>
