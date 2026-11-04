@@ -14,6 +14,7 @@ Hydraulics. Everything is fictional and for training only.
 | `history/<scenario>/run.json` | What the recorder did: timeline, fault profile, event time, the prompt | **No**, presenters only |
 | `bot/` | The bot's instructions (`CLAUDE.md`) and the grading prompt | Its `CLAUDE.md` only |
 | `run_rca.sh` | Builds an isolated workspace and runs the bot, optionally grades the report | No |
+| `replay.sh` | Replays a recorded history on the running stack: the operator's view in the SCADA and the CH viewer | No |
 | `ANSWER-KEY.md` | Story, people, planted clues and the expected RCA per demo scenario | **No**, presenters only |
 | `../Maintenance & Reliability Engineering – Background for the CH RCA Bot.md` | The brief this demo was built from: M&R background and design rules for the bot (kept as written) | No |
 | `build/` | Generators and Markdown sources for the PDFs, CSVs and the historian | No |
@@ -66,6 +67,39 @@ and `tags.csv`. Deterministic for a given `--seed`; `--start 2026-11-02` records
 ```bash
 docker run --rm -v "$PWD":/w -w /w python:3.12-slim python rca-demo/build/record_history.py   # ~75 min
 ```
+
+## Walkthrough: what the control room saw (scenario A)
+
+```bash
+docker compose up -d --build     # if the stack is not running
+rca-demo/replay.sh               # ~19 min; Ctrl-C stops, the simulators start again either way
+```
+
+`replay.sh` stops dam-sim and ch-plc-sim and publishes the recorded history instead
+(`build/replay_history.py`): every wall second the latest recorded values of both trees, plus the
+SCADA events and CH PLC alarms. Default: 2 Nov 22:00 to 3 Nov 10:15 at 120× (two plant minutes per
+second), 08:55–10:00 at 5×. Payload timestamps are the wall clock, so the SCADA's clock, trends and
+journal agree; the terminal prints the plant time (MST), the alarms and the shift log entries as they
+come up. Open the SCADA on Unit 1 (`http://localhost:8120/scada#unit/Unit1`) and the CH viewer on
+`CH-FR-1987-0042` (`http://localhost:8122/#CH-FR-1987-0042`) side by side.
+
+| Plant time | SCADA (control room) | CH viewer (second screen, no horn) | Shift log |
+| --- | --- | --- | --- |
+| 2 Nov 23:54 | U1 TGB 65.5 °C, no alarm | Pad 3 H alarm (75 °C), red badge | nothing: unseen |
+| 3 Nov 06:00 | Unit 2 trial: U1 to ~42 MW, TGB to ~70 °C | Pad 3 ~80 °C | 06:05 trial started |
+| 07:13 | no alarm | H alarm still standing | "No alarms" |
+| 09:00:29 | U1 TGB 70.3 °C, no alarm | Pad 3 HH (85 °C) | |
+| 09:03–09:14 | | the supervisor checks pads 2/4, oil, element A/B, cooling, gate, vibration | HH found by chance, OP-07 checks |
+| 09:14:30 | U1 to 34 MW (journal: local MW setpoint) | pad 3 falls slowly, HH clears 09:16 | reduced to 34 MW |
+| 09:48–09:51 | U1 stopping → stopped | pad 3 drops to its neighbours | controlled stop |
+
+The point: the control room's only TGB reading is pad 1, which never left the normal band. Everything
+that mattered was on a screen nobody was assigned to watch.
+
+Options: `--from/--to` (plant time), `--speed`, `--slow-from/--slow-to/--slow-speed`, e.g.
+`rca-demo/replay.sh --from "2026-11-03 08:50" --slow-speed 1` for the event in real time. Not
+replayed: waveforms (the viewer shows the last live blocks) and the CH nameplates (retained from the
+live stack). SCADA trends mix the live data from before the replay with the replay's.
 
 ## Running the RCA bot (Claude Code)
 

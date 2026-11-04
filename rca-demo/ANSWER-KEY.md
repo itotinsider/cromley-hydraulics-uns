@@ -74,6 +74,17 @@ element A (`Powerhouse/Unit1/TurbineGuideBearingTemp`, pad 1) only rises ~4 K an
 customer alarm (80 °C) or trip (90 °C). TGB shaft vibration rises slightly late in the ramp.
 Cooling flows, draft tube and gate position stay normal.
 
+**How the shift found out (recorded history, `history/scenario-A/`):** not from the SCADA. The control
+room's U1 TGB indication stayed at ~70 °C with no SCADA alarm. The CH PLC alarms show only in the CH
+viewer on a second screen in the control room: no horn, no acknowledge, nobody assigned to watch it.
+The pad 3 H alarm (23:54 on 2 Nov) went unseen by shift C and shift A; the 07:13 shift log entry
+"No alarms" was written while the viewer listed it. At 09:03 the shift A supervisor saw the red HH
+badge while checking Unit 2's vibration for the trial, did the OP-07 checks with I&C on call, reduced
+to 34 MW (09:14) and stopped the unit (09:48–09:51). Shift log 09:03–09:55 records this.
+- **Planted clue:** the 9 h unseen H alarm and the "No alarms" entry. They point to the latent root
+  "CH alarms not in the control room's alarm system", not to operator blame. The HH was found by
+  chance (the U2 trial), not by design.
+
 **Expected RCA:**
 
 - **Event:** Unit 1 turbine guide bearing pad 3 overheating (CH PLC alarms TGB_PAD03_H/HH), developing failure.
@@ -92,7 +103,8 @@ Cooling flows, draft tube and gate position stay normal.
   (Ray Okafor), and the reliability engineer's conditional sign-off (keep TGB sampling quarterly) was not
   incorporated; the PM interval now deviates from the CH recommendation (quarterly, max 36 months); no rule to
   escalate "Caution" lab results; customer protection only sees pad 1, so pad 3 is invisible to the
-  control room.
+  control room, and the CH viewer that does show it has no annunciation and no owner (the H alarm
+  stood unseen for 9 h).
 - **Good recommendations:** reduce load and plan a stop for TGB inspection; take an oil sample now;
   restore quarterly TGB sampling; escalation rule for lab "Caution"; bring CH pad-level alarms into
   the control room; review MOC-2025-004 against the FMECA.

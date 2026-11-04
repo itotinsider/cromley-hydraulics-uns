@@ -665,6 +665,19 @@ def shift_log():
     e("2026-11-02T15:40", "B", "Unit2", "D. Whitaker enabled rough-zone bypass for Unit 2 per MOC-2026-019 (active from tomorrow 06:00). "
                                          "Reliability sign-off still pending, plant manager approved.")
     e("2026-11-03T06:05", "A", "Unit2", "Regulation reserve trial started. U2 on part load per plant controller. U1 and U3 near 42 MW.")
+    # scenario A: how the shift learned of the CH alarm (CH viewer on a second screen, no horn, no
+    # acknowledge) and the OP-07 response; values from history/scenario-A at these times
+    e("2026-11-03T09:03", "A", "Unit1", "Checking U2 vibration for the trial in the CH viewer (second screen): red HH badge on Unit1, "
+                                         "TGB pad 3 85 C. Viewer also lists TGB pad 3 H since 23:54 yesterday. Control room U1 TGB 70 C, "
+                                         "no SCADA alarm. Started OP-07 checks.")
+    e("2026-11-03T09:14", "A", "Unit1", "OP-07 checks with N. Fenwick (I&C on call) by phone: TGB pads 2 and 4 72-73 C, warmer than pad 1 "
+                                         "and creeping up with pad 3 over the last 30 min (viewer trend); TGB oil 58 C; pad 1 element A 70.2, "
+                                         "element B 70.0; TB cooling flow 8.0 L/s, inlet 14.7 C; gate 84 %, out of the rough zone; TGB "
+                                         "vibration 56 um pp, unchanged. Bearing problem per OP-07 §4. U1 to 34 MW (LOCAL). P. Nandakumar on "
+                                         "leave until 4 Nov; oil sample requested from T. Halvorsen.")
+    e("2026-11-03T09:48", "A", "Unit1", "U1 TGB pad 3 still 81.5 C after 30 min at 34 MW. HH was reached: controlled stop per OP-07 §4, "
+                                         "agreed with E. Marsh by phone.")
+    e("2026-11-03T09:55", "A", "Unit1", "U1 stopped 09:51. Not to be restarted before TGB inspection. Level 1 RCA required (PRO-REL-01).")
     rows.sort(key=lambda r: r["timestamp"])
     write("shift-log_2026-09_2026-11.csv", ["timestamp", "shift", "supervisor", "unit", "entry"], rows)
 

@@ -77,7 +77,8 @@ mqtt_explorer_data/settings.json   the seeded "Copper Canyon Dam" connection (on
 data/                    bind mount: ch_plc_counters.json (git-ignored)
 exports/                 bind mount: CSVs Node-RED writes (git-ignored)
 rca-demo/                RCA bot demo: document library (library/), instructor answer key, generators (build/),
-                         recorded historian per scenario (history/), bot instructions (bot/), run_rca.sh
+                         recorded historian per scenario (history/), bot instructions (bot/), run_rca.sh,
+                         replay.sh (plays a recorded history on the stack: the control room's view)
 ```
 
 ## Commands
