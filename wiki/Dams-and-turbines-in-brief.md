@@ -112,13 +112,73 @@ runner blades. Each implosion is tiny, but over months it eats metal (**cavitati
 gets worse at high load, at heads far from the design head, and with low tailwater (the runner sits
 less deep under water). It shows as high-frequency energy in a headcover **accelerometer**.
 
-## Bearings and cooling
+## The unit, part by part
 
-A vertical unit hangs on its **thrust bearing** (6 pads at Copper Canyon) and is kept centred by
-three **guide bearings**: upper and lower generator guide (**UGB**, **LGB**) and the turbine
-guide (**TGB**), 4 pads each. The pads float on an oil film; the oil is cooled by **cooling water**
-from the river. Pad temperatures are normally ≤ 80 °C, the oil bath 50–60 °C. A pad losing its oil
-film heats up slowly, then fast: the classic predictive-maintenance case.
+A Copper Canyon unit stands vertically: the generator on top, the turbine below, one shaft through
+both. The drawing shows a section through the unit axis: the parts on the left, and on the right what is
+measured there, and in which tree. **CH** (teal) is the CH monitoring PLC's tree, **DRWPA** (blue)
+the customer's own unit controller. Most measurements exist only in the CH tree. The customer has a
+handful of its own, mostly for protection.
+
+[![CH-Francis unit: section with parts and measurements](images/turbine-section.png)](images/turbine-section.png)
+
+From top to bottom:
+
+| Part | What it does | Measured (CH tree, unless marked) |
+|---|---|---|
+| **Thrust bearing** | Carries the weight of the rotating parts plus the downward water thrust, on 6 pads in an oil pot. At start and stop a high-pressure oil lift floats it | `Bearings/Thrust/PadTemp01…06`, oil bath temperature and level, lift pressure; DRWPA: `ThrustBearingTemp` (pad 1) |
+| **Guide bearings** (UGB, LGB, TGB) | Keep the shaft centred: upper and lower generator guide, turbine guide. 4 pads each | `Bearings/<b>/PadTemp01…04`, oil temperature and level, shaft X/Y vibration; DRWPA: pad 1 of each |
+| **Generator** | Rotor (rim with field poles) turning inside the stator (the winding the power comes out of). Between them the **air gap** | `Generator/StatorTemp01…06`, `Generator/AirGapMin_mm`; DRWPA: `MW`, `MVAr`, `BreakerClosed` |
+| **Air coolers** | Water-to-air coolers around the stator | `Cooling/WaterFlow_AirCoolers` |
+| **Coupling** | Bolted flange between the generator shaft and the turbine shaft | — |
+| **Keyphasor** | A notch on the shaft and a probe that sees it once per turn: the reference for vibration phase | `keyphasorIdx` in the waveform blocks; DRWPA: `Speed` |
+| **Shaft seal** | Keeps the water in the turbine from running up the shaft; fed with clean seal water | `Turbine/ShaftSealWaterFlow` |
+| **Headcover** | The heavy lid over the runner; it carries the TGB | `Turbine/HeadcoverPressure`, headcover vibration and accelerometer |
+| **Spiral case, stay vanes** | Spread the water evenly round the runner | `Turbine/SpiralCasePressure` |
+| **Wicket gates, servomotors** | Set the flow; two servomotors turn the gate ring, shear pins protect each gate | `Turbine/ShearPinStatus`, `Governor/HPU/ServoPositionA/B`; DRWPA: `GatePosition` |
+| **Runner** | 13 blades; turns the water's energy into torque | — (seen through vibration and the draft tube) |
+| **Draft tube** | Slows the water down on its way to the river; the vortex rope lives here | `Turbine/DraftTubePressure` and its waveform |
+| **Governor HPU** | Pumps, accumulator, filter, sump: oil under pressure for the servomotors | `Governor/HPU/*`; DRWPA: `GovernorOilPressure` |
+| **Cooling water** | River water through coils in each oil pot and the air coolers | `Cooling/WaterFlow_GB`, `WaterFlow_TB`, inlet and outlet temperature; DRWPA: `CoolingWaterFlow` (total) |
+
+Where a sensor appears in both trees (pad 1 of each bearing, the total cooling flow, the
+accumulator pressure) it is one **dual-element** sensor: element A is wired to the customer's
+protection, element B to the CH PLC. See
+[Customer data vs. machine-builder data](Customer-data-vs-machine-builder-data).
+
+## Bearings, pads and cooling
+
+The big bearings of a hydro unit are not ball or roller bearings. A guide bearing is a ring of
+separate curved blocks, the **pads** (or segments), around the shaft. Each pad is faced with a few
+millimetres of **babbitt**, a soft white metal that is mostly tin. The pads never touch the shaft: the
+turning shaft drags oil into the narrowing gap in front of each pad and builds an **oil film**, a
+few hundredths of a millimetre thick, that carries the load. The pad sits on a **pivot**, so it tilts
+to the right wedge angle by itself. The thrust bearing works the same way, with its pads lying flat
+under a collar on the shaft.
+
+[![Turbine guide bearing: section A-A with 4 pads, RTDs and probes, and detail of one pad](images/turbine-bearing.png)](images/turbine-bearing.png)
+
+- **One RTD per pad**, in a hole drilled in the pad steel, with its tip just behind the babbitt where
+  the heat is made. Only **pad 1** has a dual-element RTD, so the customer's SCADA sees one pad per bearing; the CH PLC
+  sees them all.
+- **Two proximity probes** per guide bearing, 90° apart (X and Y), measure the gap to the shaft
+  surface: the shaft's movement in its bearing (see the next section).
+- **Oil and cooling:** each bearing has its own oil pot with a cooling coil. Thrust, UGB and LGB share
+  the generator-bearing cooling circuit (GB, 12 L/s); the TGB has its own turbine-bearing circuit
+  (TB, 8 L/s); the air coolers take 60 L/s.
+- **Normal and limits:** pads 60–70 °C at full load, oil bath 50–60 °C. The CH PLC alarms every pad
+  at 75 °C (H) and 85 °C (HH); the customer alarms pad 1 at 80 °C and trips at 90 °C. Babbitt softens
+  from about 120–130 °C.
+- **How a pad fails:** the film thins (a tight clearance, more load, or oxidised oil), the thinner
+  film makes more heat, the pad warms slowly over weeks, then the babbitt starts to smear (tin shows
+  in the oil analysis) and the temperature runs away in hours. The classic predictive-maintenance
+  case.
+- **Neighbours tell you whether it is real:** a real pad problem also warms the next pads and
+  the oil. One pad moving alone with flat neighbours points to the sensor instead.
+
+In **scenario A** this happens to Unit 1's TGB pad 3, set tighter than tolerance in 2019. Pad 3 passes
+85 °C while pad 1, the only pad the control room sees, stays near 70 °C. The
+[RCA demo walkthrough](RCA-demo-walkthrough) follows it from the control room to the RCA.
 
 ## Vibration in one paragraph
 
@@ -156,5 +216,7 @@ misalignment. Sub-synchronous vibration below 1X at a hydro unit is usually the 
 | **Orbit** | Y vs. X shaft displacement | CH asset viewer |
 | **Blade pass** | Runner blades × speed: 13 × 5 = 65 Hz | Headcover accelerometer |
 | **RTD** | Resistance temperature detector | Every bearing pad temperature |
+| **Pad** (segment) | One block of a bearing, faced with babbitt, floating on the oil film | `Bearings/<b>/PadTemp01…` |
+| **Babbitt** | Soft tin-based white metal on the pad face; wear shows as tin in the oil | Oil analysis (RCA demo library) |
 | **Air gap** | Gap between generator rotor and stator | `Generator/AirGapMin_mm` |
 | **Dual-element RTD** | One sensor, two elements: one to the customer, one to CH | [Customer data vs. machine-builder data](Customer-data-vs-machine-builder-data) |
