@@ -48,6 +48,7 @@ device management are what the vendors bring: see the [Edge vendor brief](Edge-v
 | Use the screens | [Dam SCADA](Dam-SCADA), [CH asset viewer](CH-asset-viewer), [Instructor station](Instructor-station) |
 | Show your edge platform on it | [Edge vendor brief](Edge-vendor-brief), [Failure modes](Failure-modes) |
 | Follow a failure from the control room to an AI-assisted RCA | [RCA demo walkthrough](RCA-demo-walkthrough) |
+| Do such an RCA yourself in Claude, from the documents and data | [RCA with Claude: a guide for engineers](RCA-guide-for-engineers) |
 | Discuss the business case | [Business model](Business-model) |
 | Change the code | [Development](Development) |
 

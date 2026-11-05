@@ -344,4 +344,5 @@ Not replayed: the waveforms (the viewer shows the last live blocks) and the name
 from the live stack). The SCADA trends mix the live data from before the replay with the replay's.
 
 More in [`rca-demo/README.md`](https://github.com/itotinsider/cromley-hydraulics-uns/blob/main/rca-demo/README.md).
+To do the analysis yourself, step by step, see [RCA with Claude: a guide for engineers](RCA-guide-for-engineers).
 See also [Failure modes](Failure-modes), [Dam SCADA](Dam-SCADA) and [CH asset viewer](CH-asset-viewer).
