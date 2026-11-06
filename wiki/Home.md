@@ -44,6 +44,7 @@ device management are what the vendors bring: see the [Edge vendor brief](Edge-v
 | Know the site and how it is operated | [Copper Canyon Dam](Copper-Canyon-Dam) |
 | See how the pieces fit | [Architecture](Architecture) |
 | Understand the core lesson | [Customer data vs. machine-builder data](Customer-data-vs-machine-builder-data) |
+| See both topic trees written out in full | [Example Unified Namespace](Example-Unified-Namespace) |
 | Find a topic | [Namespace](Namespace), [Interface reference](Interface-reference) |
 | Use the screens | [Dam SCADA](Dam-SCADA), [CH asset viewer](CH-asset-viewer), [Instructor station](Instructor-station) |
 | Show your edge platform on it | [Edge vendor brief](Edge-vendor-brief), [Failure modes](Failure-modes) |

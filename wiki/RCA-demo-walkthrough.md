@@ -1,5 +1,19 @@
 # RCA demo walkthrough
 
+> **Disclaimer.** This code is part of the [IT/OT Academy](https://itot.academy), offered by
+> [The IT/OT Insider](https://itotinsider.com). It is a generated, vibe-coded system made **only for
+> demo purposes**. It may not be used for anything other than demonstration or training: not in
+> production, not connected to real equipment, and not as the basis for any real control, quality
+> or maintenance decision.
+>
+> **Important: using your own company's data. This demo runs on public cloud services (Claude,
+> GitHub). Before you repeat the exercise with real data from your own company, check that your
+> company allows the service you want to use, and under which plan or contract. Know which data you
+> may take out of company systems, and how to export, transfer and store it securely. Never upload
+> or publish documents, data or results you are not authorised to share, such as confidential,
+> personal, customer or export-controlled information. When in doubt, ask your IT, data or
+> information security team before you start.**
+
 A complete run of the root cause analysis (RCA) demo, scenario A: a turbine guide bearing (TGB)
 pad on Unit 1 overheats over three weeks, the shift stops the unit, and the next morning the
 reliability engineer hands the case to an AI co-analyst (Claude Code). This page shows what each

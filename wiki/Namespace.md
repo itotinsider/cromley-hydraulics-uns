@@ -4,7 +4,8 @@ Every topic on the Copper Canyon broker. The single source of truth is
 [`common/namespace.py`](https://github.com/itotinsider/cromley-hydraulics-uns/blob/main/common/namespace.py);
 the generated, tested list of every concrete topic is
 [`inventory/topics.csv`](https://github.com/itotinsider/cromley-hydraulics-uns/blob/main/inventory/topics.csv)
-(see [Interface reference](Interface-reference)).
+(see [Interface reference](Interface-reference)). Both trees written out in full, with the
+dam's and the vendor's view explained: [Example Unified Namespace](Example-Unified-Namespace).
 
 Broker: `mqtt://localhost:1884` from the host, `mosquitto:1883` inside the compose network.
 Anonymous, no TLS. All topics start with the version `v1.0/`.
