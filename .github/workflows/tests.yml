@@ -1,0 +1,25 @@
+# Runs the test suite (interface inventory, contracts, behaviour, end to end) on every pull request
+# and on main, so an interface change cannot be merged without its inventory and version.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the tests in the test image
+        run: docker compose run --rm tests

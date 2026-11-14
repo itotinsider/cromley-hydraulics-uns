@@ -59,7 +59,7 @@ doesn't touch the running stack.
 
 | File | What it checks |
 |---|---|
-| `tests/test_inventory.py` | The committed [interface inventory](Interface-reference) still matches the code |
+| `tests/test_inventory.py` | The committed [interface inventory](Interface-reference) still matches the code, and the interface version was raised with it |
 | `tests/test_contracts.py` | Every topic a component, page, flow or wiki page names exists in the namespace; hidden faults never reach MQTT |
 | `tests/test_behaviour.py` | Both models coupled offline, faster than real time: steady state without alarms, start/stop, the plant controller, a signature for every instructor scenario |
 | `tests/test_e2e.py` | The real programs with an embedded Mosquitto: every topic of the inventory is published, commands round-trip, waveform blocks have the right shape, the last will works |
@@ -67,6 +67,7 @@ doesn't touch the running stack.
 **When a test fails:** an inventory diff means an interface changed; if you meant it, regenerate
 the inventory and commit it with the change, and name every added, renamed or removed topic in the
 PR. A new instructor scenario needs its expected signature in `tests/test_behaviour.py`.
+The same tests run on GitHub for every pull request and every push to `main`.
 
 ## Editing this wiki
 
