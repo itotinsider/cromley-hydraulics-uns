@@ -7,11 +7,12 @@ Every component keeps owning its part (see inventory/README.md); this tool only 
 
 tests/test_inventory.py fails while the committed inventory differs from the code, so any added,
 renamed or removed topic, command, hardwired signal, scenario or HTTP route shows up as a diff in
-the PR. Standard library only (runs with plain python3 too).
+the PR. inventory/interface.json carries the interface version and a fingerprint of the rest. Standard library only (runs with plain python3 too).
 """
 
 import csv
 import difflib
+import hashlib
 import importlib.util
 import io
 import json
@@ -209,7 +210,30 @@ def topics_csv():
     return buf.getvalue()
 
 
+def digest(files):
+    """Fingerprint of the interface: every inventory file except interface.json itself."""
+    h = hashlib.sha256()
+    for name in sorted(files):
+        if name != "interface.json":
+            h.update(name.encode() + b"\0" + files[name].encode("utf-8") + b"\0")
+    return h.hexdigest()[:16]
+
+
+def interface_layer(files):
+    return {"_source": "common/namespace.py INTERFACE_VERSION; digest = fingerprint of the other files here",
+            "version": NS.INTERFACE_VERSION,
+            "namespace": NS.VERSION,
+            "digest": digest(files),
+            "files": sorted(n for n in files if n != "interface.json")}
+
+
 def build():
+    files = _build_layers()
+    files["interface.json"] = dumps(interface_layer(files)) + "\n"
+    return files
+
+
+def _build_layers():
     return {
         "customer.json": dumps(customer_layer()) + "\n",
         "commands.json": dumps(commands_layer()) + "\n",

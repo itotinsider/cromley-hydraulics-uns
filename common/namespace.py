@@ -19,6 +19,14 @@ MQTT Explorer bookmarks) break.
 
 VERSION = "v1.0"
 
+# The interface as a whole (inventory/): topics, commands, hardwired signals, scenarios, HTTP routes.
+# Projects that build on Copper Canyon pin a commit and compare this number (inventory/interface.json).
+# Raise the first number for a rename, a removal or a changed type or unit; the second for an addition.
+# INTERFACE_DIGEST is the fingerprint of inventory/ at that version: tests/test_inventory.py fails
+# when the inventory changes and these two lines do not, and prints the new digest.
+INTERFACE_VERSION = "1.0"
+INTERFACE_DIGEST = "4a24d677ff8c3edc"
+
 # ----------------------------------------------------------------------------- customer tree
 CUSTOMER_ID = "DRWPA"            # Desert River Water & Power Authority
 SITE_ID = "CopperCanyon"

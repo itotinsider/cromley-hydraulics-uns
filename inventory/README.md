@@ -49,7 +49,22 @@ HTTP, never over MQTT.
 4. **Topic segments** are `[A-Za-z0-9_]` only, and a topic that carries a value never has children
    (`test_no_leaf_is_also_a_branch`).
 
+## Version
+
+`interface.json` holds one number for the whole interface, `INTERFACE_VERSION` in
+`common/namespace.py`, and a fingerprint of the other files in this folder.
+
+- First number up: something was renamed or removed, or a type or unit changed. Whatever reads the old name breaks.
+- Second number up: something was added. Existing readers keep working. A changed label or description also counts here: it changes the fingerprint.
+- `test_interface_version_is_raised_with_the_interface` fails when this folder changes and the
+  number does not, and prints the new fingerprint to put next to it.
+
+A project that builds on Copper Canyon pins a commit, records the version it was built against and
+compares after every update (see the wiki's Interface reference).
+
 ## Files
+
+- `interface.json`: the interface version, the namespace prefix and the fingerprint.
 
 - `customer.json`: every customer tag (unit, type, decimals, range, source: model or hardwired),
   the payload, the events topic, the unit states and modes.

@@ -298,13 +298,14 @@ generated, never edited.
 
 | File | What | Time |
 |---|---|---|
-| `test_inventory` | committed `inventory/` == code (full diff on failure) | 1 s |
+| `test_inventory` | committed `inventory/` == code (full diff on failure); `INTERFACE_VERSION` raised with every interface change (`INTERFACE_DIGEST` in `common/namespace.py`, the failure prints the new value) | 1 s |
 | `test_contracts` | namespace rules; dam/CH publish exactly their trees; hardwired, context, commands, SCADA alarms, PLC alarms; scenario ids/letters; hidden faults; pages, Node-RED, MQTT Explorer seed and docs only name existing paths/topics; wiki links | 1 s |
 | `test_behaviour` | `Sim`: steady state 30 min (no alarms, at setpoint, out of the rough zone), ranges, typical values, repeatability, stop/start, ESD + reset, minimum flow, plant controller sweep, LOCAL mode, refusals, hardwired loss, waveform shape, **one signature per scenario** (`SIGNATURES`; a new scenario fails `test_every_scenario_has_a_signature`), repair | ~140 s |
 | `test_e2e` | mosquitto + all five services as processes: every inventory topic on the broker with the right payload keys and units, nothing extra, waveforms, hardwired, HTTP routes, SCADA command round trip, bare-value MQTT command, viewer, instructor + a hidden scenario, killing the CH PLCs (last will, hardwired fault, no trip) | ~20 s |
 
-**Workflow per change:** run the tests before every commit; an interface change means a
-regenerated inventory in the same commit and a sentence in the PR; a new scenario needs a
+**Workflow per change:** run the tests before every commit (CI runs them on every PR:
+`.github/workflows/tests.yml`); an interface change means a regenerated inventory and a raised
+`INTERFACE_VERSION` in the same commit and a sentence in the PR; a new scenario needs a
 signature; after retuning, try another seed (`CH_TEST_SEED`).
 
 **Gotchas found while building:**

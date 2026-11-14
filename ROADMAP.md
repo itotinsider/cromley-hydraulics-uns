@@ -99,6 +99,15 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 - **Notes:** 2026-11-03 Willem: scenario A first; 13 Oct – 3 Nov window; history committed gzipped. G and C to follow with the same recorder.
   2026-11-04 Willem: no full failure, the controlled stop stays; the shift found the HH on the CH viewer (shift log 09:03–09:55); replay of the history on the stack for the operator's view.
 
+### `interface-version` — One version number for the interface, tests in CI
+- **Status:** 🚧 In progress · **Owner:** Willem (with Claude) · **Branch:** `interface-version` · **PR:** —
+- **Goal:** a project that builds on Copper Canyon (pinned to a commit, with its own containers around it) can see from one number whether an update changes anything it reads.
+- **Touches:** `common/namespace.py` (`INTERFACE_VERSION`, `INTERFACE_DIGEST`), `tools/inventory.py`, `inventory/interface.json` (new), `tests/test_inventory.py`, `.github/workflows/tests.yml` (new), the wiki's Interface reference. No topic, command, scenario or route changes.
+- **Reserves:** nothing.
+- **Depends on:** —
+- **Done when:** changing the inventory without raising the version fails a test that says what to do; the tests run on GitHub for every pull request; the wiki explains how another project builds on Copper Canyon.
+- **Notes:** `2026-11-14 Willem: asked for this, for a course lab that reuses the plant unchanged.` Not in the inventory yet: the environment variables (still only on the Configuration page).
+
 ## Planned
 
 (nothing yet)
