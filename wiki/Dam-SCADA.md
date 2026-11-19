@@ -9,7 +9,7 @@ builder's data.
 It is being rebuilt as a **high-performance HMI (ISA-101)** in the style of the HCW operator
 console: a light-grey screen, colour only for alarms (priority 1 red, 2 amber, 3 violet, stale
 data magenta), one muted blue for water, a point name on every value, faceplates for every
-command. The displays that are not rebuilt yet open the **previous HMI** at
+command. The reservoir and spillway display is not rebuilt yet: it opens the **previous HMI** at
 http://localhost:8120/scada-classic (marked *classic* in the display bar).
 
 ![Dam SCADA overview](images/scada-overview.png)
@@ -20,11 +20,13 @@ http://localhost:8120/scada-classic (marked *classic* in the display bar).
 |---|---|---|
 | Plant overview | KPI strip (plant MW and setpoint, frequency, reservoir level and its rate, gross head, river flow, units generating, spillway and outlet discharge); the flow path from reservoir to river with the spillway gates, intake, penstock, the three units, tailrace and bottom outlet; the 150 kV side (step-up transformers, breakers, generators); the grid operator | `/scada#overview` |
 | Dam section (🎓 Dam view) | The dam to scale in elevation: reservoir and tailwater levels live, the gross head as a dimension, spillway gates, intake, penstock through the dam, powerhouse, bottom outlet; teal training notes on what each part does (*Hide notes* for the plain view) | `/scada#section` |
+| Powerhouse | The three units side by side, one row per signal: state, sequence step, mode, MW and setpoint, MVAr, gate, speed, flow, head, breaker, inlet valve, the four bearing RTDs, cooling water, governor oil (with the unit's alarm and trip zones), start permissives, unit alarms | `/scada#units` |
+| Unit display (Unit 1–3) | The water path (penstock, inlet valve, spiral case, wicket gates, runner, draft tube), the shaft with the four bearing RTDs, generator and breaker, governor and HPU, all as data blocks; the **sequence** step by step (S00–S11) with the current step, the **start permissives**, the **first-out** trip, the unit protection limits; the **operating chart** (MW against net head, rough zone, max. output, all three units, the last 30 min); MW and bearing trends | `/scada#unit/Unit1` |
 | Alarms and events | Alarm summary (priority, time, point, text, value, state, acknowledge) and the event journal with filters | `/scada#alarms` |
 | Trends | Up to 8 points picked by point name, 15 min to 48 h, cursor read-out | `/scada#trends`, `/scada?trend=CC-JI-301,CC-JY-302&range=60` |
 | Point list | Every SCADA point: point name, description, value, range bar, age, alarm, customer UNS path | `/scada#points` |
 | Faceplate | Opens beside any screen: value, range with alarm limits, quality and age, the object's commands, a 30-min trend, the point's names | `/scada?tag=U1-TI-304` (point name or path) |
-| Reservoir and spillway, unit detail, governor | Still on the previous HMI: `#reservoir`, `#unit/Unit1` and `#governor` on `/scada` forward there | `/scada-classic#unit/Unit1` |
+| Reservoir and spillway | Still on the previous HMI: `#reservoir` on `/scada` forwards there (`#governor` now opens the Powerhouse display) | `/scada-classic#reservoir` |
 
 Every value is a **data block**: point name, value, unit and a thin bar over the point's range,
 with the zones beyond its alarm limits shaded and, where there is one, the setpoint as a hollow
@@ -44,10 +46,36 @@ means an alarm or a state.
 **Commands sit on faceplates.** Click a spillway gate or the bottom outlet for AUTO/MAN and a
 position, the intake gate for open/close (close is armed first, then confirmed), and the
 **Grid operator** box at the end of the 150 kV line for the plant MW setpoint and AGC: it stands
-for the dispatcher at the other end of the line. Unit commands are on the unit display (previous
-HMI for now).
+for the dispatcher at the other end of the line. **Unit control** (the button on the unit display,
+or a click on the generator, the state or the MW) has Start, Stop, Reset, Emergency stop, PLANT /
+LOCAL and a local MW setpoint; Stop and Emergency stop are armed first, then confirmed. Start is
+greyed out while a permissive is not met, and the faceplate says which.
 
-![Unit detail on the previous HMI](images/scada-unit.png)
+![Unit display during a start](images/scada-unit.png)
+
+### The unit display: sequence, permissives, first-out
+
+A hydro operator follows a start or a stop on the **sequence**: the unit controller publishes its
+step (`Powerhouse/<unit>/SequenceStep`, point `U<n>-KS-005`), finer than the unit state. A start
+runs S01 cooling water check → S02 inlet valve → S03 breakaway → S04 speed-no-load and
+excitation → S05 synchronise → S06 generating, about 100 s to the breaker; a stop S07 unload →
+S08 close the gates → S09 coast down and brakes → S10 close the inlet valve → S00 stopped. The
+time in the current step counts from when the page saw the step change.
+
+The **start permissives** (`StartPermissives`, `U<n>-KS-006`) are what the unit controller
+checks before it accepts a start: unit stopped, intake gate open, reservoir ≥ 384 m, the
+hardwired signals from the turbine present, governor oil ≥ 55 bar. A *NOT MET* line explains a
+refused start before anyone presses Start.
+
+**First-out:** when a unit trips, several causes often appear at once (a bearing trip brings the
+bearing alarm with it). The unit controller latches the cause that tripped the unit and lists it
+first in `ActiveAlarms`; the unit display shows it as the first-out until Reset.
+
+The **operating chart** plots MW against net head with the rough zone hatched and the maximum
+output dashed, for all three units: it shows why the plant controller keeps units out of the
+rough zone, and what a low reservoir (less head) does to the available output.
+
+![Powerhouse](images/scada-powerhouse.png)
 
 ## Point names: three names for one signal
 

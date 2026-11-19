@@ -200,7 +200,8 @@ a status topic, never let the SCADA, viewer or Node-RED read ground truth.
   MW = `shaft_mw(gate, head)` + vortex-rope swing (±1.2 MW × rope intensity).
 - **Governor:** online, gate = feed-forward `gate_for_mw(Pref)` + slow integral, Pref = ramped MW
   setpoint + 5 % droop on frequency; offline, a speed PI around the speed-no-load gate.
-- **Sequence:** Starting (CoolingWater check after 10 s → InletValve 15 s → Breakaway gate 20 %) →
+- **Sequence** (published as `SequenceStep` = `NS.SEQUENCE_STEPS`, permissives as `StartPermissives` =
+  `NS.START_PERMISSIVES`; `ActiveAlarms` lists the latched trip cause first): Starting (CoolingWater check after 10 s → InletValve 15 s → Breakaway gate 20 %) →
   SpeedNoLoad at 95 % speed (excite 5 s) → Synchronising (8 s, |Δf| < 1 %) → Generating (ramp
   12 MW/min up, 20 down). Stopping: unload at 40 MW/min, breaker, close gates, coast, brakes, inlet
   valve, Stopped. Tripped: breaker opens at once (load rejection peaks ~123 % speed), gates close,
@@ -279,10 +280,16 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
   - **Rebuild in progress (`scada-hp-hmi`, ROADMAP):** `/scada` is the new high-performance HMI
     (step 1: Plant overview, the **Dam section** training view `#section` = the old cross-section
     redrawn to scale with teal notes, opened by *🎓 Dam view*; faceplates, alarms and events,
-    trends, point list); the reservoir,
-    unit and governor displays are still the previous HMI at `/scada-classic` (the display bar
-    and the old hashes forward there). Steps 2–4: unit displays with `SequenceStep` and
-    `StartPermissives`, water / single-line / joint control, SQLite historian and SOE.
+    trends, point list); step 2: the Powerhouse display `#units` (old `#governor` forwards
+    there) and the unit display `#unit/<unit>` (sequence S00–S11 from `SequenceStep`, start
+    permissives from `StartPermissives`, first-out = first code of `ActiveAlarms` when it is a
+    `TRIP_*`, operating chart MW vs net head from `/api/config` zones, unit control faceplate).
+    Only `#reservoir` is still the previous HMI at `/scada-classic`. Steps 3–4: water /
+    single-line / joint control, SQLite historian and SOE.
+  - **Unit limits:** `UNIT_LIMITS` in `scada/main.py` (bearing 80/90 °C, governor oil 55/52/48 bar,
+    cooling water 56 L/s, overspeed 145 %) is the SCADA's engineering copy of the unit controller's
+    protection, on `/api/config`; `test_scada_unit_limits_match_the_unit_controller` keeps it equal
+    to `damsim/model.py`.
   - **Point names** (`NS.point_names()`): ISA-5.1 letters + loop number, `CC-` plant and `U<n>-`
     unit points (`U1-TI-304` = TGB pad 1 element A). SCADA engineering data on `/api/config`,
     never on MQTT; `test_every_customer_tag_has_one_scada_point_name`. The trend and faceplate

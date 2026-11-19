@@ -87,6 +87,15 @@ UNIT_CODES = {
     "HARDWIRED_IO_FAULT": (2, "No signals from the turbine (hardwired I/O)"),
 }
 
+# The unit controller's protection limits, as the SCADA's engineering copy (test_contracts checks them
+# against damsim/model.py). Shown on the unit display and on the bearing / oil / cooling bars.
+UNIT_LIMITS = {
+    "bearing": {"alarm": 80.0, "trip": 90.0, "delay_s": 5.0},
+    "governor_oil": {"start": 55.0, "alarm": 52.0, "trip": 48.0},
+    "cooling_water": {"alarm": 56.0, "nominal": 80.0},
+    "overspeed_trip_pct": 145.0,
+}
+
 # the signal a unit controller code is about (the point it is shown on); the others stay on the alarm word
 CODE_SIGNAL = {"TRIP_OVERSPEED": "Speed", "TRIP_GOV_OIL_PRESSURE": "GovernorOilPressure",
                "GOV_OIL_PRESSURE_LOW": "GovernorOilPressure", "COOLING_WATER_FLOW_LOW": "CoolingWaterFlow"}
@@ -278,6 +287,9 @@ def build_app(sc):
                 "alarms": [{"id": a[0], "path": a[1], "op": a[2], "limit": a[3], "priority": a[4], "text": a[5],
                             "delay": a[6], "point": POINTS.get(a[1])} for a in ALARMS],
                 "points": POINTS,
+                "sequence_steps": [{"id": k, "text": t} for k, t in NS.SEQUENCE_STEPS],
+                "start_permissives": [{"id": k, "text": t} for k, t in NS.START_PERMISSIVES],
+                "unit_limits": UNIT_LIMITS,
                 "unit_codes": {k: {"priority": p, "text": t} for k, (p, t) in UNIT_CODES.items()},
                 "zones": zones(), "rated_mw": T.RATED_MW, "rated_rpm": T.RATED_RPM, "links": LINKS,
                 "stale_s": STALE_S}

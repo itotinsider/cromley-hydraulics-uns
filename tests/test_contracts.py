@@ -161,6 +161,18 @@ def test_every_customer_tag_has_one_scada_point_name():
             assert n.startswith("U" + path.split("/")[1][len("Unit"):] + "-"), (path, n)
 
 
+def test_scada_unit_limits_match_the_unit_controller(models):
+    import inventory
+    dam_model = models[0]
+    lim = inventory.load_module("scada_main", "scada/main.py").UNIT_LIMITS
+    assert (lim["bearing"]["alarm"], lim["bearing"]["trip"], lim["bearing"]["delay_s"]) == \
+        (dam_model.BEARING_H, dam_model.BEARING_HH, dam_model.TRIP_DELAY_S)
+    assert (lim["governor_oil"]["start"], lim["governor_oil"]["alarm"], lim["governor_oil"]["trip"]) == \
+        (dam_model.GOV_OIL_START_MIN, dam_model.GOV_OIL_L, dam_model.GOV_OIL_LL)
+    assert lim["cooling_water"]["alarm"] == dam_model.COOLING_FLOW_MIN
+    assert lim["overspeed_trip_pct"] == dam_model.OVERSPEED_TRIP * 100
+
+
 def test_scada_alarms_point_at_customer_tags():
     """Every alarm the SCADA can raise names the tag its faceplate opens (or none for COMM_DAM)."""
     import inventory

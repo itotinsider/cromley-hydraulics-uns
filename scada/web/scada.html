@@ -245,6 +245,49 @@
   .tdim.d { stroke-dasharray: 5 4; }
   #section.nonotes .tn { display: none; }
   .dnav a.on, .dnav button.on { background: #3a3f44; color: #fff; border-color: #3a3f44; }
+  /* unit display (level 3) and powerhouse comparison (level 2) */
+  .dhead { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: var(--panel-2); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .dhead b { font-size: 14px; }
+  .chip { display: inline-block; font: 700 11px var(--mono); padding: 2px 8px; border: 1px solid #8d9297; background: #f2f3f3; }
+  .chip.run { background: var(--equip-run); color: #fff; border-color: var(--equip-run); }
+  .chip.trip { background: #fff; color: var(--p1); border: 2px solid var(--p1); }
+  .chip.trans { border: 2px solid var(--p2); }
+  .ugrid { display: grid; grid-template-columns: minmax(0, 1fr) 370px; }
+  .uside { border-left: 1px solid var(--line); padding: 8px 10px; }
+  .uside h4 { margin: 10px 0 4px; font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; display: flex; justify-content: space-between; }
+  .uside h4:first-child { margin-top: 0; }
+  .seq { margin: 0; padding: 0; list-style: none; font: 11.5px var(--mono); }
+  .seq li { display: flex; gap: 6px; align-items: baseline; padding: 2px 6px; border: 1px solid transparent; color: #8a9095; }
+  .seq li .n { width: 44px; flex: none; white-space: nowrap; }
+  .seq li .k { flex: 1; font-family: var(--sans); font-size: 11.5px; }
+  .seq li .t { color: var(--muted); }
+  .seq li.done { color: var(--text); }
+  .seq li.done .n::after { content: " ✓"; }
+  .seq li.cur { background: #fff; border: 2px solid var(--text); color: var(--value); font-weight: 700; }
+  .seq li.cur.trip { border-color: var(--p1); }
+  .perm { margin: 0; padding: 0; list-style: none; font-size: 11.5px; }
+  .perm li { display: flex; gap: 8px; padding: 2px 6px; }
+  .perm li b { font: 700 11px var(--mono); width: 54px; flex: none; }
+  .perm li.no b { background: var(--text); color: #fff; text-align: center; }
+  .fo { padding: 6px 8px; border: 2px solid var(--p1); background: #fbeaea; font: 12px var(--mono); margin: 4px 0; }
+  .fo.none { border: 1px solid #b4b8bc; background: #f2f3f3; color: var(--muted); }
+  .codes2 { font: 11px var(--mono); color: var(--muted); }
+  .u2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .u2 canvas { width: 100%; height: 130px; display: block; background: #f2f3f3; border: 1px solid #b4b8bc; }
+  #opchart { width: 100%; height: auto; display: block; background: #f2f3f3; border: 1px solid #b4b8bc; }
+  .oc-ax { stroke: #8d9297; } .oc-grid { stroke: #dde0e2; } .oc-t { font: 10px var(--mono); fill: var(--muted); }
+  .oc-rough { fill: url(#hatch2); stroke: #8d9297; stroke-width: .8; }
+  .oc-max { fill: none; stroke: var(--equip); stroke-width: 1.6; stroke-dasharray: 6 4; }
+  .oc-tail { fill: none; stroke: var(--text); stroke-width: 1.4; opacity: .5; }
+  .oc-pt { fill: var(--text); } .oc-pt.other { fill: #fff; stroke: var(--equip); stroke-width: 1.4; }
+  .oc-l { font: 700 10.5px var(--mono); fill: var(--text); }
+  table.cmp td { font: 12px var(--mono); }
+  table.cmp td.lab { font-family: var(--sans); color: var(--muted); }
+  table.cmp th a { color: var(--text); }
+  .ab-mini { position: relative; display: inline-block; width: 90px; height: 6px; background: #f2f3f3; border: 1px solid #a5aaae; vertical-align: middle; margin-left: 8px; }
+  .ab-mini i { position: absolute; top: -2px; width: 2px; height: 10px; background: var(--text); }
+  .ab-mini s { position: absolute; top: 0; bottom: 0; background: #bcc1c5; text-decoration: none; }
+  .ab-mini s.z2 { background: #959ca2; }
   #toast { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; background: #2f3337; color: #fff; font: 12px var(--mono); display: none; max-width: 420px; border-left: 4px solid #4caf50; z-index: 10; }
   #toast.err { border-left-color: var(--p1); }
 
@@ -306,6 +349,40 @@
       </div>
     </section>
 
+    <!-- ================= UNIT DISPLAY (level 3) ================= -->
+    <section class="tab" id="tab-unit">
+      <div class="panel">
+        <div class="dhead"><b id="u-title"></b><span class="chip" id="u-state"></span><span class="note" id="u-step" style="margin:0"></span>
+          <span class="spacer"></span><button class="btn primary" id="u-ctl">Unit control ▸</button></div>
+        <div class="dnav" data-dnav></div>
+        <div class="ugrid">
+          <svg id="umimic" viewBox="0 0 1000 520" role="img" aria-label="Unit detail"></svg>
+          <div class="uside">
+            <h4><span>Sequence</span><span id="u-steptime"></span></h4><ol class="seq" id="u-seq"></ol>
+            <h4><span>Start permissives</span><span id="u-ready"></span></h4><ul class="perm" id="u-perm"></ul>
+            <h4><span>Protection · first-out</span></h4><div id="u-fo"></div><div class="codes2" id="u-codes"></div>
+            <div class="note" id="u-limits"></div>
+          </div>
+        </div>
+      </div>
+      <div class="u2">
+        <div class="panel"><h3>Operating chart <span class="r note" style="margin:0">MW against net head · hatched: rough zone · dashed: max. output · ● this unit, ○ the others, line: last 30 min</span></h3>
+          <div style="padding:10px"><svg id="opchart" viewBox="0 0 640 300"></svg></div></div>
+        <div class="panel"><h3>Last 30 min</h3>
+          <div style="padding:10px"><div class="note" style="margin-top:0" id="u-m1l">MW · MW setpoint</div><canvas id="u-m1"></canvas>
+            <div class="note" id="u-m2l">Bearings (element A): thrust · UGB · LGB · TGB</div><canvas id="u-m2"></canvas></div></div>
+      </div>
+    </section>
+
+    <!-- ================= POWERHOUSE (level 2) ================= -->
+    <section class="tab" id="tab-units">
+      <div class="panel">
+        <h3>Powerhouse · the three units side by side <span class="r note" style="margin:0">Click a value for its faceplate · a unit's name for its display</span></h3>
+        <div class="dnav" data-dnav></div>
+        <table class="cmp" id="cmp"></table>
+      </div>
+    </section>
+
     <!-- ================= ALARMS & EVENTS ================= -->
     <section class="tab" id="tab-alarms">
       <div class="panel">
@@ -355,8 +432,8 @@
 "use strict";
 const COLORS = ["#1f2326", "#1d6fd6", "#0f8a6c", "#b5528f", "#8a6d00", "#5a4fcf", "#c2410c", "#4b7f99"];
 const RANGES = [["15m", 15], ["1h", 60], ["4h", 240], ["12h", 720], ["24h", 1440], ["48h", 2880]];
-const TABS = ["overview", "section", "alarms", "trends", "points"];
-const CLASSIC = ["reservoir", "governor", "unit"];        // displays not rebuilt yet: served by /scada-classic
+const TABS = ["overview", "section", "unit", "units", "alarms", "trends", "points"];
+const CLASSIC = ["reservoir"];        // displays not rebuilt yet: served by /scada-classic
 const AREAS = [["Reservoir", "Reservoir and river"], ["River", null], ["Plant", "Plant and grid"], ["Intake", "Intake and penstock"],
   ["Penstock", null], ["Spillway", "Spillway"], ["BottomOutlet", "Bottom outlet"], ["Powerhouse/Unit1", "Unit 1"], ["Powerhouse/Unit2", "Unit 2"], ["Powerhouse/Unit3", "Unit 3"]];
 
@@ -431,6 +508,7 @@ function barHtml(p, w, o) {
   const x1 = BAR.x, x2 = w - BAR.x;
   const zone = (a, b, cls) => `<rect class="${cls}" x="${Math.min(a, b)}" y="${BAR.y}" width="${Math.abs(b - a)}" height="${BAR.h}"/>`;
   let z = "";
+  for (const [a, b, cls] of (o.zones || [])) z += zone(barX(p, w, a), barX(p, w, b), cls);
   for (const l of (LIMITS[p] || [])) {
     if (typeof l.limit !== "number") continue;
     const at = barX(p, w, l.limit), cls = l.priority === 1 ? "z2" : "z1";
@@ -606,7 +684,7 @@ function renderMimic() {
   $("#el-bus").classList.toggle("dead", !CFG.units.some(u => val(`Powerhouse/${u}/BreakerClosed`)));
 }
 $("#mimic").addEventListener("click", e => {
-  const u = e.target.closest("[data-unit]"); if (u) { location.href = `/scada-classic#unit/${u.dataset.unit}`; return; }
+  const u = e.target.closest("[data-unit]"); if (u) { go(`#unit/${u.dataset.unit}`); return; }
   const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path);
 });
 
@@ -701,13 +779,227 @@ function renderSection() {
   }
 }
 $("#section").addEventListener("click", e => {
-  const u = e.target.closest("[data-unit]"); if (u) { location.href = `/scada-classic#unit/${u.dataset.unit}`; return; }
+  const u = e.target.closest("[data-unit]"); if (u) { go(`#unit/${u.dataset.unit}`); return; }
   const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path);
 });
 $("#btn-notes").addEventListener("click", () => {
   const off = $("#section").classList.toggle("nonotes"); $("#btn-notes").textContent = off ? "Show notes" : "Hide notes";
 });
 $("#btn-dam").addEventListener("click", () => go(TAB === "section" ? "#overview" : "#section"));
+
+/* ---------------------------------------------------------------- unit display (level 3)
+   One CH Francis unit as the customer's unit controller sees it: the water path and the shaft with the four
+   bearing RTDs (element A of the hardwired sensors), the sequence step by step, the start permissives, the
+   first-out trip and the operating chart. Commands on the unit control faceplate. */
+let UD = null;
+const STEPSEEN = {};          // unit -> {step, since}: step timer from the moment this page saw the step change
+function trackSteps() {
+  const now = Date.now() / 1000;
+  for (const u of CFG.units) {
+    const st = val(`Powerhouse/${u}/SequenceStep`), r = STEPSEEN[u];
+    if (!r) STEPSEEN[u] = { step: st, since: null };
+    else if (r.step !== st) STEPSEEN[u] = { step: st, since: now };
+  }
+}
+function buildUnit(u) {
+  UD = u;
+  const p = `Powerhouse/${u}`, n = unitNo(u), L = CFG.unit_limits;
+  const brgZ = [[L.bearing.alarm, L.bearing.trip, "z1"], [L.bearing.trip, 150, "z2"]];
+  $("#u-title").textContent = `Unit ${n} · Francis turbine-generator, 40 MW, 300 rpm`;
+  const cx = 420, cy = 330;
+  let s = `<defs><pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#e6e7e8"/><line x1="0" y1="0" x2="0" y2="4" stroke="#7c8287" stroke-width="1.6"/></pattern></defs>`;
+  // water path: penstock, inlet valve, spiral case, wicket gates, runner, draft tube, tailwater
+  s += `<text class="lbl" x="10" y="${cy - 22}">PENSTOCK</text>
+    <path class="w" style="stroke-width:14" d="M0 ${cy}H154"/>
+    <path class="w" id="u-wv" style="stroke-width:14" d="M186 ${cy}H${cx - 82}"/>
+    <g class="click" data-path="${p}/InletValveOpen"><circle class="valve" cx="170" cy="${cy}" r="16"/><line id="u-disc" x1="170" y1="${cy - 14}" x2="170" y2="${cy + 14}" stroke="var(--text)" stroke-width="4"/></g>
+    <text class="lbl" x="170" y="${cy - 26}" text-anchor="middle">INLET VALVE</text>
+    <circle id="u-spiral" cx="${cx}" cy="${cy}" r="82" fill="#eceded" stroke="var(--equip)" stroke-width="1.8"/>
+    <text class="lbl" x="${cx + 62}" y="${cy + 92}">SPIRAL CASE</text>
+    <g id="u-gates"></g>
+    <g class="click" data-path="${p}/Speed"><circle class="equip" id="u-runner" cx="${cx}" cy="${cy}" r="30"/><text class="lbl eq" id="u-runl" x="${cx}" y="${cy + 4}" text-anchor="middle">RUNNER</text></g>
+    <path class="w" id="u-dt" style="stroke-width:12" d="M${cx} ${cy + 84}V470H800"/>
+    <text class="lbl" x="${cx + 20}" y="462">DRAFT TUBE → TAILRACE</text>
+    <rect class="vessel" x="800" y="440" width="190" height="70"/><rect class="waterfill" x="801" y="470" width="188" height="39"/>`;
+  s += db("River/TailwaterLevel", 806, 446, { w: 178 });
+  // shaft, bearings, generator
+  s += `<line x1="${cx}" y1="30" x2="${cx}" y2="${cy - 30}" stroke="var(--equip)" stroke-width="7"/>
+    <g class="click" data-unit-ctl="1"><rect class="equip" id="u-gen" x="${cx - 80}" y="70" width="160" height="80"/>
+    <text class="lbl eq" id="u-genl" x="${cx}" y="106" text-anchor="middle">GENERATOR</text><text class="lbl eq" id="u-genl2" x="${cx}" y="122" text-anchor="middle">G${n}</text></g>`;
+  const brg = [["Upper guide", "UpperGuideBearingTemp", 18, 46], ["Thrust", "ThrustBearingTemp", 58, 60], ["Lower guide", "LowerGuideBearingTemp", 148, 168], ["Turbine guide", "TurbineGuideBearingTemp", 214, 248]];
+  for (const [lab, k, by, sy] of brg) {
+    s += `<rect x="${cx - 16}" y="${sy - 4}" width="32" height="8" fill="var(--equip-run)"/><path d="M282 ${by + 17}H300L${cx - 16} ${sy}" fill="none" stroke="#8d9297"/>
+      <text class="lbl" x="164" y="${by + 21}" text-anchor="end">${lab}</text>`;
+    s += db(`${p}/${k}`, 172, by, { w: 110, zones: brgZ });
+  }
+  s += `<text class="lbl" x="172" y="10">BEARINGS · customer RTD (pad 1)</text>`;
+  s += db(`${p}/CoolingWaterFlow`, 172, 262, { w: 110, zones: [[0, L.cooling_water.alarm, "z1"]] }) + `<text class="lbl" x="164" y="283" text-anchor="end">Cooling water</text>`;
+  s += db("Penstock/Pressure", 20, cy + 22, { w: 100 });
+  s += db(`${p}/InletValveOpen`, 128, cy + 22, { w: 84 });
+  // governor: gates and HPU
+  s += db(`${p}/GatePosition`, 530, 244, { w: 110, sp: `${p}/GateSetpoint` }) + db(`${p}/GateSetpoint`, 646, 244, { w: 110 });
+  s += db(`${p}/Flow`, 530, 284, { w: 110 }) + db(`${p}/NetHead`, 646, 284, { w: 110 });
+  s += `<text class="lbl" x="530" y="236">WICKET GATES · GOVERNOR</text>
+    <rect class="equip" x="530" y="360" width="60" height="34"/><text class="lbl" x="560" y="381" text-anchor="middle">HPU</text>
+    <path d="M560 360V330H${cx + 82}" fill="none" stroke="var(--equip)" stroke-width="1.6" stroke-dasharray="5 3"/>`;
+  s += db(`${p}/GovernorOilPressure`, 600, 360, { w: 110, zones: [[0, L.governor_oil.trip, "z2"], [L.governor_oil.trip, L.governor_oil.alarm, "z1"]] });
+  // electrical: speed, breaker, MW, MVAr, setpoint, mode
+  s += db(`${p}/Speed`, 600, 164, { w: 78 });
+  s += `<path class="el" id="u-el1" d="M${cx + 80} 110H630"/><g class="click" data-path="${p}/BreakerClosed"><rect class="brk" id="u-brk" x="630" y="102" width="16" height="16"/></g>
+    <path class="el" id="u-el2" d="M646 110H990"/><text class="lbl" x="990" y="100" text-anchor="end">150 kV</text><text class="lbl" x="638" y="96" text-anchor="middle">BREAKER</text>`;
+  s += db(`${p}/BreakerClosed`, 600, 124, { w: 76 }) + db(`${p}/MW`, 684, 124, { w: 150, sp: `${p}/MWSetpoint`, rough: u }) + db(`${p}/MVAr`, 840, 124, { w: 110 });
+  s += db(`${p}/MWSetpoint`, 684, 164, { w: 150 }) + db(`${p}/ControlMode`, 840, 164, { w: 110 });
+  $("#umimic").innerHTML = s;
+  // 20 wicket gate blades, turned by the gate opening
+  const gg = $("#u-gates"); let gh = "";
+  for (let i = 0; i < 20; i++) gh += `<line data-a="${i / 20 * 2 * Math.PI}" stroke="var(--equip)" stroke-width="3" stroke-linecap="round"/>`;
+  gg.innerHTML = gh;
+  // sequence and permissive lists
+  $("#u-seq").innerHTML = CFG.sequence_steps.map((x, i) => `<li data-step="${x.id}"><span class="n">S${String(i).padStart(2, "0")}</span><span class="k">${esc(x.text)}</span></li>`).join("");
+  $("#u-perm").innerHTML = CFG.start_permissives.map(x => `<li data-perm="${x.id}"><b></b><span>${esc(x.text)}</span></li>`).join("");
+  $("#u-limits").textContent = `Unit protection (element A, ${L.bearing.delay_s} s): bearings alarm ${L.bearing.alarm} °C, trip ${L.bearing.trip} °C · governor oil start ${L.governor_oil.start}, alarm ${L.governor_oil.alarm}, trip ${L.governor_oil.trip} bar · cooling water alarm < ${L.cooling_water.alarm} L/s · overspeed trip ${L.overspeed_trip_pct} %`;
+  $("#u-m1l").textContent = `${PT[`${p}/MW`]} MW · ${PT[`${p}/MWSetpoint`]} MW setpoint`;
+  $("#u-m2l").textContent = `Bearings (element A): ${["ThrustBearingTemp", "UpperGuideBearingTemp", "LowerGuideBearingTemp", "TurbineGuideBearingTemp"].map(k => PT[`${p}/${k}`]).join(" · ")}`;
+  buildOpChart();
+  UTAIL = null;
+}
+function renderUnit() {
+  const u = UD, p = `Powerhouse/${u}`; if (!u) return;
+  renderBlocks($("#umimic"));
+  const st = val(`${p}/State`) || "", step = val(`${p}/SequenceStep`) || "", codes = val(`${p}/ActiveAlarms`) || [];
+  const trip = st === "Tripped" || codes.some(c => c.startsWith("TRIP_")), trans = stateCls(st) === "trans";
+  const chip = $("#u-state"); chip.textContent = (st || "####").toUpperCase(); chip.className = "chip " + stateCls(st);
+  const stepDef = CFG.sequence_steps.find(x => x.id === step);
+  $("#u-step").textContent = stepDef ? `${PT[`${p}/SequenceStep`]}: ${step}` : "";
+  // mimic
+  const open = !!val(`${p}/InletValveOpen`), flow = (val(`${p}/Flow`) || 0) > 0.5, spin = (val(`${p}/Speed`) || 0) > 15, br = !!val(`${p}/BreakerClosed`);
+  $("#u-disc").setAttribute("transform", `rotate(${open ? 90 : 0} 170 330)`);
+  $("#u-wv").classList.toggle("dry", !open && !flow);
+  $("#u-spiral").setAttribute("fill", open || flow ? "var(--water-fill)" : "#eceded");
+  $("#u-dt").classList.toggle("dry", !flow);
+  const cls = "equip" + (spin && !trip && !trans ? " run" : "") + (trip ? " trip" : trans ? " trans" : "");
+  $("#u-runner").setAttribute("class", cls); $("#u-gen").setAttribute("class", cls);
+  for (const id of ["#u-runl", "#u-genl", "#u-genl2"]) $(id).setAttribute("class", "lbl eq" + (spin && !trip && !trans ? " w" : ""));
+  $("#u-brk").classList.toggle("closed", br); $("#u-el2").classList.toggle("dead", !br); $("#u-el1").classList.toggle("dead", !spin);
+  const g = (val(`${p}/GatePosition`) || 0) / 100;
+  for (const b of $$("#u-gates line")) {
+    const a = +b.dataset.a, gx = 420 + 56 * Math.cos(a), gy = 330 + 56 * Math.sin(a), ang = a + Math.PI / 2 - g * 1.1;
+    const dx = 8 * Math.cos(ang), dy = 8 * Math.sin(ang);
+    b.setAttribute("x1", gx - dx); b.setAttribute("y1", gy - dy); b.setAttribute("x2", gx + dx); b.setAttribute("y2", gy + dy);
+  }
+  // sequence: steps before the current one in the same sequence are done
+  const ids = CFG.sequence_steps.map(x => x.id), cur = ids.indexOf(step);
+  const startSeq = ids.slice(0, ids.indexOf("Generating") + 1), stopSeq = ids.filter(x => x.startsWith("Stopping."));
+  for (const li of $$("#u-seq li")) {
+    const id = li.dataset.step, i = ids.indexOf(id);
+    let done = false;
+    if (startSeq.includes(step)) done = startSeq.includes(id) && i < cur && id !== "Stopped";
+    if (stopSeq.includes(step)) done = stopSeq.includes(id) && i < cur;
+    li.className = (id === step ? "cur" + (trip ? " trip" : "") : "") + (done ? " done" : "");
+  }
+  const r = STEPSEEN[u];
+  $("#u-steptime").textContent = r && r.since ? `in step for ${Math.round(Date.now() / 1000 - r.since)} s` : "";
+  // permissives
+  const perm = val(`${p}/StartPermissives`) || {};
+  for (const li of $$("#u-perm li")) { const ok = perm[li.dataset.perm]; li.className = ok === false ? "no" : ""; $("b", li).textContent = ok === undefined ? "####" : ok ? "✓ OK" : "NOT MET"; }
+  const ready = Object.values(perm).length && Object.values(perm).every(Boolean);
+  $("#u-ready").textContent = st === "Stopped" ? (ready ? "ready to start" : "start blocked") : "";
+  // protection: the latched trip cause comes first in ActiveAlarms = first-out
+  const fo = codes[0] && codes[0].startsWith("TRIP_") ? codes[0] : null;
+  $("#u-fo").className = fo ? "fo" : "fo none";
+  $("#u-fo").innerHTML = fo ? `FIRST-OUT <b>${esc(fo)}</b><br><span style="font-family:var(--sans)">${esc((CFG.unit_codes[fo] || {}).text || "")}</span>` : "No trip";
+  const rest = codes.filter(c => c !== fo);
+  $("#u-codes").textContent = rest.length ? "Also active: " + rest.join(", ") : "";
+  renderOpChart();
+}
+$("#umimic").addEventListener("click", e => {
+  if (e.target.closest("[data-unit-ctl]")) { select(`Powerhouse/${UD}/State`); return; }
+  const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path);
+});
+$("#u-ctl").addEventListener("click", () => select(`Powerhouse/${UD}/State`));
+async function loadUnitTrends() {
+  if (!UD) return;
+  const p = `Powerhouse/${UD}`, end = Date.now() / 1000, start = end - 1800;
+  const brg = ["ThrustBearingTemp", "UpperGuideBearingTemp", "LowerGuideBearingTemp", "TurbineGuideBearingTemp"].map(k => `${p}/${k}`);
+  const h = await fetchTrend([`${p}/MW`, `${p}/MWSetpoint`, `${p}/NetHead`, ...brg], 30, 300); if (!h || TAB !== "unit") return;
+  const s1 = [`${p}/MW`, `${p}/MWSetpoint`].map((x, i) => ({ name: x, color: COLORS[i], t: h.t, data: h.series[x] || [] }));
+  scaleOf(s1, `${p}/MW`); drawTrend($("#u-m1"), s1, start, end);
+  const s2 = brg.map((x, i) => ({ name: x, color: COLORS[i], t: h.t, data: h.series[x] || [] }));
+  scaleOf(s2, brg[0]); drawTrend($("#u-m2"), s2, start, end);
+  UTAIL = h.t.map((t, i) => [h.series[`${p}/NetHead`][i], h.series[`${p}/MW`][i]]).filter(x => x[0] !== null && x[1] !== null);
+  renderOpChart();
+}
+// operating chart: MW against net head, rough zone and max output from /api/config zones
+let UTAIL = null;
+const OC = { L: 46, R: 14, T: 12, B: 32, W: 640, H: 300, h0: 70, h1: 125, m0: 0, m1: 45 };
+const ocX = h => OC.L + (h - OC.h0) / (OC.h1 - OC.h0) * (OC.W - OC.L - OC.R);
+const ocY = m => OC.H - OC.B - (m - OC.m0) / (OC.m1 - OC.m0) * (OC.H - OC.T - OC.B);
+function buildOpChart() {
+  const z = CFG.zones;
+  let s = `<defs><pattern id="hatch2" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#e6e7e8"/><line x1="0" y1="0" x2="0" y2="5" stroke="#9aa0a5" stroke-width="1.6"/></pattern></defs>`;
+  for (let h = 70; h <= 125; h += 5) s += `<line class="oc-grid" x1="${ocX(h)}" x2="${ocX(h)}" y1="${OC.T}" y2="${OC.H - OC.B}"/><text class="oc-t" x="${ocX(h)}" y="${OC.H - OC.B + 14}" text-anchor="middle">${h}</text>`;
+  for (let m = 0; m <= 45; m += 5) s += `<line class="oc-grid" x1="${OC.L}" x2="${OC.W - OC.R}" y1="${ocY(m)}" y2="${ocY(m)}"/><text class="oc-t" x="${OC.L - 6}" y="${ocY(m) + 3}" text-anchor="end">${m}</text>`;
+  s += `<polygon class="oc-rough" points="${z.map(r => `${ocX(r.head)},${ocY(r.rough_hi)}`).join(" ")} ${[...z].reverse().map(r => `${ocX(r.head)},${ocY(r.rough_lo)}`).join(" ")}"/>`;
+  s += `<polyline class="oc-max" points="${z.map(r => `${ocX(r.head)},${ocY(r.max)}`).join(" ")}"/>`;
+  s += `<rect x="${OC.L}" y="${OC.T}" width="${OC.W - OC.L - OC.R}" height="${OC.H - OC.T - OC.B}" fill="none" class="oc-ax"/>
+    <text class="oc-t" x="${(OC.W + OC.L) / 2}" y="${OC.H - 4}" text-anchor="middle">net head (m)</text>
+    <text class="oc-t" x="12" y="${OC.T + 4}" transform="rotate(-90 12 ${OC.T + 4})" text-anchor="end">MW</text>
+    <text class="oc-t" x="${ocX(118)}" y="${ocY(19)}" text-anchor="middle">rough zone</text>
+    <polyline class="oc-tail" id="oc-tail" points=""/><g id="oc-pts"></g>`;
+  $("#opchart").innerHTML = s;
+}
+function renderOpChart() {
+  if (!UD || !$("#oc-pts")) return;
+  $("#oc-tail").setAttribute("points", (UTAIL || []).map(([h, m]) => `${ocX(h)},${ocY(Math.max(0, m))}`).join(" "));
+  $("#oc-pts").innerHTML = CFG.units.map(u => {
+    const h = val(`Powerhouse/${u}/NetHead`), m = val(`Powerhouse/${u}/MW`);
+    if (typeof h !== "number" || typeof m !== "number") return "";
+    const x = ocX(Math.max(OC.h0, Math.min(OC.h1, h))), y = ocY(Math.max(0, Math.min(OC.m1, m)));
+    return `<circle class="oc-pt ${u === UD ? "" : "other"}" cx="${x}" cy="${y}" r="${u === UD ? 6 : 4.5}"/><text class="oc-l" x="${x + 9}" y="${y - 6}">U${unitNo(u)}</text>`;
+  }).join("");
+}
+
+/* ---------------------------------------------------------------- powerhouse (level 2): the units side by side */
+const CMP_ROWS = [["State", "State"], ["Sequence step", "SequenceStep"], ["Control mode", "ControlMode"], ["Active power", "MW"],
+  ["MW setpoint", "MWSetpoint"], ["Reactive power", "MVAr"], ["Wicket gate", "GatePosition"], ["Gate setpoint", "GateSetpoint"],
+  ["Speed", "Speed"], ["Turbine flow", "Flow"], ["Net head", "NetHead"], ["Breaker", "BreakerClosed"], ["Inlet valve", "InletValveOpen"],
+  ["Thrust bearing", "ThrustBearingTemp"], ["Upper guide bearing", "UpperGuideBearingTemp"], ["Lower guide bearing", "LowerGuideBearingTemp"],
+  ["Turbine guide bearing", "TurbineGuideBearingTemp"], ["Cooling water flow", "CoolingWaterFlow"], ["Governor oil pressure", "GovernorOilPressure"],
+  ["Start permissives", "StartPermissives"], ["Unit alarms", "ActiveAlarms"]];
+const unitBase = u => `Powerhouse/${u}`;
+function buildCmp() {
+  const us = CFG.units;
+  let h = `<thead><tr><th></th>${us.map(u => `<th colspan="2"><a href="#unit/${u}">Unit ${unitNo(u)} ▸</a></th>`).join("")}<th>Unit</th></tr></thead><tbody>`;
+  for (const [lab, k] of CMP_ROWS) {
+    const unitPath = u => [unitBase(u), k].join("/"), t = TAG[unitPath(us[0])];
+    h += `<tr><td class="lab">${esc(lab)}</td>${us.map(u => `<td class="tagcell" style="color:var(--muted);font-weight:600">${esc(PT[unitPath(u)])}</td><td class="n click" data-path="${unitPath(u)}" style="cursor:pointer"></td>`).join("")}<td class="m" style="color:var(--muted)">${esc(t.unit)}</td></tr>`;
+  }
+  $("#cmp").innerHTML = h + "</tbody>";
+}
+function renderCmp() {
+  const L = CFG.unit_limits;
+  for (const td of $$("#cmp td[data-path]")) {
+    const p = td.dataset.path, k = p.split("/").pop(), v = val(p), a = alarmOn(p);
+    let txt = fmt(p, v);
+    if (k === "StartPermissives") {      // "UnitStopped" is only a permissive for a stopped unit
+      const vs = Object.entries(v || {}).filter(([id]) => id !== "UnitStopped").map(([, x]) => x), stopped = (v || {}).UnitStopped;
+      txt = !vs.length ? "####" : !vs.every(Boolean) ? `${vs.filter(x => !x).length} not met` : stopped ? "ready to start" : "met (running)";
+    }
+    let bar = "";
+    const rg = rangeOf(p);
+    if (rg && typeof v === "number") {
+      const X = x => Math.max(0, Math.min(100, (x - rg[0]) / (rg[1] - rg[0]) * 100));
+      let zs = "";
+      if (k.endsWith("BearingTemp")) zs = `<s style="left:${X(L.bearing.alarm)}%;right:${100 - X(L.bearing.trip)}%"></s><s class="z2" style="left:${X(L.bearing.trip)}%;right:0"></s>`;
+      if (k === "GovernorOilPressure") zs = `<s class="z2" style="left:0;right:${100 - X(L.governor_oil.trip)}%"></s><s style="left:${X(L.governor_oil.trip)}%;right:${100 - X(L.governor_oil.alarm)}%"></s>`;
+      if (k === "CoolingWaterFlow") zs = `<s style="left:0;right:${100 - X(L.cooling_water.alarm)}%"></s>`;
+      bar = `<span class="ab-mini">${zs}<i style="left:${X(v)}%"></i></span>`;
+    }
+    const html = `<span style="${stale(p) ? "color:var(--bad)" : a ? `color:${a.priority === 2 ? "#b86e00" : `var(--p${a.priority})`};font-weight:700` : ""}">${esc(txt)}</span>${bar}`;
+    if (td._h !== html) { td.innerHTML = html; td._h = html; }
+  }
+}
+$("#cmp").addEventListener("click", e => { const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path); });
 
 /* ---------------------------------------------------------------- KPI strip */
 function kpiItems() {
@@ -749,19 +1041,20 @@ async function loadLevelRate() {
 /* ---------------------------------------------------------------- display bar */
 const DISPLAYS = [
   { label: "Water", href: "/scada-classic#reservoir", watch: ["Reservoir/", "River/", "Intake/", "Penstock/", "Spillway/", "BottomOutlet/"] },
-  { label: "Powerhouse", href: "/scada-classic#governor", watch: ["Powerhouse/"] },
+  { label: "Powerhouse", hash: "#units", watch: ["Powerhouse/"] },
   { label: "Single-line", watch: [], later: true },
   { label: "Joint control", watch: ["Plant/MWSetpointReachable"], later: true },
 ];
 function renderDnav() {
   const sec = `<a href="#section" class="${TAB === "section" ? "on" : ""}" title="The dam to scale, with training notes">Dam section</a>`;
-  const all = DISPLAYS.concat(CFG.units.map(u => ({ label: `Unit ${unitNo(u)}`, href: `/scada-classic#unit/${u}`, watch: [`Powerhouse/${u}/`] })));
+  const all = DISPLAYS.concat(CFG.units.map(u => ({ label: `Unit ${unitNo(u)}`, hash: `#unit/${u}`, watch: [`Powerhouse/${u}/`] })));
   const html = `<span>Displays</span><a href="#overview" class="${TAB === "overview" ? "on" : ""}">Overview</a>${sec}` + all.map(d => {
     let a = null; for (const w of d.watch) { const x = alarmOn(w, w.endsWith("/")); if (x && (!a || x.priority < a.priority)) a = x; }
     const ico = a ? prioSvg(a.priority) : "";
-    return d.later ? `<button disabled title="Coming in a later step of the SCADA rebuild">${ico}${esc(d.label)}</button>`
-      : `<a href="${d.href}" title="Opens the previous HMI until this display is rebuilt">${ico}${esc(d.label)} <span class="classic">classic</span></a>`;
-  }).join("") + `<span class="r note" style="margin:0">Water and per-unit displays still open the previous HMI</span>`;
+    if (d.later) return `<button disabled title="Coming in a later step of the SCADA rebuild">${ico}${esc(d.label)}</button>`;
+    if (d.hash) return `<a href="${d.hash}" class="${location.hash === d.hash ? "on" : ""}">${ico}${esc(d.label)}</a>`;
+    return `<a href="${d.href}" title="Opens the previous HMI until this display is rebuilt">${ico}${esc(d.label)} <span class="classic">classic</span></a>`;
+  }).join("") + `<span class="r note" style="margin:0">The water display still opens the previous HMI</span>`;
   for (const box of $$("[data-dnav]")) if (box._h !== html) { box.innerHTML = html; box._h = html; }
 }
 
@@ -860,8 +1153,8 @@ function objectOf(p) {
   if (["Plant/MWSetpoint", "Plant/AGCEnabled", "Plant/TotalMW", "Plant/MWSetpointReachable"].includes(p))
     return { kind: "grid", title: "Grid operator (dispatch)", spCmd: "Plant/Cmd/MWSetpoint", agcCmd: "Plant/Cmd/AGC",
              note: "Stands for the dispatcher at the other end of the line. The plant controller splits the setpoint over the units in PLANT mode and keeps them out of the rough zone." };
-  m = p.match(/^Powerhouse\/(Unit\d)\//);
-  if (m) return { kind: "unit", unit: m[1] };
+  m = p.match(/^Powerhouse\/(Unit\d)\/(\w+)$/);
+  if (m) return { kind: ["State", "SequenceStep", "StartPermissives", "ControlMode", "MW", "MWSetpoint", "BreakerClosed", "ActiveAlarms"].includes(m[2]) ? "unit" : "unitlink", unit: m[1] };
   return null;
 }
 let fpBuiltFor = null, armed = null;
@@ -896,8 +1189,14 @@ function buildFaceplate() {
       <div class="entry"><label>MW setpoint</label><input data-in="sp" inputmode="decimal" placeholder="0–130 MW"><button data-set="sp">Send</button></div>
       <div class="entry"><label>AGC</label><span class="modes" style="flex:1;margin:0"><button data-agc="true">ON</button><button data-agc="false">OFF</button></span></div>
       <div class="note">${esc(o.note)}</div></div>`;
-  if (o && o.kind === "unit") cmds = `<div class="fp-sec"><h4>Unit ${unitNo(o.unit)} commands</h4>
-      <div class="note">Start, stop, emergency stop, reset and the control mode are on the unit display: <a href="/scada-classic#unit/${o.unit}">Unit ${unitNo(o.unit)}</a> (previous HMI until it is rebuilt).</div></div>`;
+  if (o && o.kind === "unitlink") cmds = `<div class="fp-sec"><h4>Unit ${unitNo(o.unit)}</h4><div class="note">Unit commands: <a href="#unit/${o.unit}">Unit ${unitNo(o.unit)} display</a> → Unit control.</div></div>`;
+  if (o && o.kind === "unit") cmds = `<div class="fp-sec"><h4>Unit ${unitNo(o.unit)} control <span class="chip" data-f="ust"></span></h4>
+      <div class="entry"><button class="btn primary" data-u="Start">Start</button><button class="btn" data-u="Stop">Stop</button><button class="btn" data-u="Reset">Reset</button></div>
+      <div class="entry"><button class="btn danger" data-u="EmergencyStop" style="flex:1">Emergency stop</button></div>
+      <div class="modes"><button data-umode="PLANT">PLANT</button><button data-umode="LOCAL">LOCAL</button></div>
+      <div class="entry"><label>Local MW sp</label><input data-in="usp" inputmode="decimal" placeholder="0–42 MW"><button data-set="usp">Set</button></div>
+      <div class="note" data-f="uwhy"></div>
+      <div class="note">Stop and emergency stop ask for a second click. A local MW setpoint switches the unit to LOCAL. <a href="#unit/${o.unit}">Unit ${unitNo(o.unit)} display</a></div></div>`;
   $("#fp-body").innerHTML = `
     <div class="fp-desc">${esc(t.desc)}</div>
     <div class="fp-pv"><b data-f="pv"></b><span>${esc(t.unit)}</span></div>
@@ -922,7 +1221,7 @@ function buildFaceplate() {
     const k = b.dataset.set, inp = $(`[data-in="${k}"]`), raw = inp.value.trim().replace(",", ".");
     if (raw === "") return;
     const v = Number(raw); if (!Number.isFinite(v)) { toast("Not a number", false); return; }
-    cmd(k === "pos" ? o.posCmd : o.spCmd, v).then(j => { if (j && j.ok) inp.value = ""; });
+    cmd(k === "pos" ? o.posCmd : k === "usp" ? `Powerhouse/${o.unit}/Cmd/MWSetpoint` : o.spCmd, v).then(j => { if (j && j.ok) inp.value = ""; });
   }));
   $$("[data-in]", $("#fp-body")).forEach(i => i.addEventListener("keydown", e => { if (e.key === "Enter") $(`[data-set="${i.dataset.in}"]`).click(); }));
   $$("[data-intake]", $("#fp-body")).forEach(b => b.addEventListener("click", () => {
@@ -935,8 +1234,21 @@ function buildFaceplate() {
     armed = null; b.classList.remove("armed"); b.textContent = v ? "Open" : "Close";
     cmd(o.posCmd, v);
   }));
+  $$("[data-umode]", $("#fp-body")).forEach(b => b.addEventListener("click", () => cmd(`Powerhouse/${o.unit}/Cmd/ControlMode`, b.dataset.umode)));
+  $$("[data-u]", $("#fp-body")).forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.u, label = { Start: "Start", Stop: "Stop", Reset: "Reset", EmergencyStop: "Emergency stop" }[k];
+    if ((k === "Stop" || k === "EmergencyStop") && armed !== k) {      // arm, then confirm: no browser dialog
+      armed = k; b.classList.add("armed"); b.textContent = `Confirm ${label.toLowerCase()}`;
+      setTimeout(() => { if (armed === k) { armed = null; b.classList.remove("armed"); b.textContent = label; } }, 4000);
+      return;
+    }
+    armed = null; b.classList.remove("armed"); b.textContent = label;
+    cmd(UCMD[k](o.unit), true);
+  }));
   fpBuiltFor = p;
 }
+const UCMD = { Start: u => `Powerhouse/${u}/Cmd/Start`, Stop: u => `Powerhouse/${u}/Cmd/Stop`,
+               EmergencyStop: u => `Powerhouse/${u}/Cmd/EmergencyStop`, Reset: u => `Powerhouse/${u}/Cmd/Reset` };
 function renderFaceplate() {
   if (fpBuiltFor !== SEL) buildFaceplate();
   const p = SEL, e = E(p), v = val(p), body = $("#fp-body"), a = alarmOn(p), bad = stale(p);
@@ -949,7 +1261,18 @@ function renderFaceplate() {
   const o = objectOf(p);
   if (o && o.kind === "gate") $$("[data-mode]", body).forEach(b => b.classList.toggle("on", b.dataset.mode === val(o.mode)));
   if (o && o.kind === "grid") $$("[data-agc]", body).forEach(b => b.classList.toggle("on", String(val("Plant/AGCEnabled")) === b.dataset.agc));
+  if (o && o.kind === "unit") {
+    const up = `Powerhouse/${o.unit}`, st = val(`${up}/State`) || "", perm = val(`${up}/StartPermissives`) || {};
+    const chip = $('[data-f="ust"]', body); chip.textContent = st.toUpperCase(); chip.className = "chip " + stateCls(st);
+    const ready = Object.values(perm).length && Object.values(perm).every(Boolean);
+    const en = { Start: st === "Stopped" && ready, Stop: !["Stopped", "Stopping", "Tripped"].includes(st), Reset: st === "Tripped", EmergencyStop: st !== "Stopped" };
+    $$("[data-u]", body).forEach(b => { if (armed !== b.dataset.u) b.disabled = !en[b.dataset.u]; });
+    $$("[data-umode]", body).forEach(b => b.classList.toggle("on", b.dataset.umode === val(`${up}/ControlMode`)));
+    const why = CFG.start_permissives.filter(x => perm[x.id] === false && x.id !== "UnitStopped").map(x => x.text);
+    $('[data-f="uwhy"]', body).textContent = st === "Stopped" && why.length ? "Start blocked: " + why.join("; ") : "";
+  }
 }
+const stateCls = st => st === "Generating" ? "run" : st === "Tripped" ? "trip" : ["Starting", "SpeedNoLoad", "Synchronising", "Stopping"].includes(st) ? "trans" : "";
 async function loadFpTrend() {
   if (!SEL || !$("#fp-canvas")) return;
   const p = SEL, h = await fetchTrend([p], 30, 300);
@@ -1061,16 +1384,20 @@ function render() {
   renderStatus(); renderBanner();
   if (TAB === "overview") { renderKpis(); renderDnav(); renderMimic(); }
   if (TAB === "section") { renderDnav(); renderSection(); }
+  if (TAB === "unit") { renderDnav(); renderUnit(); }
+  if (TAB === "units") { renderDnav(); renderCmp(); }
+  trackSteps();
   if (TAB === "alarms") renderAlarms();
   if (TAB === "points") renderPoints();
   if (SEL) renderFaceplate();
 }
 function showTab(name) {
   TAB = name;
-  $$("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === (name === "section" ? "overview" : name)));
+  $$("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === (["section", "unit", "units"].includes(name) ? "overview" : name)));
   $("#btn-dam").classList.toggle("on", name === "section");
   $$(".tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + name));
   render();
+  if (name === "unit") loadUnitTrends();
   if (name === "trends") loadTrend();
   if (name === "alarms") loadEvents();
 }
@@ -1078,6 +1405,12 @@ function showTab(name) {
 function route() {
   const h = location.hash.slice(1);
   if (CLASSIC.includes(h.split("/")[0])) { location.replace("/scada-classic#" + h); return; }
+  if (h === "governor") { location.replace("#units"); return; }        // the old Governor & HPU display
+  if (h === "unit" || h.startsWith("unit/")) {
+    const u = CFG.units.includes(h.split("/")[1]) ? h.split("/")[1] : CFG.units[0];
+    if (UD !== u) buildUnit(u);
+    showTab("unit"); return;
+  }
   showTab(TABS.includes(h) ? h : "overview");
 }
 function go(hash) { if (location.hash !== hash) history.pushState({ app: true }, "", hash); route(); }
@@ -1107,14 +1440,14 @@ async function init() {
   const q = new URLSearchParams(location.search), resolve = x => TAG[x] ? x : BYPT[x];
   if (q.get("trend")) trendSel = q.get("trend").split(",").map(resolve).filter(Boolean).slice(0, 8);
   if (q.get("range")) trendMin = +q.get("range") || 60;
-  buildMimic(); buildSection(); buildPoints(); buildPicker();
+  buildMimic(); buildSection(); buildCmp(); buildPoints(); buildPicker();
   route();
   await poll();
   if (q.get("tag") && resolve(q.get("tag"))) select(resolve(q.get("tag")));
   loadLevelRate();
   setInterval(poll, 1000);
   setInterval(loadLevelRate, 60000);
-  setInterval(() => { if (TAB === "trends") loadTrend(); if (SEL) loadFpTrend(); }, 10000);
+  setInterval(() => { if (TAB === "trends") loadTrend(); if (TAB === "unit") loadUnitTrends(); if (SEL) loadFpTrend(); }, 10000);
   setInterval(() => { if (TAB === "alarms") loadEvents(); }, 5000);
   tickClock(); setInterval(tickClock, 1000);
 }
