@@ -108,6 +108,15 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 - **Done when:** changing the inventory without raising the version fails a test that says what to do; the tests run on GitHub for every pull request; the wiki explains how another project builds on Copper Canyon.
 - **Notes:** `2026-11-14 Willem: asked for this, for a course lab that reuses the plant unchanged.` Not in the inventory yet: the environment variables (still only on the Configuration page).
 
+### `scada-hp-hmi` — A high-performance (ISA-101) hydro SCADA for DRWPA
+- **Status:** 🚧 In progress · **Owner:** Claude (for David and Willem) · **Branch:** `scada-hp-hmi` · **PR:** —
+- **Goal:** replace the dark dashboard-style dam SCADA with a light-grey ISA-101 hydro SCADA in the style of HCW's operator console (data blocks, faceplates, alarm banner, display bar, deep links), plus what a hydro control room relies on: unit sequence and permissives, an operating chart (MW vs net head), a single-line, first-out and sequence of events, a persistent historian. Still customer tree only.
+- **Touches:** `scada/web/*` (rewritten; the old page stays at `/scada-classic` until step 4), `scada/main.py` (point names, alarm paths, later historian, SOE, routes), `common/namespace.py` (SCADA point names; step 2 the two sequence tags), `damsim/` (step 2), tests, `inventory/`, wiki (Dam-SCADA and screenshots), the RCA demo's SCADA screenshots (step 4).
+- **Reserves:** page `/scada-classic`; step 2: `Powerhouse/<unit>/SequenceStep`, `Powerhouse/<unit>/StartPermissives`; step 4: `/api/soe`, `/api/points`.
+- **Depends on:** —
+- **Done when:** the four steps of the proposal are merged, each green: (1) shell, Plant overview, faceplates, point names; (2) unit displays, sequence and permissives; (3) water, single-line, joint control; (4) historian, SOE, docs and screenshots.
+- **Notes:** `2026-11-19 David: decided: light-grey theme as HCW; ISA-5.1 point names with a unit prefix (U1-TI-304, CC-LI-101); publish SequenceStep and StartPermissives; add a persistent (SQLite) historian.` Open: single-line values (proposal: only what the tree has), when to remove `/scada-classic` (proposal: step 4).
+
 ## Planned
 
 (nothing yet)
