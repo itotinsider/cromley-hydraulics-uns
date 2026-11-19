@@ -25,7 +25,7 @@ VERSION = "v1.0"
 # INTERFACE_DIGEST is the fingerprint of inventory/ at that version: tests/test_inventory.py fails
 # when the inventory changes and these two lines do not, and prints the new digest.
 INTERFACE_VERSION = "1.3"
-INTERFACE_DIGEST = "2bd1ebe2ce4ffdbe"
+INTERFACE_DIGEST = "639d604040940fef"
 
 # ----------------------------------------------------------------------------- customer tree
 CUSTOMER_ID = "DRWPA"            # Desert River Water & Power Authority

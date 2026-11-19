@@ -14,7 +14,7 @@ don't collide.
 | `common/` | Shared by every image: `namespace.py` (both topic trees, the single source of truth), `turbine.py` (turbine design data), `mqttio.py`, `httpd.py`, `store.py` |
 | `damsim/` | Dam simulator: `model.py` (physics, plant controller, dam scenarios), `main.py` (MQTT, hardwired polling, HTTP) |
 | `chplc/` | CH PLC simulator: `model.py` (thermal, HPU, vibration, waveforms, PLC alarms, machine-fault scenarios), `main.py` (one PLC per turbine, MQTT, HTTP) |
-| `scada/` | Dam SCADA server and pages (`web/index.html` hub, `web/scada.html`, `web/scada-classic.html` listing the old displays' successors; `historian.py`) |
+| `scada/` | Dam SCADA server and pages (`web/index.html` hub, `web/scada.html`; `historian.py`) |
 | `instructor/` | Instructor station |
 | `chviewer/` | CH asset viewer |
 | `tools/` | `offline_sim.py` (both models coupled, faster than real time), `inventory.py` (generates `inventory/`), `publish_wiki.py` |

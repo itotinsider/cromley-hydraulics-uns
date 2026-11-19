@@ -80,7 +80,6 @@
   .dnav button, .dnav a { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: #eceded; border: 1px solid #8d9297; font: 600 11px var(--mono); color: var(--text); text-decoration: none; }
   .dnav button:hover, .dnav a:hover { background: #fff; }
   .dnav button:disabled { opacity: .45; cursor: not-allowed; background: #eceded; }
-  .dnav .classic { font-weight: 400; color: var(--muted); font-size: 10px; }
   .dnav .r { margin-left: auto; text-transform: none; letter-spacing: 0; }
 
   /* overview mimic */
@@ -489,7 +488,6 @@
 const COLORS = ["#1f2326", "#1d6fd6", "#0f8a6c", "#b5528f", "#8a6d00", "#5a4fcf", "#c2410c", "#4b7f99"];
 const RANGES = [["15m", 15], ["1h", 60], ["4h", 240], ["12h", 720], ["24h", 1440], ["7d", 10080]];
 const TABS = ["overview", "section", "water", "units", "sld", "jcc", "unit", "alarms", "trends", "points"];
-const CLASSIC = [];        // displays not rebuilt yet: served by /scada-classic (none left)
 const AREAS = [["Reservoir", "Reservoir and river"], ["River", null], ["Plant", "Plant and grid"], ["Intake", "Intake and penstock"],
   ["Penstock", null], ["Spillway", "Spillway"], ["BottomOutlet", "Bottom outlet"], ["Powerhouse/Unit1", "Unit 1"], ["Powerhouse/Unit2", "Unit 2"], ["Powerhouse/Unit3", "Unit 3"]];
 
@@ -1317,9 +1315,7 @@ function renderDnav() {
   const html = `<span>Displays</span><a href="#overview" class="${TAB === "overview" ? "on" : ""}">Overview</a>${sec}` + all.map(d => {
     let a = null; for (const w of d.watch) { const x = alarmOn(w, w.endsWith("/")); if (x && (!a || x.priority < a.priority)) a = x; }
     const ico = a ? prioSvg(a.priority) : "";
-    if (d.later) return `<button disabled title="Coming in a later step of the SCADA rebuild">${ico}${esc(d.label)}</button>`;
-    if (d.hash) return `<a href="${d.hash}" class="${location.hash === d.hash ? "on" : ""}">${ico}${esc(d.label)}</a>`;
-    return `<a href="${d.href}" title="Opens the previous HMI until this display is rebuilt">${ico}${esc(d.label)} <span class="classic">classic</span></a>`;
+    return `<a href="${d.hash}" class="${location.hash === d.hash ? "on" : ""}">${ico}${esc(d.label)}</a>`;
   }).join("");
   for (const box of $$("[data-dnav]")) if (box._h !== html) { box.innerHTML = html; box._h = html; }
 }
@@ -1698,10 +1694,9 @@ function showTab(name) {
   if (name === "trends") loadHistStat();
   if (name === "unit") renderUnitSoe();
 }
-// The hash is the display address. Displays not rebuilt yet (#reservoir, #governor, #unit/<unit>) go to the previous HMI.
+// The hash is the display address. The previous HMI's #reservoir and #governor map to their successors.
 function route() {
   const h = location.hash.slice(1);
-  if (CLASSIC.includes(h.split("/")[0])) { location.replace("/scada-classic#" + h); return; }
   if (h === "governor") { location.replace("#units"); return; }        // the old Governor & HPU display
   if (h === "reservoir") { location.replace("#water"); return; }       // the old Reservoir & spillway display
   if (h === "unit" || h.startsWith("unit/")) {

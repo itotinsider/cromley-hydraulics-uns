@@ -5,7 +5,7 @@ trend store, its own alarm engine (ISA-18.2-style: active/acknowledged/return to
 event journal; operator commands are published to the Cmd topics. It never reads the CH tree:
 that is the machine builder's data.
 
-HTTP :8120 (host): the hub (/), the SCADA HMI (/scada; the previous HMI at /scada-classic) and its API:
+HTTP :8120 (host): the hub (/), the SCADA HMI (/scada) and its API:
   GET  /api/state                 values (with age), alarms, recent events
   GET  /api/config                tags, commands, alarm limits, operating zones, links
   GET  /api/trend?paths=a,b&minutes=60&points=300
@@ -383,7 +383,6 @@ def build_app(sc):
     web = os.path.join(HERE, "web")
     app.static("/", os.path.join(web, "index.html"))
     app.static("/scada", os.path.join(web, "scada.html"))
-    app.static("/scada-classic", os.path.join(web, "scada-classic.html"))
 
     @app.get("/api/state")
     def state(req):

@@ -260,7 +260,6 @@ def _valid_prefixes(paths):
 
 @pytest.mark.parametrize("page,areas,paths,subs", [
     ("scada/web/scada.html", CUSTOMER_AREAS, "customer", list(NS.UNITS) + list(NS.SPILLWAY_GATES)),
-    ("scada/web/scada-classic.html", CUSTOMER_AREAS, "customer", list(NS.UNITS) + list(NS.SPILLWAY_GATES)),
     ("scada/web/index.html", CUSTOMER_AREAS, "customer", list(NS.UNITS)),
     ("chviewer/web/index.html", CH_SUBSYSTEMS, "ch", list(NS.GUIDE_BEARINGS) + ["X", "Y", "Thrust"]),
 ])

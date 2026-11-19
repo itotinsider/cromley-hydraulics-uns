@@ -6,11 +6,11 @@ IEC 61850, DNP3 or IEC 60870-5-104 here; in this environment everything, includi
 operator's MW setpoint, is an MQTT topic. It never reads the CH tree: that is the machine
 builder's data.
 
-It is being rebuilt as a **high-performance HMI (ISA-101)** in the style of the HCW operator
+It is a **high-performance HMI (ISA-101)** in the style of the HCW operator
 console: a light-grey screen, colour only for alarms (priority 1 red, 2 amber, 3 violet, stale
 data magenta), one muted blue for water, a point name on every value, faceplates for every
-command. The previous (dark) HMI was at http://localhost:8120/scada-classic until the rebuild
-was finished; it now lists the successor of each old display, and old deep links forward.
+command. It replaced the previous dark HMI; that HMI's
+addresses `#reservoir` and `#governor` open their successors (*Water* and *Powerhouse*).
 
 ![Dam SCADA overview](images/scada-overview.png)
 

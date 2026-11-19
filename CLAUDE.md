@@ -60,8 +60,7 @@ chplc/model.py           CH turbine: bearings/cooling thermal, HPU, seals, gener
 chplc/main.py            one PLC per turbine (thread, MQTT client + LWT, seq), waveforms, HTTP :8125
 scada/main.py            dam SCADA server: customer tree only, alarms, journal, trends, Cmd publisher, HTTP :8120
 scada/web/index.html     hub (the only page that isn't a persona HMI)
-scada/web/scada.html     the dam SCADA HMI: high-performance (ISA-101, light grey, HCW style), being rebuilt in steps
-scada/web/scada-classic.html  /scada-classic: the old HMI's displays and their successors (old deep links forward)
+scada/web/scada.html     the dam SCADA HMI: high-performance (ISA-101, light grey, HCW style)
 scada/historian.py       the SCADA historian (SQLite: samples, journal, SOE)
 instructor/main.py       instructor station: proxies to the simulators over HTTP, HTTP :8121
 instructor/web/index.html
@@ -117,8 +116,8 @@ docker compose run --rm -e CH_E2E_LOGS=1 tests python -m pytest -s tests/test_e2
 (network = compose project (folder) name + `_default`; broker host `mosquitto`, port 1883).
 
 **Screenshots** (headless Chrome; Playwright is not installed). Every view has a deep link:
-SCADA `/scada#overview|alarms|trends|points` (+ `?tag=<point or path>`, `?trend=a,b&range=60`;
-`#reservoir|unit/Unit1|governor` forward to `/scada-classic`),
+SCADA `/scada#overview|section|water|units|unit/Unit1|sld|jcc|alarms|trends|points` (+ `?tag=<point or path>`,
+`?trend=a,b&range=60`; the old `#reservoir` and `#governor` forward to `#water` and `#units`),
 viewer `#<serial>` and `#<serial>/wave/<path>`. Screenshots live in `wiki/images/`.
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
@@ -288,14 +287,13 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
     Step 3: Water `#water` (gauge with every limit, water balance, gates; old `#reservoir`
     forwards), Single-line `#sld` (only customer-tree values; untelemetered parts dashed), Joint
     control `#jcc` (makeable totals for k units above / n−k below the rough zone at the current
-    head, from `/api/config` zones and `p_min_mw`). Nothing links to `/scada-classic` any more.
+    head, from `/api/config` zones and `p_min_mw`).
     Step 4: SQLite historian (`scada/historian.py`, `data/scada_historian.db`: exception
     reporting 0.1 % / 60 s heartbeat, stale = one BAD gap row, trend buckets hold the last value,
     14 d) for `/api/trend` and `/api/events`; the SOE (`Scada.soe()`: diffs of `ActiveAlarms`,
     `BreakerClosed`, `State` per unit, first-out = first `TRIP_` of a unit that wasn't tripped,
-    source time, 1 s) on `/api/soe`; `/api/points`, `/api/historian`. `/scada-classic` is now a
-    page listing the successors (old deep links forward): kept as a route so the interface only
-    grows (1.3).
+    source time, 1 s) on `/api/soe`; `/api/points`, `/api/historian`. The previous HMI is gone (no `/scada-classic`;
+    it was never on main, so the interface only grew: 1.0 → 1.3).
   - **Gotcha:** the RCA replay publishes with the wall clock, so the historian stores replayed
     values as live; delete `data/scada_historian.db` to start clean.
   - **Unit limits:** `UNIT_LIMITS` in `scada/main.py` (bearing 80/90 °C, governor oil 55/52/48 bar,
@@ -384,7 +382,7 @@ signature; after retuning, try another seed (`CH_TEST_SEED`).
 - **Settings:** env vars with code defaults, documented in the wiki's Configuration page.
 - **Web:** self-contained `web/*.html`, vanilla JS, no build, no CDN. The hub is navigation; persona
   pages link back with `⌂ All systems`. Reference data from `/api/config`, not hardcoded. SCADA:
-  ISA-101 light grey like HCW (the classic page: dark grey), saturated colour only for alarms (P1 red,
+  ISA-101 light grey like HCW, saturated colour only for alarms (P1 red,
   P2 amber, P3 violet, stale magenta).
   Instructor: dark violet ("simulator side of the glass"). Viewer: CH teal brand. Never rebuild an
   open form on a poll; no browser dialogs (inline arm-then-confirm).

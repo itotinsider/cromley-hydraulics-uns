@@ -188,7 +188,7 @@ def test_http_routes(stack, inv):
             assert st == 200, (svc, path)
     # pages are served as HTML
     import urllib.request
-    for svc, page in (("scada", "/"), ("scada", "/scada"), ("scada", "/scada-classic"), ("viewer", "/"), ("instructor", "/")):
+    for svc, page in (("scada", "/"), ("scada", "/scada"), ("viewer", "/"), ("instructor", "/")):
         with urllib.request.urlopen(url(stack, svc, page), timeout=3) as r:
             assert r.status == 200 and r.headers["Content-Type"].startswith("text/html")
 

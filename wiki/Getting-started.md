@@ -40,7 +40,6 @@ generating, the plant at its 110 MW setpoint. No start-up procedure is needed.
 | Hub (all systems) | http://localhost:8120 |
 | Dam SCADA | http://localhost:8120/scada |
 | Unit detail (e.g. Unit 1) | http://localhost:8120/scada#unit/Unit1 |
-| Previous SCADA HMI (now a list of its successors) | http://localhost:8120/scada-classic |
 | Instructor station (fault scenarios) | http://localhost:8121 |
 | CH asset viewer | http://localhost:8122 |
 | MQTT broker | `mqtt://localhost:1884` (anonymous, no TLS) |
