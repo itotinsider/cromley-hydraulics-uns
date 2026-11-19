@@ -295,7 +295,9 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
     source time, 1 s) on `/api/soe`; `/api/points`, `/api/historian`. The previous HMI is gone (no `/scada-classic`;
     it was never on main, so the interface only grew: 1.0 → 1.3).
   - **Gotcha:** the RCA replay publishes with the wall clock, so the historian stores replayed
-    values as live; delete `data/scada_historian.db` to start clean.
+    values as live; delete `data/scada_historian.db` to start clean. The recording has no
+    `SequenceStep`/`StartPermissives`: the unit display must show them STALE, never the last live
+    step (it once showed "Generating" on a stopped unit); Start stays disabled on stale permissives.
   - **Unit limits:** `UNIT_LIMITS` in `scada/main.py` (bearing 80/90 °C, governor oil 55/52/48 bar,
     cooling water 56 L/s, overspeed 145 %) is the SCADA's engineering copy of the unit controller's
     protection, on `/api/config`; `test_scada_unit_limits_match_the_unit_controller` keeps it equal

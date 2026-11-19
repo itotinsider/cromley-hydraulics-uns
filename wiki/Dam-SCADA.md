@@ -14,6 +14,9 @@ addresses `#reservoir` and `#governor` open their successors (*Water* and *Power
 
 ![Dam SCADA overview](images/scada-overview.png)
 
+*The plant overview in normal operation: three units generating in PLANT mode, no alarms. Grey
+is normal; colour would mean an alarm.*
+
 ## Screens
 
 | Screen | Shows | Deep link |
@@ -38,6 +41,10 @@ shows the highest active alarm on each display.
 
 ![Faceplate](images/scada-faceplate.png)
 
+*Unit 2 tripped on generator protection: the unit, its generator and the display bar carry the P1
+mark; the Unit control faceplate (a click on the unit's state) offers Reset, which the unit controller
+accepts only at standstill with the inlet valve closed.*
+
 The **🎓 Dam view** button in the header (or *Dam section* in the display bar) shows how the dam
 physically looks: the cross-section of the previous HMI, redrawn in the same style, with the same
 data blocks and faceplates. Teal is the training colour only (as on the HCW console): it never
@@ -54,6 +61,9 @@ LOCAL and a local MW setpoint; Stop and Emergency stop are armed first, then con
 greyed out while a permissive is not met, and the faceplate says which.
 
 ![Unit display during a start](images/scada-unit.png)
+
+*Unit 3 during a start, at S03 breakaway (gates at 20 %, speed rising): S01 and S02 are done, the
+generator is outlined orange (in transition).*
 
 ### The unit display: sequence, permissives, first-out
 
@@ -157,6 +167,9 @@ A value older than 5 s is shown as bad quality and isn't evaluated.
 
 ![Alarms](images/scada-alarms.png)
 
+*A generator trip on Unit 2: the P1 trip and the P3 "setpoint not reachable" that follows it; the
+sequence of events marks the first-out, the journal adds the operator's commands.*
+
 ## API
 
 | Route | |
@@ -193,3 +206,5 @@ which is what separates causes that happen within the same second.
 
 The RCA demo's `replay.sh` publishes recorded history with the current wall-clock time: the
 historian stores it like live data. Delete `data/scada_historian.db` (SCADA stopped) to start clean.
+The recorded history has no `SequenceStep` and `StartPermissives`: during a replay the unit display
+shows both as STALE (magenta, with their age) and the Unit control faceplate keeps Start disabled.

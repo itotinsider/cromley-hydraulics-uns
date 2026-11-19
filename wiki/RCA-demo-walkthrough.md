@@ -79,15 +79,16 @@ The control room has two screens for Unit 1:
   nobody is assigned to watch it.
 
 The screenshots below come from `rca-demo/replay.sh`, which plays the recorded history on the
-running stack (see [Replay it yourself](#replay-it-yourself)). They show the **previous** dam SCADA
-HMI; the [current one](Dam-SCADA) shows the same data in the high-performance style, with the same
-point names and alarms. The clock on the screens is the wall
-clock of the replay; the plant time is in each heading.
+running stack (see [Replay it yourself](#replay-it-yourself)), on the [Dam SCADA](Dam-SCADA). The
+clock on the screens is the wall clock of the replay; the plant time is in each heading. The
+history was recorded before the SCADA showed each unit's sequence step and start permissives, so
+the unit display marks those two STALE in magenta: the HMI saying it has no fresh value for them,
+not part of the story.
 
 ### 2 Nov 23:54: pad 3 passes 75 °C
 
-The CH PLC raises `TGB_PAD03_H`. On the SCADA, Unit 1 runs normally at 37 MW with the TGB at
-65.7 °C, and there are no alarms.
+The CH PLC raises `TGB_PAD03_H`. On the SCADA, Unit 1 runs normally at 37 MW with the turbine
+guide bearing (`U1-TI-304`, the customer's RTD on pad 1) at 65.7 °C, and there are no alarms.
 
 ![SCADA Unit 1 at 23:55](images/rca-scada-unit1-2355.png)
 
@@ -106,8 +107,8 @@ for more than seven hours, and pad 3 is at 84 °C.
 
 ### 3 Nov 09:00: high-high
 
-Pad 3 reaches 85 °C (`TGB_PAD03_HH`). The SCADA still shows Unit 1 at 42 MW, TGB 70.4 °C, and
-"No unacknowledged alarms".
+Pad 3 reaches 85 °C (`TGB_PAD03_HH`). The SCADA still shows Unit 1 at 42 MW, `U1-TI-304` at
+70.4 °C, well below its alarm zone (80 °C), and "No active alarms" in the alarm banner.
 
 ![SCADA Unit 1 at 09:01](images/rca-scada-unit1-0901.png)
 
@@ -115,8 +116,8 @@ Pad 3 reaches 85 °C (`TGB_PAD03_HH`). The SCADA still shows Unit 1 at 42 MW, TG
 
 *The SCADA alarm list and journal at 09:01: nothing about Unit 1.*
 
-The plant overview shows the trial: Unit 2 at 23 MW and 55 % gate, inside the rough zone; Units 1
-and 3 at 42 MW.
+The plant overview shows the trial: Unit 2 at 23 MW and 55 % gate, its MW marker inside the hatched
+rough zone of its data block; Units 1 and 3 at 42 MW.
 
 ![SCADA plant overview at 09:01](images/rca-scada-overview-0901.png)
 
@@ -356,8 +357,14 @@ Useful options (all passed to `rca-demo/build/replay_history.py`):
 | `--speed`, `--slow-from`, `--slow-to`, `--slow-speed` | Plant seconds per wall second, normal and in the slow window |
 | `--pause-at "2026-11-03 09:01,2026-11-03 09:52" --pause-s 60` | Hold the screens at those moments (talking, screenshots) |
 
-Not replayed: the waveforms (the viewer shows the last live blocks) and the nameplates (retained
-from the live stack). The SCADA trends mix the live data from before the replay with the replay's.
+Not replayed: the waveforms (the viewer shows the last live blocks), the nameplates (retained
+from the live stack), and each unit's sequence step and start permissives (the history was recorded
+before the SCADA had them): the unit display marks those two STALE in magenta.
+
+The SCADA trends mix the live data from before the replay with the replay's (stop the SCADA and
+delete `data/scada_historian.db` first for a clean history). In the seconds between the simulators
+stopping and the replay's first values the SCADA raises *No data from the dam (MQTT)*; acknowledge
+it before you start talking.
 
 More in [`rca-demo/README.md`](https://github.com/itotinsider/cromley-hydraulics-uns/blob/main/rca-demo/README.md).
 To do the analysis yourself, step by step, see [RCA with Claude: a guide for engineers](RCA-guide-for-engineers).
