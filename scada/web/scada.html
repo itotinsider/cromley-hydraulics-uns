@@ -264,6 +264,8 @@
   .seq li.done .n::after { content: " ✓"; }
   .seq li.cur { background: #fff; border: 2px solid var(--text); color: var(--value); font-weight: 700; }
   .seq li.cur.trip { border-color: var(--p1); }
+  .seq li.cur.stale { border: 2px dashed var(--bad); color: var(--bad); }
+  .perm li.stale b { background: none; color: var(--bad); border: 1px dashed var(--bad); }
   .perm { margin: 0; padding: 0; list-style: none; font-size: 11.5px; }
   .perm li { display: flex; gap: 8px; padding: 2px 6px; }
   .perm li b { font: 700 11px var(--mono); width: 54px; flex: none; }
@@ -924,7 +926,10 @@ function renderUnit() {
   const trip = st === "Tripped" || codes.some(c => c.startsWith("TRIP_")), trans = stateCls(st) === "trans";
   const chip = $("#u-state"); chip.textContent = (st || "####").toUpperCase(); chip.className = "chip " + stateCls(st);
   const stepDef = CFG.sequence_steps.find(x => x.id === step);
-  $("#u-step").textContent = stepDef ? `${PT[`${p}/SequenceStep`]}: ${step}` : "";
+  const stepStale = stale(`${p}/SequenceStep`), permStale = stale(`${p}/StartPermissives`);
+  const ageTxt = q => { const e = E(q); return e ? `no update for ${e.age.toFixed(0)} s` : "no data"; };
+  $("#u-step").innerHTML = stepStale ? `<span class="q-stale">${PT[`${p}/SequenceStep`]}: STALE${step ? ` (last ${esc(step)})` : ""}</span>`
+    : stepDef ? esc(`${PT[`${p}/SequenceStep`]}: ${step}`) : "";
   // mimic
   const open = !!val(`${p}/InletValveOpen`), flow = (val(`${p}/Flow`) || 0) > 0.5, spin = (val(`${p}/Speed`) || 0) > 15, br = !!val(`${p}/BreakerClosed`);
   $("#u-disc").setAttribute("transform", `rotate(${open ? 90 : 0} 170 330)`);
@@ -949,15 +954,22 @@ function renderUnit() {
     let done = false;
     if (startSeq.includes(step)) done = startSeq.includes(id) && i < cur && id !== "Stopped";
     if (stopSeq.includes(step)) done = stopSeq.includes(id) && i < cur;
-    li.className = (id === step ? "cur" + (trip ? " trip" : "") : "") + (done ? " done" : "");
+    // stale: the last known step stays outlined (dashed magenta), nothing is shown as done
+    li.className = id === step ? "cur" + (stepStale ? " stale" : trip ? " trip" : "") : (done && !stepStale ? "done" : "");
   }
   const r = STEPSEEN[u];
-  $("#u-steptime").textContent = r && r.since ? `in step for ${Math.round(Date.now() / 1000 - r.since)} s` : "";
+  $("#u-steptime").innerHTML = stepStale ? `<span class="q-stale">STALE · ${ageTxt(`${p}/SequenceStep`)}</span>`
+    : r && r.since ? `in step for ${Math.round(Date.now() / 1000 - r.since)} s` : "";
   // permissives
   const perm = val(`${p}/StartPermissives`) || {};
-  for (const li of $$("#u-perm li")) { const ok = perm[li.dataset.perm]; li.className = ok === false ? "no" : ""; $("b", li).textContent = ok === undefined ? "####" : ok ? "✓ OK" : "NOT MET"; }
-  const ready = Object.values(perm).length && Object.values(perm).every(Boolean);
-  $("#u-ready").textContent = st === "Stopped" ? (ready ? "ready to start" : "start blocked") : "";
+  for (const li of $$("#u-perm li")) {
+    const ok = perm[li.dataset.perm];
+    li.className = permStale ? "stale" : ok === false ? "no" : "";
+    $("b", li).textContent = permStale ? "STALE" : ok === undefined ? "####" : ok ? "✓ OK" : "NOT MET";
+  }
+  const ready = !permStale && Object.values(perm).length && Object.values(perm).every(Boolean);
+  $("#u-ready").innerHTML = permStale ? `<span class="q-stale">STALE · ${ageTxt(`${p}/StartPermissives`)}</span>`
+    : st === "Stopped" ? (ready ? "ready to start" : "start blocked") : "";
   // protection: the latched trip cause comes first in ActiveAlarms = first-out
   const fo = codes[0] && codes[0].startsWith("TRIP_") ? codes[0] : null;
   $("#u-fo").className = fo ? "fo" : "fo none";
@@ -1550,12 +1562,14 @@ function renderFaceplate() {
   if (o && o.kind === "unit") {
     const up = `Powerhouse/${o.unit}`, st = val(`${up}/State`) || "", perm = val(`${up}/StartPermissives`) || {};
     const chip = $('[data-f="ust"]', body); chip.textContent = st.toUpperCase(); chip.className = "chip " + stateCls(st);
-    const ready = Object.values(perm).length && Object.values(perm).every(Boolean);
+    const permStale = stale(`${up}/StartPermissives`);
+    const ready = !permStale && Object.values(perm).length && Object.values(perm).every(Boolean);
     const en = { Start: st === "Stopped" && ready, Stop: !["Stopped", "Stopping", "Tripped"].includes(st), Reset: st === "Tripped", EmergencyStop: st !== "Stopped" };
     $$("[data-u]", body).forEach(b => { if (armed !== b.dataset.u) b.disabled = !en[b.dataset.u]; });
     $$("[data-umode]", body).forEach(b => b.classList.toggle("on", b.dataset.umode === val(`${up}/ControlMode`)));
     const why = CFG.start_permissives.filter(x => perm[x.id] === false && x.id !== "UnitStopped").map(x => x.text);
-    $('[data-f="uwhy"]', body).textContent = st === "Stopped" && why.length ? "Start blocked: " + why.join("; ") : "";
+    $('[data-f="uwhy"]', body).textContent = st === "Stopped" && permStale ? "Start blocked here: the start permissives are stale (no fresh value)"
+      : st === "Stopped" && why.length ? "Start blocked: " + why.join("; ") : "";
   }
 }
 const stateCls = st => st === "Generating" ? "run" : st === "Tripped" ? "trip" : ["Starting", "SpeedNoLoad", "Synchronising", "Stopping"].includes(st) ? "trans" : "";
