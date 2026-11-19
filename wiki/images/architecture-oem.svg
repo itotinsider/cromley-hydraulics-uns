@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>The OEM case: Cromley Hydraulics, from selling turbines to selling data-driven services</title>
+  <defs>
+    <marker id="aBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3a6ea5"/></marker>
+    <marker id="aTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#137a7f"/></marker>
+    <marker id="aGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8c959f"/></marker>
+  </defs>
+
+  <!-- own background, so it reads the same in GitHub's light and dark themes -->
+  <rect x="0.5" y="0.5" width="999" height="559" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+
+  <text x="24" y="34" font-size="17" font-weight="600" fill="#24292f">Case 2 · The OEM: Cromley Hydraulics (CH)</text>
+  <text x="24" y="54" font-size="12.5" fill="#57606a">75 years of engineering, selling turbines. Now a PLC that speaks MQTT on every turbine it ships: the first step into data and services.</text>
+
+  <!-- column headings -->
+  <g font-size="12" font-weight="600" fill="#57606a">
+    <text x="166" y="86" text-anchor="middle">CUSTOMER SITES (THE INSTALLED BASE)</text>
+    <text x="482" y="86" text-anchor="middle">ON SITE: ONE BROKER</text>
+    <text x="828" y="86" text-anchor="middle">CROMLEY HYDRAULICS</text>
+  </g>
+
+  <!-- site 1: built -->
+  <rect x="24" y="98" width="284" height="214" rx="8" fill="#e9f5f5" stroke="#137a7f" stroke-width="1.5"/>
+  <text x="38" y="120" font-size="14" font-weight="600" fill="#24292f">Copper Canyon Dam <tspan font-weight="400" fill="#57606a">· DRWPA</tspan></text>
+  <g font-size="12" fill="#24292f">
+    <rect x="38" y="132" width="256" height="40" rx="5" fill="#ffffff" stroke="#137a7f"/>
+    <text x="48" y="149" font-weight="600">Unit1 · CH-FR-1987-0042</text><text x="48" y="164" font-size="11" fill="#57606a">Francis turbine + CH PLC</text>
+    <rect x="38" y="178" width="256" height="40" rx="5" fill="#ffffff" stroke="#137a7f"/>
+    <text x="48" y="195" font-weight="600">Unit2 · CH-FR-1987-0043</text><text x="48" y="210" font-size="11" fill="#57606a">Francis turbine + CH PLC</text>
+    <rect x="38" y="224" width="256" height="40" rx="5" fill="#ffffff" stroke="#137a7f"/>
+    <text x="48" y="241" font-weight="600">Unit3 · CH-FR-1989-0051</text><text x="48" y="256" font-size="11" fill="#57606a">Francis turbine + CH PLC</text>
+  </g>
+  <text x="38" y="282" font-size="11" fill="#57606a">bearings, cooling, HPU, seals, generator,</text>
+  <text x="38" y="298" font-size="11" fill="#57606a">vibration + raw waveforms · simulated by ch-plc-sim</text>
+
+  <!-- further sites: not built -->
+  <rect x="24" y="326" width="284" height="40" rx="8" fill="#ffffff" stroke="#8c959f" stroke-width="1.3" stroke-dasharray="6 4"/>
+  <text x="38" y="351" font-size="12.5" fill="#8c959f">next customer site … (not built)</text>
+  <rect x="24" y="374" width="284" height="40" rx="8" fill="#ffffff" stroke="#8c959f" stroke-width="1.3" stroke-dasharray="6 4"/>
+  <text x="38" y="399" font-size="12.5" fill="#8c959f">and the next … (not built)</text>
+
+  <!-- broker -->
+  <rect x="340" y="98" width="284" height="268" rx="8" fill="#f6f8fa" stroke="#57606a" stroke-width="1.5"/>
+  <text x="482" y="120" text-anchor="middle" font-size="14.5" font-weight="600" fill="#24292f">Mosquitto <tspan font-weight="400" fill="#57606a" font-size="12">(the customer's site)</tspan></text>
+  <rect x="352" y="132" width="260" height="150" rx="6" fill="#e9f5f5" stroke="#137a7f" stroke-width="1.5"/>
+  <text x="364" y="152" font-size="12.5" font-weight="600" fill="#137a7f">CH tree: asset-centric, keyed by serial</text>
+  <text x="364" y="172" font-size="10.5" font-family="Menlo, Consolas, monospace" fill="#24292f">v1.0/CH/Fleet/&lt;customer&gt;/&lt;site&gt;/</text>
+  <text x="364" y="186" font-size="10.5" font-family="Menlo, Consolas, monospace" fill="#24292f">  &lt;serial&gt;/&lt;subsystem&gt;/…</text>
+  <g font-size="11.5" fill="#57606a">
+    <text x="364" y="208">values + quality + seq, 1 s</text>
+    <text x="364" y="224">alarms, nameplate, online status</text>
+    <text x="364" y="240">raw waveforms (shaft, draft tube,</text>
+    <text x="364" y="256">headcover accelerometer)</text>
+    <text x="364" y="272" fill="#137a7f">owned by the machine builder</text>
+  </g>
+  <rect x="352" y="292" width="260" height="62" rx="6" fill="#eef3f9" stroke="#3a6ea5" stroke-width="1.3"/>
+  <text x="364" y="312" font-size="12" font-weight="600" fill="#3a6ea5">Customer tree (DRWPA's own)</text>
+  <text x="364" y="328" font-size="11" fill="#57606a">the CH PLC copies its operating point</text>
+  <text x="364" y="343" font-size="11" fill="#57606a">(MW, head, speed, state): read only</text>
+  <path d="M352,322 H330 V250 H310" fill="none" stroke="#3a6ea5" stroke-width="1.6" stroke-dasharray="6 3" marker-end="url(#aBlue)"/>
+  <text x="314" y="242" font-size="10.5" fill="#3a6ea5">context</text>
+  <line x1="310" y1="190" x2="350" y2="190" stroke="#137a7f" stroke-width="1.8" marker-end="url(#aTeal)"/>
+
+  <!-- CH today -->
+  <rect x="660" y="98" width="316" height="140" rx="8" fill="#e9f5f5" stroke="#137a7f" stroke-width="1.5"/>
+  <text x="674" y="120" font-size="13" font-weight="600" fill="#137a7f">TODAY (BUILT)</text>
+  <text x="674" y="142" font-size="14" font-weight="600" fill="#24292f">CH asset viewer <tspan font-weight="400" fill="#57606a">:8122</tspan></text>
+  <g font-size="12" fill="#57606a">
+    <text x="674" y="161">per serial: nameplate, values, alarms,</text>
+    <text x="674" y="177">raw waveforms, data rate, seq gaps</text>
+  </g>
+  <text x="674" y="202" font-size="14" font-weight="600" fill="#24292f">Node-RED examples <tspan font-weight="400" fill="#57606a">:1881</tspan></text>
+  <text x="674" y="221" font-size="12" fill="#57606a">1-min training data, vortex-rope DFT</text>
+  <line x1="626" y1="170" x2="658" y2="170" stroke="#137a7f" stroke-width="1.8" marker-end="url(#aTeal)"/>
+
+  <!-- CH tomorrow -->
+  <rect x="660" y="252" width="316" height="162" rx="8" fill="#ffffff" stroke="#137a7f" stroke-width="1.3" stroke-dasharray="7 4"/>
+  <text x="674" y="274" font-size="13" font-weight="600" fill="#137a7f">THE BUSINESS CASE (NOT BUILT)</text>
+  <g font-size="12" fill="#24292f">
+    <text x="674" y="296">· remote condition monitoring of the fleet</text>
+    <text x="674" y="315">· predictive maintenance: bearings, HPU,</text>
+    <text x="688" y="331">cooling, vortex rope, runner cracks</text>
+    <text x="674" y="350">· spare parts and service visits on condition</text>
+    <text x="674" y="369">· efficiency and performance reports</text>
+    <text x="674" y="388">· availability-based service contracts</text>
+  </g>
+  <text x="674" y="406" font-size="11" fill="#57606a">one model for every turbine, every customer</text>
+
+  <!-- edge band -->
+  <rect x="340" y="380" width="284" height="34" rx="8" fill="#fbfbfb" stroke="#8c959f" stroke-width="1.3" stroke-dasharray="7 4"/>
+  <text x="482" y="402" text-anchor="middle" font-size="12" fill="#57606a">edge / IIoT vendor: off site, buffered, secure</text>
+  <path d="M624,397 H644 V332 H658" fill="none" stroke="#8c959f" stroke-width="1.6" stroke-dasharray="6 3" marker-end="url(#aGrey)"/>
+  <line x1="482" y1="366" x2="482" y2="378" stroke="#8c959f" stroke-width="1.6" stroke-dasharray="4 3"/>
+
+  <!-- audience band -->
+  <rect x="24" y="428" width="952" height="112" rx="8" fill="#fbfbfb" stroke="#8c959f" stroke-width="1.3" stroke-dasharray="7 4"/>
+  <text x="44" y="456" font-size="14" font-weight="600" fill="#24292f">For OEMs, digital and service teams, data architects and edge / IIoT vendors</text>
+  <g font-size="12.5" fill="#57606a">
+    <text x="44" y="480">· an engineering-first company designs its first data model: by asset and serial, not by the customer's plant</text>
+    <text x="44" y="500">· who owns which data: the customer's tree and the machine builder's tree on one broker, overlapping only by copper</text>
+    <text x="44" y="520">· what it takes to get from a PLC that publishes to a service someone pays for (the vendors' part of the case study)</text>
+  </g>
+</svg>

@@ -97,12 +97,15 @@ services:
       <<: *mqtt
       WEB_PORT: "8120"
       STALE_SECONDS: "5"
+      DATA_DIR: /app/data              # the SCADA historian (scada_historian.db): trends and journal survive restarts
       # Links on the hub page: how a browser on the host reaches the other systems.
       PUBLIC_INSTRUCTOR_URL: http://localhost:${CH_INSTRUCTOR_PORT:-8121}
       PUBLIC_VIEWER_URL: http://localhost:${CH_VIEWER_PORT:-8122}
       PUBLIC_NODERED_URL: http://localhost:${CH_NODERED_PORT:-1881}
       PUBLIC_MQTT_EXPLORER_URL: http://localhost:${CH_MQTT_EXPLORER_PORT:-4001}
       PUBLIC_BROKER: localhost:${CH_MQTT_PORT:-1884}
+    volumes:
+      - ./data:/app/data
     depends_on:
       - mosquitto
       - dam-sim

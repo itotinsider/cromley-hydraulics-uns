@@ -154,6 +154,12 @@ class Unit:
     def at_standstill(self):
         return self.speed < 0.005
 
+    def sequence_step(self):
+        """NS.SEQUENCE_STEPS id: the state, or "<state>.<step>" while a stepped sequence runs."""
+        if self.state in ("Starting", "Stopping", "SpeedNoLoad") and self.substep:
+            return f"{self.state}.{self.substep}"
+        return self.state
+
     def alarms(self):
         out = sorted(self.warnings)
         if self.trip_cause:
@@ -335,14 +341,24 @@ class Dam:
             return self._ok(n, f"{n}: local MW setpoint {v:.1f} MW")
         return self._refuse(n, f"{n}: unknown command {cmd}")
 
+    def permissives(self, u):
+        """The start permissives as the unit controller publishes them (NS.START_PERMISSIVES), in order."""
+        hw = self.hw_ok(u)
+        return {"UnitStopped": u.state == "Stopped",
+                "IntakeGateOpen": self.intake >= 99.5,
+                "ReservoirLevel": self.level >= LEVEL_MIN_START,
+                "HardwiredIO": hw,
+                "GovernorOilPressure": hw and u.hw.get("GovernorOilPressure", 0) >= GOV_OIL_START_MIN}
+
     def _start_permissives(self, u):
-        if self.intake < 99.5:
+        ok = self.permissives(u)
+        if not ok["IntakeGateOpen"]:
             return "intake gate not open"
-        if self.level < LEVEL_MIN_START:
+        if not ok["ReservoirLevel"]:
             return f"reservoir below {LEVEL_MIN_START} m a.s.l."
-        if not self.hw_ok(u):
+        if not ok["HardwiredIO"]:
             return "no signals from the turbine (hardwired I/O fault)"
-        if u.hw.get("GovernorOilPressure", 0) < GOV_OIL_START_MIN:
+        if not ok["GovernorOilPressure"]:
             return f"governor oil pressure below {GOV_OIL_START_MIN} bar"
         return None
 
@@ -769,6 +785,8 @@ class Dam:
                 f"{p}/NetHead": u.net_head,
                 f"{p}/InletValveOpen": u.inlet >= 1.0,
                 f"{p}/ActiveAlarms": u.alarms(),
+                f"{p}/SequenceStep": u.sequence_step(),
+                f"{p}/StartPermissives": self.permissives(u),
             })
             if self.hw_ok(u):
                 for h in NS.HARDWIRED:

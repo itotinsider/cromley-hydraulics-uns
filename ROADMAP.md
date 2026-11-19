@@ -80,33 +80,7 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 
 ## In progress
 
-### `rca-demo-documents` — Document set for an RCA bot demo
-- **Status:** 🚧 In progress · **Owner:** Claude (for Willem) · **Branch:** `rca-demo-documents` · **PR:** [#1](https://github.com/itotinsider/cromley-hydraulics-uns/pull/1)
-- **Goal:** a document library for a root cause analysis (RCA) bot used by Copper Canyon Dam's own maintenance and reliability team: supplier O&M manual, schematics and service bulletin (CH); asset register, FMECA, PM plan, work orders, oil analysis, MOC register, shift log, procedures and three previous RCA reports (DRWPA). Clues planted for scenarios A, G and C; answer key kept outside the library.
-- **Touches:** new folder `rca-demo/` only (no code, topics, commands or scenarios change). One line in `CLAUDE.md` (layout).
-- **Reserves:** —
-- **Depends on:** —
-- **Done when:** library and answer key reviewed by Willem; values match the simulators; `rca-demo/README.md` explains rebuild and use.
-- **Notes:** 2026-11-03 Claude: next step is historian data (weeks of pre-event trends), see `rca-demo/README.md`.
-
-### `rca-history-and-bot-run` — Recorded history and a first RCA bot test run
-- **Status:** 🚧 In progress · **Owner:** Claude (for Willem) · **Branch:** `rca-demo-rebuild` · **PR:** [#2](https://github.com/itotinsider/cromley-hydraulics-uns/pull/2)
-- **Goal:** three weeks of recorded plant history ending in scenario A (Unit 1 TGB pad 3), following the library's story, and a script that runs Claude Code as the RCA bot on it in an isolated workspace and grades the report against the answer key.
-- **Touches:** `rca-demo/` only (`build/record_history.py`, `build/replay_history.py`, `history/`, `bot/`, `run_rca.sh`, `replay.sh`, README, the 3 Nov shift log entries). No topics, commands or scenarios change; the recorder reuses `tools/offline_sim.py` unchanged.
-- **Reserves:** —
-- **Depends on:** `rca-demo-documents`
-- **Done when:** history recorded and committed (gzipped); a headless bot run produces a DRWPA-template report; the grade is reviewed by Willem.
-- **Notes:** 2026-11-03 Willem: scenario A first; 13 Oct – 3 Nov window; history committed gzipped. G and C to follow with the same recorder.
-  2026-11-04 Willem: no full failure, the controlled stop stays; the shift found the HH on the CH viewer (shift log 09:03–09:55); replay of the history on the stack for the operator's view.
-
-### `interface-version` — One version number for the interface, tests in CI
-- **Status:** 🚧 In progress · **Owner:** Willem (with Claude) · **Branch:** `interface-version` · **PR:** —
-- **Goal:** a project that builds on Copper Canyon (pinned to a commit, with its own containers around it) can see from one number whether an update changes anything it reads.
-- **Touches:** `common/namespace.py` (`INTERFACE_VERSION`, `INTERFACE_DIGEST`), `tools/inventory.py`, `inventory/interface.json` (new), `tests/test_inventory.py`, `.github/workflows/tests.yml` (new), the wiki's Interface reference. No topic, command, scenario or route changes.
-- **Reserves:** nothing.
-- **Depends on:** —
-- **Done when:** changing the inventory without raising the version fails a test that says what to do; the tests run on GitHub for every pull request; the wiki explains how another project builds on Copper Canyon.
-- **Notes:** `2026-11-14 Willem: asked for this, for a course lab that reuses the plant unchanged.` Not in the inventory yet: the environment variables (still only on the Configuration page).
+(nothing yet)
 
 ## Planned
 
@@ -143,6 +117,22 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 (nothing yet)
 
 ## Done
+
+### `scada-hp-hmi` — A high-performance (ISA-101) hydro SCADA for DRWPA
+- **Status:** ✅ Done · **Owner:** Claude (for David and Willem) · **Branch:** `scada-hp-hmi` · **PR:** [#9](https://github.com/itotinsider/cromley-hydraulics-uns/pull/9)
+- **Result:** the dam SCADA rebuilt as a light-grey ISA-101 HMI in HCW's style: Plant overview, Dam section (training cross-section), water, powerhouse, unit displays with sequence, permissives, first-out and operating chart, single-line, joint control, alarms, SOE, journal, persistent SQLite historian and trends, faceplates for every command, ISA-5.1 point names. Interface 1.0 → 1.3 (`SequenceStep`, `StartPermissives`, `/api/soe`, `/api/points`, `/api/historian`); the old HMI removed. Hub: demo notice and logo on top. README: the two cases (end user, OEM) with their own architecture drawings. Wiki and RCA screenshots retaken; the RCA replay checked on the new HMI (the two tags it doesn't publish show STALE).
+
+### `interface-version` — One version number for the interface, tests in CI
+- **Status:** ✅ Done · **Owner:** Willem (with Claude) · **Branch:** `interface-version` · **PR:** [#7](https://github.com/itotinsider/cromley-hydraulics-uns/pull/7)
+- **Result:** `INTERFACE_VERSION` + `INTERFACE_DIGEST` in `common/namespace.py`, `inventory/interface.json`, a test that fails when the inventory changes without a version bump, tests on GitHub for every PR. Open: the environment variables are not in the inventory yet.
+
+### `rca-history-and-bot-run` — Recorded history and a first RCA bot test run
+- **Status:** ✅ Done · **Owner:** Claude (for Willem) · **Branch:** `rca-demo-rebuild` · **PR:** [#2](https://github.com/itotinsider/cromley-hydraulics-uns/pull/2)
+- **Result:** three weeks of recorded history ending in scenario A (13 Oct – 3 Nov, gzipped), `run_rca.sh` (Claude Code as the RCA bot, graded against the answer key), `replay.sh` (the control room's view on the stack). G and C still to follow with the same recorder.
+
+### `rca-demo-documents` — Document set for an RCA bot demo
+- **Status:** ✅ Done · **Owner:** Claude (for Willem) · **Branch:** `rca-demo-documents` · **PR:** [#1](https://github.com/itotinsider/cromley-hydraulics-uns/pull/1)
+- **Result:** `rca-demo/library/`: CH O&M manual, schematics, service bulletin; DRWPA asset register, FMECA, PM plan, work orders, oil analysis, MOC, shift log, procedures, three earlier RCA reports; answer key outside the library.
 
 ### `initial-build` — The first CH environment, from the design basis
 - **Status:** ✅ Done · **Owner:** Claude (for Willem/David) · **Branch:** — · **PR:** —

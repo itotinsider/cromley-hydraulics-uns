@@ -9,7 +9,7 @@ beyond it is yours. That makes vendors comparable: same data, same faults, your 
 | | |
 |---|---|
 | Broker | `mqtt://<host>:1884` (default host port), MQTT 3.1.1/5, anonymous, no TLS. Inside the compose network `mosquitto:1883` |
-| Customer tree | `v1.0/DRWPA/CopperCanyon/#`: 82 topics, 1 s, retained; commands under `Cmd` |
+| Customer tree | `v1.0/DRWPA/CopperCanyon/#`: 88 topics, 1 s, retained; commands under `Cmd` |
 | CH tree | `v1.0/CH/Fleet/DRWPA/CopperCanyon/<serial>/#` for three turbines: 74 process topics each at 1 s with quality and seq, 8 raw waveform channels, alarm events, nameplate, last-will status |
 | Waveforms | 6 shaft probes at 1 kS/s (4 s every 30 s), draft-tube pressure at 100 S/s (10 s every 30 s), headcover accelerometer at 10 kS/s (0.5 s every 5 min), plus on alarm |
 | Load | ~18 KB/s per turbine with the defaults; raise it with `WAVEFORM_*_EVERY_S`, `WAVEFORM_*_SECONDS` and `DETAILED_TURBINES` in `docker-compose.yml` (see [Configuration](Configuration)) |

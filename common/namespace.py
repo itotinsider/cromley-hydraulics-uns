@@ -24,8 +24,8 @@ VERSION = "v1.0"
 # Raise the first number for a rename, a removal or a changed type or unit; the second for an addition.
 # INTERFACE_DIGEST is the fingerprint of inventory/ at that version: tests/test_inventory.py fails
 # when the inventory changes and these two lines do not, and prints the new digest.
-INTERFACE_VERSION = "1.0"
-INTERFACE_DIGEST = "4a24d677ff8c3edc"
+INTERFACE_VERSION = "1.3"
+INTERFACE_DIGEST = "639d604040940fef"
 
 # ----------------------------------------------------------------------------- customer tree
 CUSTOMER_ID = "DRWPA"            # Desert River Water & Power Authority
@@ -37,6 +37,30 @@ SPILLWAY_GATES = ("Gate01", "Gate02")
 UNIT_STATES = ("Stopped", "Starting", "SpeedNoLoad", "Synchronising", "Generating", "Stopping", "Tripped")
 CONTROL_MODES = ("PLANT", "LOCAL")   # unit follows the plant controller, or its own MW setpoint
 GATE_MODES = ("AUTO", "MAN")         # spillway gates, bottom outlet
+
+# The unit controller's sequence steps (Powerhouse/<unit>/SequenceStep), in order: "<State>.<step>" or the state.
+SEQUENCE_STEPS = (
+    ("Stopped", "Stopped: brakes on, inlet valve closed"),
+    ("Starting.CoolingWater", "Check the cooling water flow (10 s)"),
+    ("Starting.InletValve", "Open the inlet valve (15 s)"),
+    ("Starting.Breakaway", "Breakaway: gates to 20 %, accelerate to 95 % speed"),
+    ("SpeedNoLoad.Excite", "Speed-no-load: excitation on (5 s)"),
+    ("Synchronising", "Synchronise to the grid, close the breaker"),
+    ("Generating", "Generating: ramp to the MW setpoint"),
+    ("Stopping.Unload", "Unload, open the breaker"),
+    ("Stopping.CloseGates", "Close the wicket gates"),
+    ("Stopping.Coast", "Coast down, brakes below 30 % speed"),
+    ("Stopping.InletValve", "Close the inlet valve"),
+    ("Tripped", "Tripped: breaker open, gates and inlet valve close; reset at standstill"),
+)
+# The unit controller's start permissives (Powerhouse/<unit>/StartPermissives: {key: true/false}).
+START_PERMISSIVES = (
+    ("UnitStopped", "Unit stopped (not running, not tripped)"),
+    ("IntakeGateOpen", "Intake gate open (≥ 99.5 %)"),
+    ("ReservoirLevel", "Reservoir level ≥ 384 m a.s.l."),
+    ("HardwiredIO", "Signals from the turbine present (hardwired I/O)"),
+    ("GovernorOilPressure", "Governor oil pressure ≥ 55 bar"),
+)
 
 
 def _t(path, unit, kind, desc, dec=2, lo=None, hi=None):
@@ -89,7 +113,9 @@ def customer_tags():
             _t(f"{p}/Flow", "m³/s", "float", "Turbine flow", 2, 0, 60),
             _t(f"{p}/NetHead", "m", "float", "Net head at the unit (gross head - penstock losses)", 2, 60, 125),
             _t(f"{p}/InletValveOpen", "", "bool", "Butterfly inlet valve fully open", 0),
-            _t(f"{p}/ActiveAlarms", "", "json", "Unit controller alarms and trip causes (list of codes)", 0),
+            _t(f"{p}/ActiveAlarms", "", "json", "Unit controller alarms and trip causes (list of codes, the latched trip cause first)", 0),
+            _t(f"{p}/SequenceStep", "", "string", "Unit controller sequence step (SEQUENCE_STEPS), e.g. Starting.InletValve", 0),
+            _t(f"{p}/StartPermissives", "", "json", "Unit controller start permissives {name: true/false} (START_PERMISSIVES)", 0),
             # The customer's own (hardwired) sensors on the CH turbine: one element of each
             # dual-element sensor, see HARDWIRED.
             _t(f"{p}/ThrustBearingTemp", "°C", "float", "Thrust bearing pad 1 temperature (customer RTD element)", 1, 0, 150),
@@ -139,6 +165,43 @@ def customer_commands():
 
 
 EVENTS_TOPIC = "Plant/Events"   # non-retained JSON events: commands accepted/refused, trips, sequence steps
+
+
+# ----------------------------------------------------------------------------- SCADA point names
+# The control room's own names (ISA-5.1 letters, a loop number per area), next to the customer tree
+# path and the CH tree path of the same signal: one TGB RTD is U1-TI-304 in the SCADA,
+# Powerhouse/Unit1/TurbineGuideBearingTemp in the customer UNS and .../Bearings/TGB/PadTemp01 at CH.
+# SCADA engineering data: served on the SCADA's /api/config, never published over MQTT.
+# Plant points: CC-<letters>-<loop>; unit points: U<n>-<letters>-<loop>.
+_PLANT_POINTS = {
+    "Reservoir/Level": "LI-101", "Reservoir/Inflow": "FI-102", "Reservoir/Volume": "LY-103",
+    "River/TailwaterLevel": "LI-201", "River/Flow": "FI-202",
+    "Plant/TotalMW": "JI-301", "Plant/MWSetpoint": "JY-302", "Plant/MWSetpointReachable": "YA-303",
+    "Plant/AGCEnabled": "HS-304", "Plant/GridFrequency": "SI-305", "Plant/GrossHead": "LDI-306",
+    "Intake/GatePosition": "ZI-401", "Intake/TrashRackDP": "LDI-402", "Intake/RakerRunning": "YS-403",
+    "Penstock/Pressure": "PI-501", "Penstock/Flow": "FI-502",
+    "Spillway/Gate01/Position": "ZI-611", "Spillway/Gate01/Flow": "FI-612", "Spillway/Gate01/Mode": "HS-613",
+    "Spillway/Gate02/Position": "ZI-621", "Spillway/Gate02/Flow": "FI-622", "Spillway/Gate02/Mode": "HS-623",
+    "BottomOutlet/ValvePosition": "ZI-701", "BottomOutlet/Flow": "FI-702", "BottomOutlet/Mode": "HS-703",
+}
+_UNIT_POINTS = {
+    "State": "YS-001", "BreakerClosed": "ZS-002", "ControlMode": "HS-003",
+    "MW": "JI-010", "MWSetpoint": "JY-011", "MVAr": "JI-012",
+    "GatePosition": "ZI-020", "GateSetpoint": "ZY-021", "Speed": "SI-030",
+    "Flow": "FI-040", "NetHead": "LDI-041", "InletValveOpen": "ZSO-050", "ActiveAlarms": "UA-060",
+    "SequenceStep": "KS-005", "StartPermissives": "KS-006",
+    "ThrustBearingTemp": "TI-301", "UpperGuideBearingTemp": "TI-302",
+    "LowerGuideBearingTemp": "TI-303", "TurbineGuideBearingTemp": "TI-304",
+    "GovernorOilPressure": "PI-401", "CoolingWaterFlow": "FI-501",
+}
+
+
+def point_names():
+    """SCADA point name per customer tag path, e.g. {"Powerhouse/Unit1/TurbineGuideBearingTemp": "U1-TI-304"}."""
+    out = {p: "CC-" + n for p, n in _PLANT_POINTS.items()}
+    for i, u in enumerate(UNITS, 1):
+        out.update({f"Powerhouse/{u}/{k}": f"U{i}-{n}" for k, n in _UNIT_POINTS.items()})
+    return out
 
 # ----------------------------------------------------------------------------- CH tree
 CH_PREFIX = f"{VERSION}/CH/Fleet"

@@ -42,6 +42,11 @@ Each has a default in the code. After a change: `docker compose up -d --build`.
 | Variable | Default | Purpose |
 |---|---|---|
 | `STALE_SECONDS` | `5` | A value older than this is bad quality and not alarmed |
+| `DATA_DIR` | `/app/data` (compose: `./data`) | Where the historian lives |
+| `HISTORIAN_FILE` | `$DATA_DIR/scada_historian.db` | The SQLite historian: trends, journal, sequence of events. Delete it (with the SCADA stopped) to start empty |
+| `HISTORIAN_DEADBAND_PCT` | `0.1` | Exception reporting: a value is stored when it moved more than this % of its range… |
+| `HISTORIAN_HEARTBEAT_S` | `60` | …or when this long has passed since the last stored value |
+| `HISTORIAN_RETENTION_DAYS` | `14` | Older samples, journal and SOE rows are purged (hourly) |
 | `PUBLIC_INSTRUCTOR_URL`, `PUBLIC_VIEWER_URL`, `PUBLIC_NODERED_URL`, `PUBLIC_MQTT_EXPLORER_URL`, `PUBLIC_BROKER` | localhost URLs from the host ports | Links shown on the hub page |
 | `PUBLIC_WIKI_URL` | the GitHub wiki | Link on the hub |
 

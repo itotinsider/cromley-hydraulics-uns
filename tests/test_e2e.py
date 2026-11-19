@@ -212,6 +212,15 @@ def test_scada_sees_the_customer_tree_and_commands_work(stack):
     assert any("normal stop" in e["text"] for e in ev)
     st, tr = httpd.http_json(url(stack, "scada", "/api/trend?paths=Plant/TotalMW&minutes=5&points=50"))
     assert st == 200 and tr["series"]["Plant/TotalMW"]
+    # the historian (SQLite in DATA_DIR) records the plant and the journal; the SOE the unit's state change
+    st, h = httpd.http_json(url(stack, "scada", "/api/historian"))
+    assert st == 200 and h["samples"] > 0 and h["points"] > 60, h
+    st, ev = httpd.http_json(url(stack, "scada", "/api/events?limit=50"))
+    assert any("Cmd → Stop" in e["text"] or "Unit3/Cmd/Stop" in e["text"] or "Stop = True" in e["text"] for e in ev["events"]), ev
+    st, so = httpd.http_json(url(stack, "scada", "/api/soe?limit=50"))
+    assert st == 200 and any(e["unit"] == "Unit3" and e["kind"] == "state" and "Stopping" in e["text"] for e in so["soe"]), so
+    st, pts = httpd.http_json(url(stack, "scada", "/api/points"))
+    assert st == 200 and len(pts["points"]) == len(NS.customer_tags()) and all(x["point"] for x in pts["points"])
 
 
 def test_viewer_and_instructor(stack, inv):

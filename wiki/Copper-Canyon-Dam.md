@@ -28,6 +28,12 @@ the turbine design data shared by both simulators in
 Only the three generating units carry a **CH PLC** that publishes into the CH tree. Everything else
 exists only in the customer tree.
 
+![Copper Canyon Dam in cross-section](images/scada-section.png)
+
+*The dam in cross-section, live, as the [Dam SCADA](Dam-SCADA) draws it (the 🎓 Dam view button):
+elevations to scale (lengths are not), the reservoir and tailwater levels, the gross head, and teal
+training notes on what each part does.*
+
 ## How it is operated
 
 - **Grid operator:** sends a plant MW setpoint, default **110 MW** (`Plant/Cmd/MWSetpoint`).

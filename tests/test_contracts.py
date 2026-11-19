@@ -150,6 +150,38 @@ def test_scada_alarms_use_existing_tags():
         assert prio in (1, 2, 3) and op in (">", "<", "=="), aid
 
 
+def test_every_customer_tag_has_one_scada_point_name():
+    """SCADA point names (ISA-5.1 letters, CC- plant / U<n>- unit prefix): one per customer tag, unique, well formed."""
+    names = NS.point_names()
+    assert set(names) == customer_paths(), sorted(set(names) ^ customer_paths())
+    assert len(set(names.values())) == len(names), "duplicate point names"
+    for path, n in names.items():
+        assert re.fullmatch(r"(CC|U[1-9])-[A-Z]{2,4}-\d{3}", n), (path, n)
+        if path.startswith("Powerhouse/"):
+            assert n.startswith("U" + path.split("/")[1][len("Unit"):] + "-"), (path, n)
+
+
+def test_scada_unit_limits_match_the_unit_controller(models):
+    import inventory
+    dam_model = models[0]
+    lim = inventory.load_module("scada_main", "scada/main.py").UNIT_LIMITS
+    assert (lim["bearing"]["alarm"], lim["bearing"]["trip"], lim["bearing"]["delay_s"]) == \
+        (dam_model.BEARING_H, dam_model.BEARING_HH, dam_model.TRIP_DELAY_S)
+    assert (lim["governor_oil"]["start"], lim["governor_oil"]["alarm"], lim["governor_oil"]["trip"]) == \
+        (dam_model.GOV_OIL_START_MIN, dam_model.GOV_OIL_L, dam_model.GOV_OIL_LL)
+    assert lim["cooling_water"]["alarm"] == dam_model.COOLING_FLOW_MIN
+    assert lim["overspeed_trip_pct"] == dam_model.OVERSPEED_TRIP * 100
+
+
+def test_scada_alarms_point_at_customer_tags():
+    """Every alarm the SCADA can raise names the tag its faceplate opens (or none for COMM_DAM)."""
+    import inventory
+    scada = inventory.load_module("scada_main", "scada/main.py")
+    for aid, m in scada.ALARM_META.items():
+        assert m["path"] is None or m["path"] in customer_paths(), (aid, m)
+        assert (m["path"] is None) == (aid == "COMM_DAM"), aid
+
+
 def test_ch_plc_alarms_use_existing_tags(tb):
     ch = {t["path"] for t in NS.ch_tags()}
     ids = [d[0] for d in tb.alarm_defs()]

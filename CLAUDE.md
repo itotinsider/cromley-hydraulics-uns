@@ -45,8 +45,8 @@ after a change, run the tests and regenerate it (`docker compose run --rm tests 
 
 ```
 ROADMAP.md               plans, ideas, claims and progress (read before starting work)
-common/namespace.py      BOTH topic trees, commands, assets (serials), hardwired signals, CH context map
-                         — single source of truth, copied into every image
+common/namespace.py      BOTH topic trees, commands, assets (serials), hardwired signals, CH context map,
+                         SCADA point names — single source of truth, copied into every image
 common/turbine.py        CH-Francis design data shared by both simulators: efficiency hill, flow,
                          ρgQHη, rough zone, vortex rope intensity, cavitation index
 common/mqttio.py         payload format, command parsing, reconnecting paho client (last will)
@@ -60,7 +60,8 @@ chplc/model.py           CH turbine: bearings/cooling thermal, HPU, seals, gener
 chplc/main.py            one PLC per turbine (thread, MQTT client + LWT, seq), waveforms, HTTP :8125
 scada/main.py            dam SCADA server: customer tree only, alarms, journal, trends, Cmd publisher, HTTP :8120
 scada/web/index.html     hub (the only page that isn't a persona HMI)
-scada/web/scada.html     the dam SCADA HMI (ISA-101, dark grey)
+scada/web/scada.html     the dam SCADA HMI: high-performance (ISA-101, light grey, HCW style)
+scada/historian.py       the SCADA historian (SQLite: samples, journal, SOE)
 instructor/main.py       instructor station: proxies to the simulators over HTTP, HTTP :8121
 instructor/web/index.html
 chviewer/main.py         CH asset viewer: CH tree only, nameplates, values, events, raw waveforms, HTTP :8122
@@ -74,7 +75,7 @@ wiki/                    the GitHub wiki's source; wiki/images/ screenshots
 mosquitto/config/        broker config; mosquitto/data/ retained-message persistence (git-ignored)
 nodered_data/flows.json  the only tracked file in nodered_data/ (hand-written, 3 tabs)
 mqtt_explorer_data/settings.json   the seeded "Copper Canyon Dam" connection (only file tracked there)
-data/                    bind mount: ch_plc_counters.json (git-ignored)
+data/                    bind mount: ch_plc_counters.json, scada_historian.db (git-ignored)
 exports/                 bind mount: CSVs Node-RED writes (git-ignored)
 rca-demo/                RCA bot demo: document library (library/), instructor answer key, generators (build/),
                          recorded historian per scenario (history/), bot instructions (bot/), run_rca.sh,
@@ -115,7 +116,8 @@ docker compose run --rm -e CH_E2E_LOGS=1 tests python -m pytest -s tests/test_e2
 (network = compose project (folder) name + `_default`; broker host `mosquitto`, port 1883).
 
 **Screenshots** (headless Chrome; Playwright is not installed). Every view has a deep link:
-SCADA `/scada#overview|reservoir|unit/Unit1|governor|alarms|trends` (+ `?trend=a,b&range=60`),
+SCADA `/scada#overview|section|water|units|unit/Unit1|sld|jcc|alarms|trends|points` (+ `?tag=<point or path>`,
+`?trend=a,b&range=60`; the old `#reservoir` and `#governor` forward to `#water` and `#units`),
 viewer `#<serial>` and `#<serial>/wave/<path>`. Screenshots live in `wiki/images/`.
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
@@ -158,7 +160,7 @@ a status topic, never let the SCADA, viewer or Node-RED read ground truth.
 
 ## Namespace and payloads (`common/namespace.py`)
 
-- **Customer tree** `v1.0/DRWPA/CopperCanyon/<Area>/<Module>/<Tag>`, 82 topics, retained, every 1 s,
+- **Customer tree** `v1.0/DRWPA/CopperCanyon/<Area>/<Module>/<Tag>`, 88 topics, retained, every 1 s,
   SHT payload `{"value", "unit", "timestamp"}` (no quality, no seq: a teaching contrast).
   `Plant/Events` (not retained) carries command results, refusals, state changes and trips.
 - **Commands** `…/<Area>/[<Module>/]Cmd/<Command>`, 27 topics. Payload a bare value or
@@ -198,7 +200,8 @@ a status topic, never let the SCADA, viewer or Node-RED read ground truth.
   MW = `shaft_mw(gate, head)` + vortex-rope swing (±1.2 MW × rope intensity).
 - **Governor:** online, gate = feed-forward `gate_for_mw(Pref)` + slow integral, Pref = ramped MW
   setpoint + 5 % droop on frequency; offline, a speed PI around the speed-no-load gate.
-- **Sequence:** Starting (CoolingWater check after 10 s → InletValve 15 s → Breakaway gate 20 %) →
+- **Sequence** (published as `SequenceStep` = `NS.SEQUENCE_STEPS`, permissives as `StartPermissives` =
+  `NS.START_PERMISSIVES`; `ActiveAlarms` lists the latched trip cause first): Starting (CoolingWater check after 10 s → InletValve 15 s → Breakaway gate 20 %) →
   SpeedNoLoad at 95 % speed (excite 5 s) → Synchronising (8 s, |Δf| < 1 %) → Generating (ramp
   12 MW/min up, 20 down). Stopping: unload at 40 MW/min, breaker, close gates, coast, brakes, inlet
   valve, Stopped. Tripped: breaker opens at once (load rejection peaks ~123 % speed), gates close,
@@ -271,9 +274,46 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
 
 - **Dam SCADA (`scada/main.py`):** customer tree only (`test_scada_never_reads_the_ch_tree`). Alarm
   engine ISA-18.2-style (`ALARMS` limits with on-delays + unit codes + `COMM_DAM` stale), an alarm
-  stays listed until cleared *and* acked. Journal: SCADA events + `Plant/Events`. Trends in memory
-  (`common/store.py`: 2 h at 1 s, 48 h at 1 min); a restart starts empty. Commands: `POST /api/cmd`
+  stays listed until cleared *and* acked. Journal: SCADA events + `Plant/Events`. Trends from the historian (below), the
+  in-memory store (`common/store.py`: 2 h at 1 s, 48 h at 1 min) only when it can't be opened. Commands: `POST /api/cmd`
   → MQTT with `source: "SCADA operator"`.
+  - **Rebuild in progress (`scada-hp-hmi`, ROADMAP):** `/scada` is the new high-performance HMI
+    (step 1: Plant overview, the **Dam section** training view `#section` = the old cross-section
+    redrawn to scale with teal notes, opened by *🎓 Dam view*; faceplates, alarms and events,
+    trends, point list); step 2: the Powerhouse display `#units` (old `#governor` forwards
+    there) and the unit display `#unit/<unit>` (sequence S00–S11 from `SequenceStep`, start
+    permissives from `StartPermissives`, first-out = first code of `ActiveAlarms` when it is a
+    `TRIP_*`, operating chart MW vs net head from `/api/config` zones, unit control faceplate).
+    Step 3: Water `#water` (gauge with every limit, water balance, gates; old `#reservoir`
+    forwards), Single-line `#sld` (only customer-tree values; untelemetered parts dashed), Joint
+    control `#jcc` (makeable totals for k units above / n−k below the rough zone at the current
+    head, from `/api/config` zones and `p_min_mw`).
+    Step 4: SQLite historian (`scada/historian.py`, `data/scada_historian.db`: exception
+    reporting 0.1 % / 60 s heartbeat, stale = one BAD gap row, trend buckets hold the last value,
+    14 d) for `/api/trend` and `/api/events`; the SOE (`Scada.soe()`: diffs of `ActiveAlarms`,
+    `BreakerClosed`, `State` per unit, first-out = first `TRIP_` of a unit that wasn't tripped,
+    source time, 1 s) on `/api/soe`; `/api/points`, `/api/historian`. The previous HMI is gone (no `/scada-classic`;
+    it was never on main, so the interface only grew: 1.0 → 1.3).
+  - **Gotcha:** the RCA replay publishes with the wall clock, so the historian stores replayed
+    values as live; delete `data/scada_historian.db` to start clean. The recording has no
+    `SequenceStep`/`StartPermissives`: the unit display must show them STALE, never the last live
+    step (it once showed "Generating" on a stopped unit); Start stays disabled on stale permissives.
+  - **Unit limits:** `UNIT_LIMITS` in `scada/main.py` (bearing 80/90 °C, governor oil 55/52/48 bar,
+    cooling water 56 L/s, overspeed 145 %) is the SCADA's engineering copy of the unit controller's
+    protection, on `/api/config`; `test_scada_unit_limits_match_the_unit_controller` keeps it equal
+    to `damsim/model.py`.
+  - **Point names** (`NS.point_names()`): ISA-5.1 letters + loop number, `CC-` plant and `U<n>-`
+    unit points (`U1-TI-304` = TGB pad 1 element A). SCADA engineering data on `/api/config`,
+    never on MQTT; `test_every_customer_tag_has_one_scada_point_name`. The trend and faceplate
+    deep links accept a point name or a path.
+  - **Alarm → point:** `ALARM_META` gives every alarm its `path` and `point` (in `/api/state`);
+    unit controller codes sit on the signal they are about (`CODE_SIGNAL`: cooling flow, governor
+    oil, speed), the rest on the unit's alarm word `ActiveAlarms`.
+  - **Page conventions (from HCW's operator console):** data block = point name, value, unit, a
+    4 px bar over the tag's `lo..hi` with the zones beyond the SCADA alarm limits shaded (P1 dark,
+    P2/P3 medium), setpoint as a hollow triangle, alarm border + badge in the priority colour,
+    stale = dashed magenta. Grey equipment, filled = running/open/closed breaker; no green/red
+    for state. Commands only on faceplates (built once per point, polls only patch values).
 - **CH viewer (`chviewer/main.py`):** CH tree only. Counts msgs/s, KB/s and seq gaps per asset
   (retained messages are excluded from the gap count). No analytics on waveforms, on purpose.
 - **Instructor (`instructor/main.py`):** merges both simulators' scenarios, proxies start/stop,
@@ -344,7 +384,8 @@ signature; after retuning, try another seed (`CH_TEST_SEED`).
 - **Settings:** env vars with code defaults, documented in the wiki's Configuration page.
 - **Web:** self-contained `web/*.html`, vanilla JS, no build, no CDN. The hub is navigation; persona
   pages link back with `⌂ All systems`. Reference data from `/api/config`, not hardcoded. SCADA:
-  ISA-101 dark grey, saturated colour only for alarms (P1 red, P2 amber, P3 violet, stale magenta).
+  ISA-101 light grey like HCW, saturated colour only for alarms (P1 red,
+  P2 amber, P3 violet, stale magenta).
   Instructor: dark violet ("simulator side of the glass"). Viewer: CH teal brand. Never rebuild an
   open form on a poll; no browser dialogs (inline arm-then-confirm).
 

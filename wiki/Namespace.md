@@ -23,11 +23,19 @@ Prefix `v1.0/DRWPA/CopperCanyon/`. Published by the dam simulator every second, 
 | `Penstock` | `Pressure` (bar), `Flow` (m³/s) |
 | `Spillway/Gate01`, `/Gate02` | `Position` (%), `Flow` (m³/s), `Mode` (`AUTO`/`MAN`) |
 | `BottomOutlet` | `ValvePosition` (%), `Flow` (m³/s), `Mode` (`AUTO`/`MAN`) |
-| `Powerhouse/Unit1`…`Unit3` | `State`, `BreakerClosed`, `ControlMode` (`PLANT`/`LOCAL`), `MWSetpoint`, `MW`, `MVAr`, `GatePosition` (%), `GateSetpoint` (%), `Speed` (rpm), `Flow` (m³/s), `NetHead` (m), `InletValveOpen`, `ActiveAlarms` (list of codes) |
+| `Powerhouse/Unit1`…`Unit3` | `State`, `BreakerClosed`, `ControlMode` (`PLANT`/`LOCAL`), `MWSetpoint`, `MW`, `MVAr`, `GatePosition` (%), `GateSetpoint` (%), `Speed` (rpm), `Flow` (m³/s), `NetHead` (m), `InletValveOpen`, `ActiveAlarms` (list of codes, the latched trip cause first), `SequenceStep`, `StartPermissives` |
 | `Powerhouse/Unit1`…`Unit3` (hardwired) | `ThrustBearingTemp`, `UpperGuideBearingTemp`, `LowerGuideBearingTemp`, `TurbineGuideBearingTemp` (°C), `CoolingWaterFlow` (L/s), `GovernorOilPressure` (bar) |
 
-82 topics. `State` is one of `Stopped`, `Starting`, `SpeedNoLoad`, `Synchronising`, `Generating`,
+88 topics. `State` is one of `Stopped`, `Starting`, `SpeedNoLoad`, `Synchronising`, `Generating`,
 `Stopping`, `Tripped`; the `ActiveAlarms` codes are listed on [Copper Canyon Dam](Copper-Canyon-Dam#unit-protection).
+
+`SequenceStep` is the unit controller's step, finer than `State`: `Stopped`,
+`Starting.CoolingWater`, `Starting.InletValve`, `Starting.Breakaway`, `SpeedNoLoad.Excite`,
+`Synchronising`, `Generating`, `Stopping.Unload`, `Stopping.CloseGates`, `Stopping.Coast`,
+`Stopping.InletValve`, `Tripped` (`SEQUENCE_STEPS` in `common/namespace.py`).
+`StartPermissives` is a JSON object, true when the condition for a start is met:
+`{"UnitStopped": true, "IntakeGateOpen": true, "ReservoirLevel": true, "HardwiredIO": true, "GovernorOilPressure": true}`.
+A start is refused unless all are true.
 
 **Payload** (the Sweet Harmony format):
 
