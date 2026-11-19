@@ -13,7 +13,7 @@ broker, and need very different data.
 | Example | `.../Powerhouse/Unit1/MW` | `.../CH-FR-1987-0042/Bearings/TGB/PadTemp03` |
 | Published by | The dam simulator (unit controllers, plant controller) | One CH PLC per turbine |
 | Used by | The dam SCADA, the grid operator | CH's service engineers, edge devices, analytics |
-| Size | 82 measured topics for the whole dam, plus 27 command topics | 74 process topics per turbine, 8 waveform channels, alarms, nameplate, status |
+| Size | 88 measured topics for the whole dam, plus 27 command topics | 74 process topics per turbine, 8 waveform channels, alarms, nameplate, status |
 | Rate | 1 s | 1 s process values; waveform blocks every 30 s (accelerometer every 5 min) and on alarm |
 | Payload | `{"value", "unit", "timestamp"}` (the Sweet Harmony format) | the same plus `"quality"` and `"seq"` |
 | Questions it answers | Is the plant producing what the grid asked? Is anything tripping? Is the dam safe? | How healthy is my machine? What will fail, when? What should the next service visit do? |

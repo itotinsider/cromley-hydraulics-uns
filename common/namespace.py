@@ -24,8 +24,8 @@ VERSION = "v1.0"
 # Raise the first number for a rename, a removal or a changed type or unit; the second for an addition.
 # INTERFACE_DIGEST is the fingerprint of inventory/ at that version: tests/test_inventory.py fails
 # when the inventory changes and these two lines do not, and prints the new digest.
-INTERFACE_VERSION = "1.1"
-INTERFACE_DIGEST = "a285035fe746b9f7"
+INTERFACE_VERSION = "1.2"
+INTERFACE_DIGEST = "5bcd52f5a3da6d38"
 
 # ----------------------------------------------------------------------------- customer tree
 CUSTOMER_ID = "DRWPA"            # Desert River Water & Power Authority
@@ -37,6 +37,30 @@ SPILLWAY_GATES = ("Gate01", "Gate02")
 UNIT_STATES = ("Stopped", "Starting", "SpeedNoLoad", "Synchronising", "Generating", "Stopping", "Tripped")
 CONTROL_MODES = ("PLANT", "LOCAL")   # unit follows the plant controller, or its own MW setpoint
 GATE_MODES = ("AUTO", "MAN")         # spillway gates, bottom outlet
+
+# The unit controller's sequence steps (Powerhouse/<unit>/SequenceStep), in order: "<State>.<step>" or the state.
+SEQUENCE_STEPS = (
+    ("Stopped", "Stopped: brakes on, inlet valve closed"),
+    ("Starting.CoolingWater", "Check the cooling water flow (10 s)"),
+    ("Starting.InletValve", "Open the inlet valve (15 s)"),
+    ("Starting.Breakaway", "Breakaway: gates to 20 %, accelerate to 95 % speed"),
+    ("SpeedNoLoad.Excite", "Speed-no-load: excitation on (5 s)"),
+    ("Synchronising", "Synchronise to the grid, close the breaker"),
+    ("Generating", "Generating: ramp to the MW setpoint"),
+    ("Stopping.Unload", "Unload, open the breaker"),
+    ("Stopping.CloseGates", "Close the wicket gates"),
+    ("Stopping.Coast", "Coast down, brakes below 30 % speed"),
+    ("Stopping.InletValve", "Close the inlet valve"),
+    ("Tripped", "Tripped: breaker open, gates and inlet valve close; reset at standstill"),
+)
+# The unit controller's start permissives (Powerhouse/<unit>/StartPermissives: {key: true/false}).
+START_PERMISSIVES = (
+    ("UnitStopped", "Unit stopped (not running, not tripped)"),
+    ("IntakeGateOpen", "Intake gate open (≥ 99.5 %)"),
+    ("ReservoirLevel", "Reservoir level ≥ 384 m a.s.l."),
+    ("HardwiredIO", "Signals from the turbine present (hardwired I/O)"),
+    ("GovernorOilPressure", "Governor oil pressure ≥ 55 bar"),
+)
 
 
 def _t(path, unit, kind, desc, dec=2, lo=None, hi=None):
@@ -89,7 +113,9 @@ def customer_tags():
             _t(f"{p}/Flow", "m³/s", "float", "Turbine flow", 2, 0, 60),
             _t(f"{p}/NetHead", "m", "float", "Net head at the unit (gross head - penstock losses)", 2, 60, 125),
             _t(f"{p}/InletValveOpen", "", "bool", "Butterfly inlet valve fully open", 0),
-            _t(f"{p}/ActiveAlarms", "", "json", "Unit controller alarms and trip causes (list of codes)", 0),
+            _t(f"{p}/ActiveAlarms", "", "json", "Unit controller alarms and trip causes (list of codes, the latched trip cause first)", 0),
+            _t(f"{p}/SequenceStep", "", "string", "Unit controller sequence step (SEQUENCE_STEPS), e.g. Starting.InletValve", 0),
+            _t(f"{p}/StartPermissives", "", "json", "Unit controller start permissives {name: true/false} (START_PERMISSIVES)", 0),
             # The customer's own (hardwired) sensors on the CH turbine: one element of each
             # dual-element sensor, see HARDWIRED.
             _t(f"{p}/ThrustBearingTemp", "°C", "float", "Thrust bearing pad 1 temperature (customer RTD element)", 1, 0, 150),
@@ -163,6 +189,7 @@ _UNIT_POINTS = {
     "MW": "JI-010", "MWSetpoint": "JY-011", "MVAr": "JI-012",
     "GatePosition": "ZI-020", "GateSetpoint": "ZY-021", "Speed": "SI-030",
     "Flow": "FI-040", "NetHead": "LDI-041", "InletValveOpen": "ZSO-050", "ActiveAlarms": "UA-060",
+    "SequenceStep": "KS-005", "StartPermissives": "KS-006",
     "ThrustBearingTemp": "TI-301", "UpperGuideBearingTemp": "TI-302",
     "LowerGuideBearingTemp": "TI-303", "TurbineGuideBearingTemp": "TI-304",
     "GovernorOilPressure": "PI-401", "CoolingWaterFlow": "FI-501",

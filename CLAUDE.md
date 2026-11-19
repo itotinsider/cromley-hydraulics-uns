@@ -160,7 +160,7 @@ a status topic, never let the SCADA, viewer or Node-RED read ground truth.
 
 ## Namespace and payloads (`common/namespace.py`)
 
-- **Customer tree** `v1.0/DRWPA/CopperCanyon/<Area>/<Module>/<Tag>`, 82 topics, retained, every 1 s,
+- **Customer tree** `v1.0/DRWPA/CopperCanyon/<Area>/<Module>/<Tag>`, 88 topics, retained, every 1 s,
   SHT payload `{"value", "unit", "timestamp"}` (no quality, no seq: a teaching contrast).
   `Plant/Events` (not retained) carries command results, refusals, state changes and trips.
 - **Commands** `…/<Area>/[<Module>/]Cmd/<Command>`, 27 topics. Payload a bare value or

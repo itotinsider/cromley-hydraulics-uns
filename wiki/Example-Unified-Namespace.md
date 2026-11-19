@@ -28,7 +28,7 @@ This page writes out both trees in full. For payload details, rates and commands
 | 7 | | Subsystem: `Bearings`, `Cooling`, `Governor`, `Turbine`, `Vibration`, `Generator`, … |
 | 8–9 | | Component and metric: `TGB/PadTemp03`, `HPU/AccumulatorPressure`, … |
 | Identity | The **position in the plant**: "Unit 1" | The **serial number**: the machine keeps it when it moves or is renamed |
-| Size | 82 values + 1 event topic + 27 commands | 74 values + 8 waveforms + 4 status/event topics, per turbine |
+| Size | 88 values + 1 event topic + 27 commands | 74 values + 8 waveforms + 4 status/event topics, per turbine |
 
 Both trees are generated from one source,
 [`common/namespace.py`](https://github.com/itotinsider/cromley-hydraulics-uns/blob/main/common/namespace.py),

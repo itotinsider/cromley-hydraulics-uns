@@ -100,6 +100,36 @@ def test_stop_and_start_a_unit(sim):
     assert sim.v(("Unit3", "Bearings/Thrust/HPLiftPressure")) == 0.0
 
 
+def test_sequence_steps_and_start_permissives(sim):
+    """SequenceStep walks NS.SEQUENCE_STEPS in order; StartPermissives says why a start would be refused."""
+    steps = [k for k, _ in NS.SEQUENCE_STEPS]
+    seen = []
+
+    def watch(s):
+        st = s.v("Powerhouse/Unit3/SequenceStep")
+        assert st in steps, st
+        if not seen or seen[-1] != st:
+            seen.append(st)
+        return False
+
+    perm = sim.v("Powerhouse/Unit3/StartPermissives")
+    assert list(perm) == [k for k, _ in NS.START_PERMISSIVES]
+    assert perm["UnitStopped"] is False and all(v for k, v in perm.items() if k != "UnitStopped")
+    sim.command("Powerhouse/Unit3/Cmd/Stop", True)
+    sim.run(420, until=lambda s: watch(s) or s.v("Powerhouse/Unit3/State") == "Stopped")
+    assert seen == ["Stopping.Unload", "Stopping.CloseGates", "Stopping.Coast", "Stopping.InletValve", "Stopped"], seen
+    assert all(sim.v("Powerhouse/Unit3/StartPermissives").values())
+    seen.clear()
+    sim.command("Powerhouse/Unit3/Cmd/Start", True)
+    sim.run(200, until=lambda s: watch(s) or s.v("Powerhouse/Unit3/State") == "Generating")
+    assert seen == ["Starting.CoolingWater", "Starting.InletValve", "Starting.Breakaway", "SpeedNoLoad.Excite",
+                    "Synchronising", "Generating"], seen
+    sim.command("Powerhouse/Unit3/Cmd/EmergencyStop", True)
+    sim.run(3)
+    assert sim.v("Powerhouse/Unit3/SequenceStep") == "Tripped"
+    assert sim.v("Powerhouse/Unit3/ActiveAlarms")[0] == "TRIP_EMERGENCY_STOP"      # first-out: the latched cause first
+
+
 def test_emergency_stop_and_reset(sim):
     es = sim.v(("Unit1", "Counters/EmergencyStops"))
     lr = sim.v(("Unit1", "Counters/LoadRejections"))

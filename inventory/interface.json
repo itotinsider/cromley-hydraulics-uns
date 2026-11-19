@@ -1,7 +1,7 @@
 {
   "_source": "common/namespace.py INTERFACE_VERSION; digest = fingerprint of the other files here",
-  "version": "1.1",
+  "version": "1.2",
   "namespace": "v1.0",
-  "digest": "a285035fe746b9f7",
+  "digest": "5bcd52f5a3da6d38",
   "files": ["api.json", "ch.json", "commands.json", "customer.json", "hardwired.json", "scenarios.json", "topics.csv"]
 }

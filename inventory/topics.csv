@@ -36,7 +36,9 @@ customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Speed,rpm,float,yes,dam-sim,1 
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/Flow,m³/s,float,yes,dam-sim,1 s,Turbine flow
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/NetHead,m,float,yes,dam-sim,1 s,Net head at the unit (gross head - penstock losses)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/InletValveOpen,,bool,yes,dam-sim,1 s,Butterfly inlet valve fully open
-customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ActiveAlarms,,json,yes,dam-sim,1 s,Unit controller alarms and trip causes (list of codes)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ActiveAlarms,,json,yes,dam-sim,1 s,"Unit controller alarms and trip causes (list of codes, the latched trip cause first)"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/SequenceStep,,string,yes,dam-sim,1 s,"Unit controller sequence step (SEQUENCE_STEPS), e.g. Starting.InletValve"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/StartPermissives,,json,yes,dam-sim,1 s,Unit controller start permissives {name: true/false} (START_PERMISSIVES)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/ThrustBearingTemp,°C,float,yes,dam-sim,1 s,Thrust bearing pad 1 temperature (customer RTD element)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/UpperGuideBearingTemp,°C,float,yes,dam-sim,1 s,Upper guide bearing pad 1 temperature (customer RTD element)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/LowerGuideBearingTemp,°C,float,yes,dam-sim,1 s,Lower guide bearing pad 1 temperature (customer RTD element)
@@ -55,7 +57,9 @@ customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Speed,rpm,float,yes,dam-sim,1 
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/Flow,m³/s,float,yes,dam-sim,1 s,Turbine flow
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/NetHead,m,float,yes,dam-sim,1 s,Net head at the unit (gross head - penstock losses)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/InletValveOpen,,bool,yes,dam-sim,1 s,Butterfly inlet valve fully open
-customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ActiveAlarms,,json,yes,dam-sim,1 s,Unit controller alarms and trip causes (list of codes)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ActiveAlarms,,json,yes,dam-sim,1 s,"Unit controller alarms and trip causes (list of codes, the latched trip cause first)"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/SequenceStep,,string,yes,dam-sim,1 s,"Unit controller sequence step (SEQUENCE_STEPS), e.g. Starting.InletValve"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/StartPermissives,,json,yes,dam-sim,1 s,Unit controller start permissives {name: true/false} (START_PERMISSIVES)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/ThrustBearingTemp,°C,float,yes,dam-sim,1 s,Thrust bearing pad 1 temperature (customer RTD element)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/UpperGuideBearingTemp,°C,float,yes,dam-sim,1 s,Upper guide bearing pad 1 temperature (customer RTD element)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit2/LowerGuideBearingTemp,°C,float,yes,dam-sim,1 s,Lower guide bearing pad 1 temperature (customer RTD element)
@@ -74,7 +78,9 @@ customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Speed,rpm,float,yes,dam-sim,1 
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/Flow,m³/s,float,yes,dam-sim,1 s,Turbine flow
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/NetHead,m,float,yes,dam-sim,1 s,Net head at the unit (gross head - penstock losses)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/InletValveOpen,,bool,yes,dam-sim,1 s,Butterfly inlet valve fully open
-customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ActiveAlarms,,json,yes,dam-sim,1 s,Unit controller alarms and trip causes (list of codes)
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ActiveAlarms,,json,yes,dam-sim,1 s,"Unit controller alarms and trip causes (list of codes, the latched trip cause first)"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/SequenceStep,,string,yes,dam-sim,1 s,"Unit controller sequence step (SEQUENCE_STEPS), e.g. Starting.InletValve"
+customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/StartPermissives,,json,yes,dam-sim,1 s,Unit controller start permissives {name: true/false} (START_PERMISSIVES)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/ThrustBearingTemp,°C,float,yes,dam-sim,1 s,Thrust bearing pad 1 temperature (customer RTD element)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/UpperGuideBearingTemp,°C,float,yes,dam-sim,1 s,Upper guide bearing pad 1 temperature (customer RTD element)
 customer,v1.0/DRWPA/CopperCanyon/Powerhouse/Unit3/LowerGuideBearingTemp,°C,float,yes,dam-sim,1 s,Lower guide bearing pad 1 temperature (customer RTD element)
