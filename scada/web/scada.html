@@ -229,6 +229,22 @@
   .sw { display: inline-block; width: 18px; height: 3px; vertical-align: middle; }
   .evf { display: flex; gap: 4px; flex-wrap: wrap; }
 
+  /* Dam section (training view): the dam to scale. Teal is the training colour only (as in HCW): never an alarm, never state. */
+  :root { --train: #0e7490; --train-2: #e6f4f7; --earth: #b9b4aa; --concrete: #d4d6d8; }
+  .home.train { color: #9fe3ef; border-color: var(--train); }
+  .home.train:hover, .home.train.on { background: var(--train); color: #fff; border-color: var(--train); }
+  #section { width: 100%; height: auto; display: block; background: #eef0f1; }
+  .earth { fill: var(--earth); }
+  .concrete { fill: var(--concrete); stroke: var(--equip); stroke-width: 1.4; }
+  .resw { fill: var(--water-fill); }
+  .wl { stroke: var(--water); stroke-width: 1.6; }
+  .elev { font: 10px var(--mono); fill: var(--muted); }
+  .tnote { font: 600 11.5px var(--sans); fill: var(--train); }
+  .tnote.s { font-weight: 400; font-size: 10.5px; }
+  .tdim { stroke: var(--train); stroke-width: 1.4; fill: none; }
+  .tdim.d { stroke-dasharray: 5 4; }
+  #section.nonotes .tn { display: none; }
+  .dnav a.on, .dnav button.on { background: #3a3f44; color: #fff; border-color: #3a3f44; }
   #toast { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; background: #2f3337; color: #fff; font: 12px var(--mono); display: none; max-width: 420px; border-left: 4px solid #4caf50; z-index: 10; }
   #toast.err { border-left-color: var(--p1); }
 
@@ -254,6 +270,7 @@
   <div class="hstat"><span class="led" id="led"></span><span id="conn">MQTT —</span></div>
   <div class="hstat" id="rate">—</div>
   <div class="clock" id="clock">--:--:--</div>
+  <button class="home train" id="btn-dam" title="Training: the dam to scale, with what each part does">🎓 Dam view</button>
   <a class="home" href="/">⌂ All systems</a>
 </header>
 <div id="banner">
@@ -275,8 +292,17 @@
       <div class="panel"><div class="kpis" id="kpis"></div></div>
       <div class="panel">
         <h3>Copper Canyon · plant overview <span class="r note" style="margin:0">Click a value for its faceplate · click a unit's name for its display</span></h3>
-        <div class="dnav" id="dnav"></div>
+        <div class="dnav" id="dnav" data-dnav></div>
         <svg id="mimic" viewBox="0 0 1520 616" role="img" aria-label="Copper Canyon plant overview"></svg>
+      </div>
+    </section>
+
+    <!-- ================= DAM SECTION (training view) ================= -->
+    <section class="tab" id="tab-section">
+      <div class="panel">
+        <h3>Copper Canyon · dam section <span class="r" style="display:flex;gap:10px;align-items:center"><span class="note" style="margin:0">Elevations to scale (m a.s.l.), lengths not · click a value for its faceplate</span><button class="btn" id="btn-notes">Hide notes</button></span></h3>
+        <div class="dnav" data-dnav></div>
+        <svg id="section" viewBox="0 0 1520 616" role="img" aria-label="Copper Canyon dam section"></svg>
       </div>
     </section>
 
@@ -329,7 +355,7 @@
 "use strict";
 const COLORS = ["#1f2326", "#1d6fd6", "#0f8a6c", "#b5528f", "#8a6d00", "#5a4fcf", "#c2410c", "#4b7f99"];
 const RANGES = [["15m", 15], ["1h", 60], ["4h", 240], ["12h", 720], ["24h", 1440], ["48h", 2880]];
-const TABS = ["overview", "alarms", "trends", "points"];
+const TABS = ["overview", "section", "alarms", "trends", "points"];
 const CLASSIC = ["reservoir", "governor", "unit"];        // displays not rebuilt yet: served by /scada-classic
 const AREAS = [["Reservoir", "Reservoir and river"], ["River", null], ["Plant", "Plant and grid"], ["Intake", "Intake and penstock"],
   ["Penstock", null], ["Spillway", "Spillway"], ["BottomOutlet", "Bottom outlet"], ["Powerhouse/Unit1", "Unit 1"], ["Powerhouse/Unit2", "Unit 2"], ["Powerhouse/Unit3", "Unit 3"]];
@@ -584,6 +610,105 @@ $("#mimic").addEventListener("click", e => {
   const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path);
 });
 
+/* ---------------------------------------------------------------- dam section (training view)
+   The physical dam: elevations to scale, the water levels live, the same data blocks and faceplates as the
+   overview. The teal notes explain what each part does (the console's training colour, as in HCW). */
+const ey = m => 566 - (m - 296) * 3.6;          // elevation (m a.s.l.) -> y
+function buildSection() {
+  const units = CFG.units, UXS = [980, 1080, 1180];
+  let s = `<defs><clipPath id="basin"><polygon points="0,0 600,0 600,${ey(300)} 300,${ey(300)} 0,${ey(374)}"/></clipPath>
+    <marker id="tarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--train)"/></marker></defs>`;
+  // ground, reservoir, river
+  s += `<polygon class="earth" points="0,${ey(374)} 300,${ey(300)} 600,${ey(300)} 600,${ey(298)} 1520,${ey(298)} 1520,616 0,616"/>
+    <rect class="resw" id="sec-res" clip-path="url(#basin)" x="0" y="${ey(412)}" width="600" height="600"/>
+    <line class="wl" id="sec-resl" x1="0" x2="600" y1="${ey(412)}" y2="${ey(412)}"/>
+    <rect class="resw" id="sec-riv" x="880" y="${ey(304.5)}" width="640" height="${ey(298) - ey(304.5)}"/>
+    <line class="wl" id="sec-rivl" x1="880" x2="1520" y1="${ey(304.5)}" y2="${ey(304.5)}"/>`;
+  for (const [m, lab] of [[425, "425 dam crest"], [420, "420 max. operating"], [410, "410 spillway crest"], [385, "385 min. operating"]])
+    s += `<line class="lim" x1="300" x2="600" y1="${ey(m)}" y2="${ey(m)}"/><text class="elev" x="306" y="${ey(m) - 3}">${lab}</text>`;
+  // dam body, spillway water on the face, radial gate
+  s += `<polygon class="concrete" points="600,${ey(425)} 660,${ey(425)} 880,${ey(298)} 600,${ey(298)}"/>
+    <path id="sec-spillw" d="M664 ${ey(424)} L884 ${ey(298.5)}" stroke="var(--water)" stroke-width="6" fill="none" opacity="0"/>
+    <g class="click" data-path="Spillway/Gate01/Position"><path id="sec-gate" d="M604 ${ey(420)} A 34 34 0 0 1 604 ${ey(410)}" stroke="var(--equip)" stroke-width="4" fill="none"/></g>`;
+  // intake: trash rack, gate, penstock through the dam to the powerhouse
+  for (let i = 0; i < 5; i++) s += `<line x1="${568 + i * 4}" x2="${568 + i * 4}" y1="${ey(380)}" y2="${ey(366)}" stroke="var(--equip)" stroke-width="1.4"/>`;
+  s += `<g class="click" data-path="Intake/GatePosition"><rect class="valve" id="sec-intake" x="592" y="${ey(380)}" width="7" height="${ey(366) - ey(380)}"/></g>`;
+  // bottom outlet through the dam base
+  s += `<path class="w" id="sec-bo" style="stroke-width:6" d="M600 ${ey(301.5)} H880"/>
+    <g class="click" data-path="BottomOutlet/ValvePosition">${valveH(840, ey(301.5), "sec-bov")}</g>`;
+  // powerhouse with the three units, draft tubes into the tailrace
+  s += `<rect class="concrete" x="930" y="${ey(336)}" width="310" height="${ey(298) - ey(336)}"/>
+    <text class="lbl" x="940" y="${ey(336) + 14}">POWERHOUSE</text>
+    <path id="sec-pen" class="w" style="stroke-width:9" d="M600 ${ey(373)} H700 L900 ${ey(312)} H${UXS[units.length - 1] - 14}"/>`;
+  units.forEach((u, i) => {
+    const x = UXS[i];
+    s += `<path class="w" id="sec-dt-${u}" style="stroke-width:6" d="M${x} ${ey(310)} V${ey(301)} H1240"/>
+      <g class="click" data-unit="${u}"><rect class="equip" id="sec-tur-${u}" x="${x - 14}" y="${ey(314)}" width="28" height="12"/>
+      <line x1="${x}" x2="${x}" y1="${ey(314)}" y2="${ey(326)}" stroke="var(--equip)" stroke-width="3"/>
+      <circle class="equip" id="sec-gen-${u}" cx="${x}" cy="${ey(328)}" r="14"/><text class="lbl eq" id="sec-genl-${u}" x="${x}" y="${ey(328) + 4}" text-anchor="middle">G${unitNo(u)}</text></g>`;
+    s += db(`Powerhouse/${u}/MW`, x - 46, ey(336) - 42, { w: 92 });
+  });
+  // 150 kV line
+  s += `<path class="el" d="M1240 ${ey(330)} H1262 V210 H1520"/><text class="lbl" x="1440" y="202" text-anchor="end">150 kV line to the grid</text>`;
+  // data blocks
+  s += db("Reservoir/Level", 20, 14, { w: 106 }) + db("Reservoir/Inflow", 132, 14, { w: 100 }) + db("Reservoir/Volume", 238, 14, { w: 100 });
+  s += db("Spillway/Gate01/Position", 360, 14, { w: 90 }) + db("Spillway/Gate01/Flow", 456, 14, { w: 96 });
+  s += db("Spillway/Gate02/Position", 360, 54, { w: 90 }) + db("Spillway/Gate02/Flow", 456, 54, { w: 96 });
+  s += db("Intake/TrashRackDP", 440, ey(366) + 10, { w: 96 }) + db("Penstock/Pressure", 930, ey(336) - 112, { w: 96 }) + db("Penstock/Flow", 1032, ey(336) - 112, { w: 96 });
+  s += db("BottomOutlet/ValvePosition", 640, 572, { w: 92 }) + db("BottomOutlet/Flow", 738, 572, { w: 96 });
+  s += db("River/TailwaterLevel", 1272, ey(336) + 10, { w: 110 }) + db("River/Flow", 1388, ey(336) + 10, { w: 110 });
+  s += db("Plant/GrossHead", 1272, 220, { w: 110 }) + db("Plant/TotalMW", 1388, 220, { w: 110, sp: "Plant/MWSetpoint" });
+  // training notes (teal)
+  const note = (x, y, a, b, anchor = "start") => `<g class="tn"><text class="tnote" x="${x}" y="${y}" text-anchor="${anchor}">${a}</text>${b ? `<text class="tnote s" x="${x}" y="${y + 14}" text-anchor="${anchor}">${b}</text>` : ""}</g>`;
+  s += `<g class="tn"><line class="tdim d" id="sec-hl1" x1="600" x2="1516" y1="0" y2="0"/><line class="tdim d" id="sec-hl2" x1="1240" x2="1516" y1="0" y2="0"/>
+      <line class="tdim" id="sec-head" x1="1508" x2="1508" y1="0" y2="0" marker-start="url(#tarr)" marker-end="url(#tarr)"/>
+      <text class="tnote" id="sec-headt" x="1498" y="0" text-anchor="end"></text><text class="tnote s" id="sec-headt2" x="1498" y="0" text-anchor="end">level − tailwater</text></g>`;
+  s += note(612, ey(340), "Concrete gravity dam", "holds the water by its own weight");
+  s += note(668, ey(424) + 4, "Spillway: 2 radial gates", "over the crest at 410 m, AUTO opens from 419 m");
+  s += note(556, ey(400), "Intake, trash rack and gate", "keeps debris and the reservoir out of the penstock", "end");
+  s += note(840, ey(364), "Penstock", "pressure ≈ head; flow to the units");
+  s += note(940, ey(298) + 22, "Three CH Francis units, 40 MW each", "water → runner → shaft → generator");
+  s += note(400, 588, "Bottom outlet", "keeps the river at 10 m³/s or more", "end");
+  s += note(1270, ey(298) + 22, "Tailwater", "rises with the flow released");
+  $("#section").innerHTML = s;
+}
+function renderSection() {
+  const g = $("#section"); if (!g.firstChild) return;
+  renderBlocks(g);
+  const lvl = val("Reservoir/Level"), tw = val("River/TailwaterLevel");
+  if (typeof lvl === "number") { $("#sec-res").setAttribute("y", ey(lvl)); for (const a of ["y1", "y2"]) { $("#sec-resl").setAttribute(a, ey(lvl)); $("#sec-hl1").setAttribute(a, ey(lvl)); } }
+  if (typeof tw === "number") { $("#sec-riv").setAttribute("y", ey(tw)); $("#sec-riv").setAttribute("height", Math.max(0, ey(298) - ey(tw))); for (const a of ["y1", "y2"]) { $("#sec-rivl").setAttribute(a, ey(tw)); $("#sec-hl2").setAttribute(a, ey(tw)); } }
+  if (typeof lvl === "number" && typeof tw === "number") {
+    $("#sec-head").setAttribute("y1", ey(lvl) + 2); $("#sec-head").setAttribute("y2", ey(tw) - 2);
+    const mid = (ey(lvl) + ey(tw)) / 2;
+    $("#sec-headt").setAttribute("y", mid); $("#sec-headt").textContent = `gross head ${(lvl - tw).toFixed(1)} m`;
+    $("#sec-headt2").setAttribute("y", mid + 14);
+  }
+  const flow = p => val(p) || 0, open = p => (val(p) || 0) > 0.5;
+  $("#sec-spillw").setAttribute("opacity", flow("Spillway/Gate01/Flow") + flow("Spillway/Gate02/Flow") > 1 ? 0.9 : 0);
+  $("#sec-gate").setAttribute("stroke", open("Spillway/Gate01/Position") || open("Spillway/Gate02/Position") ? "var(--water)" : "var(--equip)");
+  $("#sec-intake").classList.toggle("open", !open("Intake/GatePosition"));      // filled = gate down (closed)
+  $("#sec-pen").classList.toggle("dry", flow("Penstock/Flow") < 0.5);
+  $("#sec-bo").classList.toggle("dry", flow("BottomOutlet/Flow") < 0.5);
+  $("#sec-bov").classList.toggle("open", open("BottomOutlet/ValvePosition"));
+  for (const u of CFG.units) {
+    const p = `Powerhouse/${u}`, st = val(`${p}/State`) || "", codes = val(`${p}/ActiveAlarms`) || [];
+    const trip = st === "Tripped" || codes.some(c => c.startsWith("TRIP_")), trans = ["Starting", "SpeedNoLoad", "Synchronising", "Stopping"].includes(st);
+    const run = (val(`${p}/Speed`) || 0) > 15 && !trip && !trans;
+    for (const id of [`#sec-tur-${u}`, `#sec-gen-${u}`]) $(id).setAttribute("class", "equip" + (run ? " run" : "") + (trip ? " trip" : trans ? " trans" : ""));
+    $(`#sec-genl-${u}`).setAttribute("class", "lbl eq" + (run ? " w" : ""));
+    $(`#sec-dt-${u}`).classList.toggle("dry", flow(`${p}/Flow`) < 0.5);
+  }
+}
+$("#section").addEventListener("click", e => {
+  const u = e.target.closest("[data-unit]"); if (u) { location.href = `/scada-classic#unit/${u.dataset.unit}`; return; }
+  const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path);
+});
+$("#btn-notes").addEventListener("click", () => {
+  const off = $("#section").classList.toggle("nonotes"); $("#btn-notes").textContent = off ? "Show notes" : "Hide notes";
+});
+$("#btn-dam").addEventListener("click", () => go(TAB === "section" ? "#overview" : "#section"));
+
 /* ---------------------------------------------------------------- KPI strip */
 function kpiItems() {
   const units = CFG.units, gen = units.filter(u => val(`Powerhouse/${u}/State`) === "Generating").length;
@@ -629,14 +754,15 @@ const DISPLAYS = [
   { label: "Joint control", watch: ["Plant/MWSetpointReachable"], later: true },
 ];
 function renderDnav() {
+  const sec = `<a href="#section" class="${TAB === "section" ? "on" : ""}" title="The dam to scale, with training notes">Dam section</a>`;
   const all = DISPLAYS.concat(CFG.units.map(u => ({ label: `Unit ${unitNo(u)}`, href: `/scada-classic#unit/${u}`, watch: [`Powerhouse/${u}/`] })));
-  const html = `<span>Displays</span>` + all.map(d => {
+  const html = `<span>Displays</span><a href="#overview" class="${TAB === "overview" ? "on" : ""}">Overview</a>${sec}` + all.map(d => {
     let a = null; for (const w of d.watch) { const x = alarmOn(w, w.endsWith("/")); if (x && (!a || x.priority < a.priority)) a = x; }
     const ico = a ? prioSvg(a.priority) : "";
     return d.later ? `<button disabled title="Coming in a later step of the SCADA rebuild">${ico}${esc(d.label)}</button>`
       : `<a href="${d.href}" title="Opens the previous HMI until this display is rebuilt">${ico}${esc(d.label)} <span class="classic">classic</span></a>`;
   }).join("") + `<span class="r note" style="margin:0">Water and per-unit displays still open the previous HMI</span>`;
-  const box = $("#dnav"); if (box._h !== html) { box.innerHTML = html; box._h = html; }
+  for (const box of $$("[data-dnav]")) if (box._h !== html) { box.innerHTML = html; box._h = html; }
 }
 
 /* ---------------------------------------------------------------- banner, status */
@@ -934,13 +1060,15 @@ function render() {
   if (!ST) return;
   renderStatus(); renderBanner();
   if (TAB === "overview") { renderKpis(); renderDnav(); renderMimic(); }
+  if (TAB === "section") { renderDnav(); renderSection(); }
   if (TAB === "alarms") renderAlarms();
   if (TAB === "points") renderPoints();
   if (SEL) renderFaceplate();
 }
 function showTab(name) {
   TAB = name;
-  $$("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  $$("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === (name === "section" ? "overview" : name)));
+  $("#btn-dam").classList.toggle("on", name === "section");
   $$(".tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + name));
   render();
   if (name === "trends") loadTrend();
@@ -979,7 +1107,7 @@ async function init() {
   const q = new URLSearchParams(location.search), resolve = x => TAG[x] ? x : BYPT[x];
   if (q.get("trend")) trendSel = q.get("trend").split(",").map(resolve).filter(Boolean).slice(0, 8);
   if (q.get("range")) trendMin = +q.get("range") || 60;
-  buildMimic(); buildPoints(); buildPicker();
+  buildMimic(); buildSection(); buildPoints(); buildPicker();
   route();
   await poll();
   if (q.get("tag") && resolve(q.get("tag"))) select(resolve(q.get("tag")));

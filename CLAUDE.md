@@ -277,7 +277,9 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
   (`common/store.py`: 2 h at 1 s, 48 h at 1 min); a restart starts empty. Commands: `POST /api/cmd`
   → MQTT with `source: "SCADA operator"`.
   - **Rebuild in progress (`scada-hp-hmi`, ROADMAP):** `/scada` is the new high-performance HMI
-    (step 1: Plant overview, faceplates, alarms and events, trends, point list); the reservoir,
+    (step 1: Plant overview, the **Dam section** training view `#section` = the old cross-section
+    redrawn to scale with teal notes, opened by *🎓 Dam view*; faceplates, alarms and events,
+    trends, point list); the reservoir,
     unit and governor displays are still the previous HMI at `/scada-classic` (the display bar
     and the old hashes forward there). Steps 2–4: unit displays with `SequenceStep` and
     `StartPermissives`, water / single-line / joint control, SQLite historian and SOE.

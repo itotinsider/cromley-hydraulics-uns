@@ -19,6 +19,7 @@ http://localhost:8120/scada-classic (marked *classic* in the display bar).
 | Screen | Shows | Deep link |
 |---|---|---|
 | Plant overview | KPI strip (plant MW and setpoint, frequency, reservoir level and its rate, gross head, river flow, units generating, spillway and outlet discharge); the flow path from reservoir to river with the spillway gates, intake, penstock, the three units, tailrace and bottom outlet; the 150 kV side (step-up transformers, breakers, generators); the grid operator | `/scada#overview` |
+| Dam section (🎓 Dam view) | The dam to scale in elevation: reservoir and tailwater levels live, the gross head as a dimension, spillway gates, intake, penstock through the dam, powerhouse, bottom outlet; teal training notes on what each part does (*Hide notes* for the plain view) | `/scada#section` |
 | Alarms and events | Alarm summary (priority, time, point, text, value, state, acknowledge) and the event journal with filters | `/scada#alarms` |
 | Trends | Up to 8 points picked by point name, 15 min to 48 h, cursor read-out | `/scada#trends`, `/scada?trend=CC-JI-301,CC-JY-302&range=60` |
 | Point list | Every SCADA point: point name, description, value, range bar, age, alarm, customer UNS path | `/scada#points` |
@@ -32,6 +33,13 @@ a border and badge in its priority colour; a stale block a dashed magenta border
 shows the highest active alarm on each display.
 
 ![Faceplate](images/scada-faceplate.png)
+
+The **🎓 Dam view** button in the header (or *Dam section* in the display bar) shows how the dam
+physically looks: the cross-section of the previous HMI, redrawn in the same style, with the same
+data blocks and faceplates. Teal is the training colour only (as on the HCW console): it never
+means an alarm or a state.
+
+![Dam section](images/scada-section.png)
 
 **Commands sit on faceplates.** Click a spillway gate or the bottom outlet for AUTO/MAN and a
 position, the intake gate for open/close (close is armed first, then confirmed), and the
