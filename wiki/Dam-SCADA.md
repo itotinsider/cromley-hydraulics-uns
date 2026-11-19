@@ -6,8 +6,11 @@ IEC 61850, DNP3 or IEC 60870-5-104 here; in this environment everything, includi
 operator's MW setpoint, is an MQTT topic. It never reads the CH tree: that is the machine
 builder's data.
 
-Styling follows ISA-101 like Sweet Harmony's modern HMI: muted greys, saturated colour only for
-alarms.
+It is being rebuilt as a **high-performance HMI (ISA-101)** in the style of the HCW operator
+console: a light-grey screen, colour only for alarms (priority 1 red, 2 amber, 3 violet, stale
+data magenta), one muted blue for water, a point name on every value, faceplates for every
+command. The displays that are not rebuilt yet open the **previous HMI** at
+http://localhost:8120/scada-classic (marked *classic* in the display bar).
 
 ![Dam SCADA overview](images/scada-overview.png)
 
@@ -15,17 +18,48 @@ alarms.
 
 | Screen | Shows | Deep link |
 |---|---|---|
-| Plant overview | Reservoir and tailwater level, head, total MW against the setpoint, river flow, status of Units 1–3, spillway and bottom outlet | `/scada#overview` |
-| Reservoir and spillway | Level against the operating limits, inflow, spillway gate positions and flow, bottom outlet; gate mode and position commands | `/scada#reservoir` |
-| Unit detail (Unit1–3) | Mimic from inlet valve to draft tube, state, gate position and setpoint, MW against the rough zone, speed, flow, net head, the customer's bearing temperatures and cooling water flow; start, stop, emergency stop, reset, control mode, local MW setpoint | `/scada#unit/Unit1` |
-| Governor and HPU | Gate position vs. setpoint and governor oil pressure per unit | `/scada#governor` |
-| Alarms and events | Active alarms by priority, acknowledge, the event journal | `/scada#alarms` |
-| Trends | Any numeric customer tag, from the SCADA's in-memory trend store | `/scada#trends`, `/scada?trend=Plant/TotalMW,Plant/MWSetpoint&range=60` |
+| Plant overview | KPI strip (plant MW and setpoint, frequency, reservoir level and its rate, gross head, river flow, units generating, spillway and outlet discharge); the flow path from reservoir to river with the spillway gates, intake, penstock, the three units, tailrace and bottom outlet; the 150 kV side (step-up transformers, breakers, generators); the grid operator | `/scada#overview` |
+| Alarms and events | Alarm summary (priority, time, point, text, value, state, acknowledge) and the event journal with filters | `/scada#alarms` |
+| Trends | Up to 8 points picked by point name, 15 min to 48 h, cursor read-out | `/scada#trends`, `/scada?trend=CC-JI-301,CC-JY-302&range=60` |
+| Point list | Every SCADA point: point name, description, value, range bar, age, alarm, customer UNS path | `/scada#points` |
+| Faceplate | Opens beside any screen: value, range with alarm limits, quality and age, the object's commands, a 30-min trend, the point's names | `/scada?tag=U1-TI-304` (point name or path) |
+| Reservoir and spillway, unit detail, governor | Still on the previous HMI: `#reservoir`, `#unit/Unit1` and `#governor` on `/scada` forward there | `/scada-classic#unit/Unit1` |
 
-![Unit detail](images/scada-unit.png)
+Every value is a **data block**: point name, value, unit and a thin bar over the point's range,
+with the zones beyond its alarm limits shaded and, where there is one, the setpoint as a hollow
+triangle. The unit's MW bar also hatches the rough zone at the current head. A block in alarm gets
+a border and badge in its priority colour; a stale block a dashed magenta border. The display bar
+shows the highest active alarm on each display.
 
-The grid operator's setpoint and AGC switch sit on the overview: they stand for the dispatcher at
-the other end of the line.
+![Faceplate](images/scada-faceplate.png)
+
+**Commands sit on faceplates.** Click a spillway gate or the bottom outlet for AUTO/MAN and a
+position, the intake gate for open/close (close is armed first, then confirmed), and the
+**Grid operator** box at the end of the 150 kV line for the plant MW setpoint and AGC: it stands
+for the dispatcher at the other end of the line. Unit commands are on the unit display (previous
+HMI for now).
+
+![Unit detail on the previous HMI](images/scada-unit.png)
+
+## Point names: three names for one signal
+
+Like a real control room, the SCADA has its own point names: ISA-5.1 letters and a loop number,
+`CC-` for plant points and `U1-`…`U3-` for unit points. They are SCADA engineering data
+(`point_names()` in [`common/namespace.py`](https://github.com/itotinsider/cromley-hydraulics-uns/blob/main/common/namespace.py),
+served on `/api/config`), not part of the UNS. One turbine guide bearing RTD has three names:
+
+| Who | Name |
+|---|---|
+| Control room (SCADA point) | `U1-TI-304` |
+| Customer UNS (ISA-95 tree) | `v1.0/DRWPA/CopperCanyon/Powerhouse/Unit1/TurbineGuideBearingTemp` (element A) |
+| Machine builder (CH tree) | `v1.0/CH/Fleet/DRWPA/CopperCanyon/CH-FR-1987-0042/Bearings/TGB/PadTemp01` (element B) |
+
+| Letters | Meaning | Examples |
+|---|---|---|
+| `LI`, `FI`, `PI`, `TI`, `SI`, `ZI`, `JI` | level, flow, pressure, temperature, speed/frequency, position, power indicator | `CC-LI-101` reservoir level, `U2-FI-501` cooling water |
+| `LDI` | level difference (head, trash rack loss) | `CC-LDI-306` gross head |
+| `LY`, `JY`, `ZY` | calculated value or setpoint | `CC-JY-302` plant MW setpoint, `U1-ZY-021` gate setpoint |
+| `HS`, `YS`, `ZS`, `ZSO`, `YA`, `UA` | mode switch, state, breaker position, valve open, state alarm, alarm word | `U1-ZS-002` breaker, `U1-UA-060` unit alarms |
 
 ## How a command travels
 
@@ -62,7 +96,9 @@ listed after it clears until it is acknowledged (return to normal, RTN). Priorit
 
 **Unit controller codes** from `Powerhouse/<unit>/ActiveAlarms` become alarms too: every `TRIP_*`
 is priority 1; `BEARING_TEMP_HIGH`, `COOLING_WATER_FLOW_LOW`, `GOV_OIL_PRESSURE_LOW` and
-`HARDWIRED_IO_FAULT` priority 2.
+`HARDWIRED_IO_FAULT` priority 2. Each code is shown on the signal it is about
+(`COOLING_WATER_FLOW_LOW` on `U<n>-FI-501`, the governor oil codes on `U<n>-PI-401`,
+`TRIP_OVERSPEED` on `U<n>-SI-030`); the others on the unit's alarm word `U<n>-UA-060`.
 
 A value older than 5 s is shown as bad quality and isn't evaluated.
 
@@ -72,8 +108,8 @@ A value older than 5 s is shown as bad quality and isn't evaluated.
 
 | Route | |
 |---|---|
-| `GET /api/state` | Every value with its age, the alarm list, the last 40 events |
-| `GET /api/config` | Tags, commands, alarm limits, operating zones (rough zone and max MW per head), links |
+| `GET /api/state` | Every value with its age, the alarm list (each alarm with the `path` and `point` it is on), the last 40 events |
+| `GET /api/config` | Tags, commands, alarm limits, `points` (SCADA point name per path), operating zones (rough zone and max MW per head), links |
 | `GET /api/trend?paths=a,b&minutes=60&points=300` | Bucket means; 1 s resolution for 2 h, then 1 min for 48 h |
 | `GET /api/events?limit=200` | The journal |
 | `POST /api/cmd` | `{"path": "<command path>", "value": ...}` |
@@ -84,4 +120,5 @@ curl -s -X POST -H 'Content-Type: application/json' \
   -d '{"path": "Plant/Cmd/MWSetpoint", "value": 90}' localhost:8120/api/cmd
 ```
 
-Trends and the journal are kept in memory: a restart of `dam-scada` starts empty.
+Trends and the journal are kept in memory: a restart of `dam-scada` starts empty. (A persistent
+historian is planned in the SCADA rebuild.)

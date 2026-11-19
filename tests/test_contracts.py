@@ -150,6 +150,26 @@ def test_scada_alarms_use_existing_tags():
         assert prio in (1, 2, 3) and op in (">", "<", "=="), aid
 
 
+def test_every_customer_tag_has_one_scada_point_name():
+    """SCADA point names (ISA-5.1 letters, CC- plant / U<n>- unit prefix): one per customer tag, unique, well formed."""
+    names = NS.point_names()
+    assert set(names) == customer_paths(), sorted(set(names) ^ customer_paths())
+    assert len(set(names.values())) == len(names), "duplicate point names"
+    for path, n in names.items():
+        assert re.fullmatch(r"(CC|U[1-9])-[A-Z]{2,4}-\d{3}", n), (path, n)
+        if path.startswith("Powerhouse/"):
+            assert n.startswith("U" + path.split("/")[1][len("Unit"):] + "-"), (path, n)
+
+
+def test_scada_alarms_point_at_customer_tags():
+    """Every alarm the SCADA can raise names the tag its faceplate opens (or none for COMM_DAM)."""
+    import inventory
+    scada = inventory.load_module("scada_main", "scada/main.py")
+    for aid, m in scada.ALARM_META.items():
+        assert m["path"] is None or m["path"] in customer_paths(), (aid, m)
+        assert (m["path"] is None) == (aid == "COMM_DAM"), aid
+
+
 def test_ch_plc_alarms_use_existing_tags(tb):
     ch = {t["path"] for t in NS.ch_tags()}
     ids = [d[0] for d in tb.alarm_defs()]
@@ -228,6 +248,7 @@ def _valid_prefixes(paths):
 
 @pytest.mark.parametrize("page,areas,paths,subs", [
     ("scada/web/scada.html", CUSTOMER_AREAS, "customer", list(NS.UNITS) + list(NS.SPILLWAY_GATES)),
+    ("scada/web/scada-classic.html", CUSTOMER_AREAS, "customer", list(NS.UNITS) + list(NS.SPILLWAY_GATES)),
     ("scada/web/index.html", CUSTOMER_AREAS, "customer", list(NS.UNITS)),
     ("chviewer/web/index.html", CH_SUBSYSTEMS, "ch", list(NS.GUIDE_BEARINGS) + ["X", "Y", "Thrust"]),
 ])

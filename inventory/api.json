@@ -17,7 +17,7 @@
   "dam-scada": {
     "port": 8120,
     "host": true,
-    "pages": ["/", "/scada"],
+    "pages": ["/", "/scada", "/scada-classic"],
     "get": ["/api/state", "/api/config", "/api/trend", "/api/events"],
     "post": ["/api/cmd", "/api/alarms/ack"]
   },

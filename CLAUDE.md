@@ -45,8 +45,8 @@ after a change, run the tests and regenerate it (`docker compose run --rm tests 
 
 ```
 ROADMAP.md               plans, ideas, claims and progress (read before starting work)
-common/namespace.py      BOTH topic trees, commands, assets (serials), hardwired signals, CH context map
-                         — single source of truth, copied into every image
+common/namespace.py      BOTH topic trees, commands, assets (serials), hardwired signals, CH context map,
+                         SCADA point names — single source of truth, copied into every image
 common/turbine.py        CH-Francis design data shared by both simulators: efficiency hill, flow,
                          ρgQHη, rough zone, vortex rope intensity, cavitation index
 common/mqttio.py         payload format, command parsing, reconnecting paho client (last will)
@@ -60,7 +60,8 @@ chplc/model.py           CH turbine: bearings/cooling thermal, HPU, seals, gener
 chplc/main.py            one PLC per turbine (thread, MQTT client + LWT, seq), waveforms, HTTP :8125
 scada/main.py            dam SCADA server: customer tree only, alarms, journal, trends, Cmd publisher, HTTP :8120
 scada/web/index.html     hub (the only page that isn't a persona HMI)
-scada/web/scada.html     the dam SCADA HMI (ISA-101, dark grey)
+scada/web/scada.html     the dam SCADA HMI: high-performance (ISA-101, light grey, HCW style), being rebuilt in steps
+scada/web/scada-classic.html  the previous (dark) HMI at /scada-classic: serves the displays not rebuilt yet
 instructor/main.py       instructor station: proxies to the simulators over HTTP, HTTP :8121
 instructor/web/index.html
 chviewer/main.py         CH asset viewer: CH tree only, nameplates, values, events, raw waveforms, HTTP :8122
@@ -115,7 +116,8 @@ docker compose run --rm -e CH_E2E_LOGS=1 tests python -m pytest -s tests/test_e2
 (network = compose project (folder) name + `_default`; broker host `mosquitto`, port 1883).
 
 **Screenshots** (headless Chrome; Playwright is not installed). Every view has a deep link:
-SCADA `/scada#overview|reservoir|unit/Unit1|governor|alarms|trends` (+ `?trend=a,b&range=60`),
+SCADA `/scada#overview|alarms|trends|points` (+ `?tag=<point or path>`, `?trend=a,b&range=60`;
+`#reservoir|unit/Unit1|governor` forward to `/scada-classic`),
 viewer `#<serial>` and `#<serial>/wave/<path>`. Screenshots live in `wiki/images/`.
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
@@ -274,6 +276,23 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
   stays listed until cleared *and* acked. Journal: SCADA events + `Plant/Events`. Trends in memory
   (`common/store.py`: 2 h at 1 s, 48 h at 1 min); a restart starts empty. Commands: `POST /api/cmd`
   → MQTT with `source: "SCADA operator"`.
+  - **Rebuild in progress (`scada-hp-hmi`, ROADMAP):** `/scada` is the new high-performance HMI
+    (step 1: Plant overview, faceplates, alarms and events, trends, point list); the reservoir,
+    unit and governor displays are still the previous HMI at `/scada-classic` (the display bar
+    and the old hashes forward there). Steps 2–4: unit displays with `SequenceStep` and
+    `StartPermissives`, water / single-line / joint control, SQLite historian and SOE.
+  - **Point names** (`NS.point_names()`): ISA-5.1 letters + loop number, `CC-` plant and `U<n>-`
+    unit points (`U1-TI-304` = TGB pad 1 element A). SCADA engineering data on `/api/config`,
+    never on MQTT; `test_every_customer_tag_has_one_scada_point_name`. The trend and faceplate
+    deep links accept a point name or a path.
+  - **Alarm → point:** `ALARM_META` gives every alarm its `path` and `point` (in `/api/state`);
+    unit controller codes sit on the signal they are about (`CODE_SIGNAL`: cooling flow, governor
+    oil, speed), the rest on the unit's alarm word `ActiveAlarms`.
+  - **Page conventions (from HCW's operator console):** data block = point name, value, unit, a
+    4 px bar over the tag's `lo..hi` with the zones beyond the SCADA alarm limits shaded (P1 dark,
+    P2/P3 medium), setpoint as a hollow triangle, alarm border + badge in the priority colour,
+    stale = dashed magenta. Grey equipment, filled = running/open/closed breaker; no green/red
+    for state. Commands only on faceplates (built once per point, polls only patch values).
 - **CH viewer (`chviewer/main.py`):** CH tree only. Counts msgs/s, KB/s and seq gaps per asset
   (retained messages are excluded from the gap count). No analytics on waveforms, on purpose.
 - **Instructor (`instructor/main.py`):** merges both simulators' scenarios, proxies start/stop,
@@ -344,7 +363,8 @@ signature; after retuning, try another seed (`CH_TEST_SEED`).
 - **Settings:** env vars with code defaults, documented in the wiki's Configuration page.
 - **Web:** self-contained `web/*.html`, vanilla JS, no build, no CDN. The hub is navigation; persona
   pages link back with `⌂ All systems`. Reference data from `/api/config`, not hardcoded. SCADA:
-  ISA-101 dark grey, saturated colour only for alarms (P1 red, P2 amber, P3 violet, stale magenta).
+  ISA-101 light grey like HCW (the classic page: dark grey), saturated colour only for alarms (P1 red,
+  P2 amber, P3 violet, stale magenta).
   Instructor: dark violet ("simulator side of the glass"). Viewer: CH teal brand. Never rebuild an
   open form on a poll; no browser dialogs (inline arm-then-confirm).
 

@@ -24,8 +24,8 @@ VERSION = "v1.0"
 # Raise the first number for a rename, a removal or a changed type or unit; the second for an addition.
 # INTERFACE_DIGEST is the fingerprint of inventory/ at that version: tests/test_inventory.py fails
 # when the inventory changes and these two lines do not, and prints the new digest.
-INTERFACE_VERSION = "1.0"
-INTERFACE_DIGEST = "4a24d677ff8c3edc"
+INTERFACE_VERSION = "1.1"
+INTERFACE_DIGEST = "a285035fe746b9f7"
 
 # ----------------------------------------------------------------------------- customer tree
 CUSTOMER_ID = "DRWPA"            # Desert River Water & Power Authority
@@ -139,6 +139,42 @@ def customer_commands():
 
 
 EVENTS_TOPIC = "Plant/Events"   # non-retained JSON events: commands accepted/refused, trips, sequence steps
+
+
+# ----------------------------------------------------------------------------- SCADA point names
+# The control room's own names (ISA-5.1 letters, a loop number per area), next to the customer tree
+# path and the CH tree path of the same signal: one TGB RTD is U1-TI-304 in the SCADA,
+# Powerhouse/Unit1/TurbineGuideBearingTemp in the customer UNS and .../Bearings/TGB/PadTemp01 at CH.
+# SCADA engineering data: served on the SCADA's /api/config, never published over MQTT.
+# Plant points: CC-<letters>-<loop>; unit points: U<n>-<letters>-<loop>.
+_PLANT_POINTS = {
+    "Reservoir/Level": "LI-101", "Reservoir/Inflow": "FI-102", "Reservoir/Volume": "LY-103",
+    "River/TailwaterLevel": "LI-201", "River/Flow": "FI-202",
+    "Plant/TotalMW": "JI-301", "Plant/MWSetpoint": "JY-302", "Plant/MWSetpointReachable": "YA-303",
+    "Plant/AGCEnabled": "HS-304", "Plant/GridFrequency": "SI-305", "Plant/GrossHead": "LDI-306",
+    "Intake/GatePosition": "ZI-401", "Intake/TrashRackDP": "LDI-402", "Intake/RakerRunning": "YS-403",
+    "Penstock/Pressure": "PI-501", "Penstock/Flow": "FI-502",
+    "Spillway/Gate01/Position": "ZI-611", "Spillway/Gate01/Flow": "FI-612", "Spillway/Gate01/Mode": "HS-613",
+    "Spillway/Gate02/Position": "ZI-621", "Spillway/Gate02/Flow": "FI-622", "Spillway/Gate02/Mode": "HS-623",
+    "BottomOutlet/ValvePosition": "ZI-701", "BottomOutlet/Flow": "FI-702", "BottomOutlet/Mode": "HS-703",
+}
+_UNIT_POINTS = {
+    "State": "YS-001", "BreakerClosed": "ZS-002", "ControlMode": "HS-003",
+    "MW": "JI-010", "MWSetpoint": "JY-011", "MVAr": "JI-012",
+    "GatePosition": "ZI-020", "GateSetpoint": "ZY-021", "Speed": "SI-030",
+    "Flow": "FI-040", "NetHead": "LDI-041", "InletValveOpen": "ZSO-050", "ActiveAlarms": "UA-060",
+    "ThrustBearingTemp": "TI-301", "UpperGuideBearingTemp": "TI-302",
+    "LowerGuideBearingTemp": "TI-303", "TurbineGuideBearingTemp": "TI-304",
+    "GovernorOilPressure": "PI-401", "CoolingWaterFlow": "FI-501",
+}
+
+
+def point_names():
+    """SCADA point name per customer tag path, e.g. {"Powerhouse/Unit1/TurbineGuideBearingTemp": "U1-TI-304"}."""
+    out = {p: "CC-" + n for p, n in _PLANT_POINTS.items()}
+    for i, u in enumerate(UNITS, 1):
+        out.update({f"Powerhouse/{u}/{k}": f"U{i}-{n}" for k, n in _UNIT_POINTS.items()})
+    return out
 
 # ----------------------------------------------------------------------------- CH tree
 CH_PREFIX = f"{VERSION}/CH/Fleet"

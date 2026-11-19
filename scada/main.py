@@ -5,7 +5,7 @@ trend store, its own alarm engine (ISA-18.2-style: active/acknowledged/return to
 event journal; operator commands are published to the Cmd topics. It never reads the CH tree:
 that is the machine builder's data.
 
-HTTP :8120 (host): the hub (/), the SCADA HMI (/scada) and its API:
+HTTP :8120 (host): the hub (/), the SCADA HMI (/scada; the previous HMI at /scada-classic) and its API:
   GET  /api/state                 values (with age), alarms, recent events
   GET  /api/config                tags, commands, alarm limits, operating zones, links
   GET  /api/trend?paths=a,b&minutes=60&points=300
@@ -87,6 +87,28 @@ UNIT_CODES = {
     "HARDWIRED_IO_FAULT": (2, "No signals from the turbine (hardwired I/O)"),
 }
 
+# the signal a unit controller code is about (the point it is shown on); the others stay on the alarm word
+CODE_SIGNAL = {"TRIP_OVERSPEED": "Speed", "TRIP_GOV_OIL_PRESSURE": "GovernorOilPressure",
+               "GOV_OIL_PRESSURE_LOW": "GovernorOilPressure", "COOLING_WATER_FLOW_LOW": "CoolingWaterFlow"}
+POINTS = NS.point_names()
+
+
+def _alarm_meta():
+    """Per alarm id: the customer path it watches (unit codes: the unit's ActiveAlarms), its point name
+    and unit, so the HMI can open the point's faceplate and badge the right display."""
+    meta = {aid: {"path": path} for aid, path, *_ in ALARMS}
+    for u in NS.UNITS:
+        for code in UNIT_CODES:
+            meta[f"{u.upper()}_{code}"] = {"path": f"Powerhouse/{u}/{CODE_SIGNAL.get(code, 'ActiveAlarms')}", "code": code}
+    meta["COMM_DAM"] = {"path": None}
+    for aid, m in meta.items():
+        m["point"] = POINTS.get(m["path"]) if m["path"] else None
+        m["unit"] = next((u for u in NS.UNITS if m["path"] and m["path"].startswith(f"Powerhouse/{u}/")), None)
+    return meta
+
+
+ALARM_META = _alarm_meta()
+
 
 def _ops(op, v, limit, was):
     if op == "==":
@@ -150,7 +172,8 @@ class Alarms:
         return n
 
     def listing(self):
-        return sorted(self.items.values(), key=lambda a: (a["priority"], -a["since"]))
+        rows = [{**ALARM_META.get(a["id"], {}), **a} for a in self.items.values()]
+        return sorted(rows, key=lambda a: (a["priority"], -a["since"]))
 
 
 class Scada:
@@ -238,6 +261,7 @@ def build_app(sc):
     web = os.path.join(HERE, "web")
     app.static("/", os.path.join(web, "index.html"))
     app.static("/scada", os.path.join(web, "scada.html"))
+    app.static("/scada-classic", os.path.join(web, "scada-classic.html"))
 
     @app.get("/api/state")
     def state(req):
@@ -251,8 +275,9 @@ def build_app(sc):
     def config(req):
         return {"prefix": NS.CUSTOMER_PREFIX, "units": list(NS.UNITS), "tags": NS.customer_tags(),
                 "commands": NS.customer_commands(), "unit_states": list(NS.UNIT_STATES),
-                "alarms": [{"id": a[0], "path": a[1], "op": a[2], "limit": a[3], "priority": a[4], "text": a[5]}
-                           for a in ALARMS],
+                "alarms": [{"id": a[0], "path": a[1], "op": a[2], "limit": a[3], "priority": a[4], "text": a[5],
+                            "delay": a[6], "point": POINTS.get(a[1])} for a in ALARMS],
+                "points": POINTS,
                 "unit_codes": {k: {"priority": p, "text": t} for k, (p, t) in UNIT_CODES.items()},
                 "zones": zones(), "rated_mw": T.RATED_MW, "rated_rpm": T.RATED_RPM, "links": LINKS,
                 "stale_s": STALE_S}
