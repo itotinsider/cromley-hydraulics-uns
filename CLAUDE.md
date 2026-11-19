@@ -284,8 +284,11 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
     there) and the unit display `#unit/<unit>` (sequence S00–S11 from `SequenceStep`, start
     permissives from `StartPermissives`, first-out = first code of `ActiveAlarms` when it is a
     `TRIP_*`, operating chart MW vs net head from `/api/config` zones, unit control faceplate).
-    Only `#reservoir` is still the previous HMI at `/scada-classic`. Steps 3–4: water /
-    single-line / joint control, SQLite historian and SOE.
+    Step 3: Water `#water` (gauge with every limit, water balance, gates; old `#reservoir`
+    forwards), Single-line `#sld` (only customer-tree values; untelemetered parts dashed), Joint
+    control `#jcc` (makeable totals for k units above / n−k below the rough zone at the current
+    head, from `/api/config` zones and `p_min_mw`). Nothing links to `/scada-classic` any more.
+    Step 4: SQLite historian and SOE, remove `/scada-classic`.
   - **Unit limits:** `UNIT_LIMITS` in `scada/main.py` (bearing 80/90 °C, governor oil 55/52/48 bar,
     cooling water 56 L/s, overspeed 145 %) is the SCADA's engineering copy of the unit controller's
     protection, on `/api/config`; `test_scada_unit_limits_match_the_unit_controller` keeps it equal

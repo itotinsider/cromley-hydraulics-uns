@@ -288,6 +288,22 @@
   .ab-mini i { position: absolute; top: -2px; width: 2px; height: 10px; background: var(--text); }
   .ab-mini s { position: absolute; top: 0; bottom: 0; background: #bcc1c5; text-decoration: none; }
   .ab-mini s.z2 { background: #959ca2; }
+  /* water, single-line, joint control (level 2) */
+  .wsvg { width: 100%; height: auto; display: block; background: var(--panel); }
+  .bal-l { font: 600 11.5px var(--sans); fill: var(--text); }
+  .bal-v { font: 700 12px var(--mono); fill: var(--value); }
+  .bal-bar { fill: #7c8287; } .bal-bar.in { fill: var(--water); } .bal-tr { fill: #dde0e2; }
+  .bal-row { cursor: pointer; } .bal-row:hover .bal-l { text-decoration: underline; }
+  .gtick { stroke: var(--equip); stroke-width: 1.4; }
+  .notel { stroke: var(--equip); stroke-width: 2; fill: none; stroke-dasharray: 4 3; }
+  .ntm { font: 10.5px var(--sans); fill: var(--muted); font-style: italic; }
+  .band { fill: #bcc1c5; stroke: var(--equip); stroke-width: 1; }
+  .band.on { fill: #7c8287; }
+  .spline { stroke: var(--text); stroke-width: 2.4; }
+  .ttline { stroke: var(--text); stroke-width: 1.4; stroke-dasharray: 4 3; }
+  .ab-mini s.rough { background: repeating-linear-gradient(135deg, #8d9297 0 2px, #f2f3f3 2px 4px); }
+  .w2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .w2 canvas { width: 100%; height: 150px; display: block; background: #f2f3f3; border: 1px solid #b4b8bc; }
   #toast { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; background: #2f3337; color: #fff; font: 12px var(--mono); display: none; max-width: 420px; border-left: 4px solid #4caf50; z-index: 10; }
   #toast.err { border-left-color: var(--p1); }
 
@@ -383,6 +399,39 @@
       </div>
     </section>
 
+    <!-- ================= WATER (level 2) ================= -->
+    <section class="tab" id="tab-water">
+      <div class="panel">
+        <h3>Water · reservoir, spillway, bottom outlet, intake <span class="r note" style="margin:0">Click a value or a gate for its faceplate</span></h3>
+        <div class="dnav" data-dnav></div>
+        <svg class="wsvg" id="water" viewBox="0 0 1520 470" role="img" aria-label="Water management"></svg>
+      </div>
+      <div class="w2">
+        <div class="panel"><h3>Reservoir level · 24 h <span class="r note" style="margin:0" id="w-t1"></span></h3><div style="padding:10px"><canvas id="w-c1"></canvas></div></div>
+        <div class="panel"><h3>Inflow and release to the river · 24 h <span class="r note" style="margin:0">CC-FI-102 · CC-FI-202</span></h3><div style="padding:10px"><canvas id="w-c2"></canvas></div></div>
+      </div>
+    </section>
+
+    <!-- ================= SINGLE-LINE (level 2) ================= -->
+    <section class="tab" id="tab-sld">
+      <div class="panel">
+        <h3>Single-line · generators, step-up transformers, 150 kV <span class="r note" style="margin:0">Filled breaker = closed · dashed = drawn for orientation, no telemetry in the customer tree</span></h3>
+        <div class="dnav" data-dnav></div>
+        <svg class="wsvg" id="sld" viewBox="0 0 1520 470" role="img" aria-label="Single-line diagram"></svg>
+      </div>
+    </section>
+
+    <!-- ================= JOINT CONTROL (level 2) ================= -->
+    <section class="tab" id="tab-jcc">
+      <div class="panel">
+        <h3>Joint control · the plant controller <span class="r note" style="margin:0">The grid operator's setpoint (+ AGC) split over the units in PLANT mode, kept out of the rough zone</span></h3>
+        <div class="dnav" data-dnav></div>
+        <svg class="wsvg" id="jcc" viewBox="0 0 1520 300" role="img" aria-label="Joint control"></svg>
+        <table class="cmp" id="jcc-t"></table>
+      </div>
+      <div class="panel"><h3>Plant MW and setpoint · 60 min <span class="r note" style="margin:0">CC-JI-301 · CC-JY-302</span></h3><div style="padding:10px"><canvas id="j-c1" style="width:100%;height:150px;display:block;background:#f2f3f3;border:1px solid #b4b8bc"></canvas></div></div>
+    </section>
+
     <!-- ================= ALARMS & EVENTS ================= -->
     <section class="tab" id="tab-alarms">
       <div class="panel">
@@ -432,8 +481,8 @@
 "use strict";
 const COLORS = ["#1f2326", "#1d6fd6", "#0f8a6c", "#b5528f", "#8a6d00", "#5a4fcf", "#c2410c", "#4b7f99"];
 const RANGES = [["15m", 15], ["1h", 60], ["4h", 240], ["12h", 720], ["24h", 1440], ["48h", 2880]];
-const TABS = ["overview", "section", "unit", "units", "alarms", "trends", "points"];
-const CLASSIC = ["reservoir"];        // displays not rebuilt yet: served by /scada-classic
+const TABS = ["overview", "section", "water", "units", "sld", "jcc", "unit", "alarms", "trends", "points"];
+const CLASSIC = [];        // displays not rebuilt yet: served by /scada-classic (none left)
 const AREAS = [["Reservoir", "Reservoir and river"], ["River", null], ["Plant", "Plant and grid"], ["Intake", "Intake and penstock"],
   ["Penstock", null], ["Spillway", "Spillway"], ["BottomOutlet", "Bottom outlet"], ["Powerhouse/Unit1", "Unit 1"], ["Powerhouse/Unit2", "Unit 2"], ["Powerhouse/Unit3", "Unit 3"]];
 
@@ -1001,6 +1050,216 @@ function renderCmp() {
 }
 $("#cmp").addEventListener("click", e => { const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path); });
 
+/* ---------------------------------------------------------------- water (level 2)
+   The reservoir level against every limit, the water balance (what comes in, where it goes), and the
+   gates that decide it: spillway, bottom outlet, intake. */
+const WG = { x: 60, w: 70, y0: 36, y1: 440, lo: 380, hi: 426 };
+const wgY = m => WG.y1 - (Math.max(WG.lo, Math.min(WG.hi, m)) - WG.lo) / (WG.hi - WG.lo) * (WG.y1 - WG.y0);
+const BAL = [["Inflow (estimated)", "Reservoir/Inflow", "in"], ["→ Units (penstock)", "Penstock/Flow", ""], ["→ Spillway (both gates)", null, "spill"],
+  ["→ Bottom outlet", "BottomOutlet/Flow", ""], ["= Release to the river", "River/Flow", ""]];
+function buildWater() {
+  const lim = (LIMITS["Reservoir/Level"] || []);
+  let s = `<text class="lbl big" x="${WG.x}" y="22">RESERVOIR LEVEL · m a.s.l.</text>
+    <rect class="vessel" x="${WG.x}" y="${WG.y0}" width="${WG.w}" height="${WG.y1 - WG.y0}"/>
+    <rect class="waterfill" id="w-fill" x="${WG.x + 1}" y="${WG.y1}" width="${WG.w - 2}" height="0"/>
+    <path id="w-ptr" d="" fill="var(--text)"/>`;
+  for (let m = 380; m <= 426; m += 2) s += `<line class="gtick" x1="${WG.x - (m % 10 ? 4 : 9)}" x2="${WG.x}" y1="${wgY(m)}" y2="${wgY(m)}"/>${m % 10 ? "" : `<text class="elev" x="${WG.x - 12}" y="${wgY(m) + 3}" text-anchor="end">${m}</text>`}`;
+  const marks = [[425, "dam crest"], [420, "max. operating"], [410, "spillway crest"], [384, "start permissive (unit)"]];
+  for (const l of lim) marks.push([l.limit, `${limText(l)} · P${l.priority}${l.id === "RES_LEVEL_H" ? " · spillway opens" : ""}`]);
+  marks.sort((a, b) => b[0] - a[0]);
+  let last = -99;
+  for (const [m, lab] of marks) {
+    const ty = Math.max(wgY(m), last + 13); last = ty;
+    s += `<line x1="${WG.x}" x2="${WG.x + WG.w + 8}" y1="${wgY(m)}" y2="${wgY(m)}" stroke="#8a9095" stroke-dasharray="3 3"/>
+      <polyline points="${WG.x + WG.w + 8},${wgY(m)} ${WG.x + WG.w + 14},${ty} ${WG.x + WG.w + 18},${ty}" fill="none" stroke="#a5aaae"/>
+      <text class="elev" x="${WG.x + WG.w + 20}" y="${ty + 3}">${m} ${esc(lab)}</text>`;
+  }
+  s += db("Reservoir/Level", 330, 40, { w: 116 }) + db("Reservoir/Volume", 330, 80, { w: 116 }) + db("River/TailwaterLevel", 330, 120, { w: 116 }) + db("Plant/GrossHead", 330, 160, { w: 116 });
+  s += `<text class="elev" x="330" y="216" id="w-rate"></text>`;
+  // water balance
+  s += `<text class="lbl big" x="500" y="22">WATER BALANCE · m³/s</text>`;
+  BAL.forEach(([lab, p, kind], i) => {
+    const y = 40 + i * 44;
+    s += `<g class="bal-row" ${p ? `data-path="${p}"` : `data-path="Spillway/Gate01/Flow"`}><text class="bal-l" x="500" y="${y + 13}">${esc(lab)}</text>
+      <text class="elev" x="500" y="${y + 27}">${p ? esc(PT[p]) : "CC-FI-612 + CC-FI-622"}</text>
+      <rect class="bal-tr" x="690" y="${y + 4}" width="260" height="14"/><rect class="bal-bar ${kind === "in" ? "in" : ""}" id="bal-${i}" x="690" y="${y + 4}" width="0" height="14"/>
+      <text class="bal-v" id="balv-${i}" x="1010" y="${y + 16}" text-anchor="end"></text></g>`;
+  });
+  s += `<line x1="500" x2="1010" y1="256" y2="256" stroke="var(--line)"/>
+    <text class="bal-l" x="500" y="276">Into the reservoir (inflow − release)</text><text class="bal-v" id="bal-net" x="1010" y="276" text-anchor="end"></text>
+    <text class="ntm" x="500" y="296">Calculated by the SCADA from the points above.</text>
+    <text class="ntm" x="500" y="310">The inflow is itself an estimate (from the level and the outflows).</text>`;
+  // gates
+  const gx = 1060;
+  s += `<text class="lbl big" x="${gx}" y="22">SPILLWAY · 2 radial gates, crest 410 m</text>`;
+  ["Gate01", "Gate02"].forEach((g, i) => {
+    const y = 34 + i * 42, pre = `Spillway/${g}`;
+    s += `<g class="click" data-path="${pre}/Position">${valveH(gx + 12, y + 17, `w-v-${g}`)}</g><text class="elev" x="${gx + 12}" y="${y + 38}" text-anchor="middle">${g.slice(-2)}</text>`;
+    s += db(`${pre}/Position`, gx + 32, y, { w: 104 }) + db(`${pre}/Flow`, gx + 142, y, { w: 104 }) + db(`${pre}/Mode`, gx + 252, y + 4, { w: 80 });
+  });
+  s += `<text class="ntm" x="${gx}" y="136">AUTO: opens linearly from 419 to 420 m a.s.l.</text>
+    <text class="lbl big" x="${gx}" y="166">BOTTOM OUTLET · fixed-cone valve</text>
+    <g class="click" data-path="BottomOutlet/ValvePosition">${valveH(gx + 12, 195, "w-v-bo")}</g>`;
+  s += db("BottomOutlet/ValvePosition", gx + 32, 178, { w: 104 }) + db("BottomOutlet/Flow", gx + 142, 178, { w: 104 }) + db("BottomOutlet/Mode", gx + 252, 182, { w: 80 });
+  s += `<text class="ntm" x="${gx}" y="228">AUTO: keeps the river at 10 m³/s or more when the units don't.</text>
+    <text class="lbl big" x="${gx}" y="258">INTAKE · trash rack, gate, raker</text>
+    <g class="click" data-path="Intake/GatePosition">${valveH(gx + 12, 287, "w-v-in")}</g>`;
+  s += db("Intake/GatePosition", gx + 32, 270, { w: 104 }) + db("Intake/TrashRackDP", gx + 142, 270, { w: 104 }) + db("Intake/RakerRunning", gx + 252, 274, { w: 80 });
+  s += `<text class="lbl big" x="${gx}" y="336">PENSTOCK</text>` + db("Penstock/Pressure", gx + 32, 346, { w: 104 }) + db("Penstock/Flow", gx + 142, 346, { w: 104 });
+  s += `<text class="ntm" x="${gx}" y="402">The raker cleans the trash rack when its head loss reaches 0.35 m.</text>`;
+  $("#water").innerHTML = s;
+  $("#w-t1").textContent = `${PT["Reservoir/Level"]} · dashed: limits`;
+}
+function renderWater() {
+  const w = $("#water"); renderBlocks(w);
+  const lvl = val("Reservoir/Level");
+  if (typeof lvl === "number") {
+    const y = wgY(lvl); $("#w-fill").setAttribute("y", y); $("#w-fill").setAttribute("height", WG.y1 - y);
+    $("#w-ptr").setAttribute("d", `M${WG.x - 2} ${y}l-9 -6v12z`);
+  }
+  $("#w-rate").textContent = levelRate === null ? "" : `level ${levelRate >= 0 ? "rising" : "falling"} ${Math.abs(levelRate).toFixed(1)} cm/h (last hour)`;
+  const vals = BAL.map(([, p, k]) => k === "spill" ? (val("Spillway/Gate01/Flow") || 0) + (val("Spillway/Gate02/Flow") || 0) : val(p));
+  const top = Math.max(200, ...vals.filter(v => typeof v === "number").map(v => v * 1.15));
+  vals.forEach((v, i) => {
+    $(`#bal-${i}`).setAttribute("width", typeof v === "number" ? Math.max(0, v / top * 260) : 0);
+    $(`#balv-${i}`).textContent = typeof v === "number" ? v.toFixed(1) : "####";
+  });
+  const net = typeof vals[0] === "number" && typeof vals[4] === "number" ? vals[0] - vals[4] : null;
+  $("#bal-net").textContent = net === null ? "####" : `${net >= 0 ? "+" : "−"}${Math.abs(net).toFixed(1)}`;
+  const open = p => (val(p) || 0) > 0.5;
+  $("#w-v-Gate01").classList.toggle("open", open("Spillway/Gate01/Position"));
+  $("#w-v-Gate02").classList.toggle("open", open("Spillway/Gate02/Position"));
+  $("#w-v-bo").classList.toggle("open", open("BottomOutlet/ValvePosition"));
+  $("#w-v-in").classList.toggle("open", open("Intake/GatePosition"));
+}
+$("#water").addEventListener("click", e => { const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path); });
+async function loadWaterTrends() {
+  const end = Date.now() / 1000, start = end - 86400;
+  const h = await fetchTrend(["Reservoir/Level", "Reservoir/Inflow", "River/Flow"], 1440, 400); if (!h || TAB !== "water") return;
+  const s1 = [{ name: "Reservoir/Level", color: COLORS[0], t: h.t, data: h.series["Reservoir/Level"] || [] }];
+  scaleOf(s1, "Reservoir/Level"); drawTrend($("#w-c1"), s1, start, end);
+  const s2 = ["Reservoir/Inflow", "River/Flow"].map((p, i) => ({ name: p, color: COLORS[i], t: h.t, data: h.series[p] || [] }));
+  scaleOf(s2, "River/Flow"); for (const x of s2) { x.lo = Math.min(s2[0].lo, s2[1].lo); x.hi = Math.max(s2[0].hi, s2[1].hi); }
+  drawTrend($("#w-c2"), s2, start, end);
+}
+
+/* ---------------------------------------------------------------- single-line (level 2)
+   Only what the customer tree measures: per unit breaker, MW, MVAr, speed; the grid frequency. Transformers,
+   the bus and the line breaker are drawn for orientation, dashed where there is no telemetry. */
+const SLX = { Unit1: 360, Unit2: 760, Unit3: 1160 };
+function buildSld() {
+  const bus = 110;
+  let s = `<text class="lbl big" x="150" y="${bus - 12}">150 kV BUS</text>
+    <path class="el" id="sl-bus" d="M150 ${bus}H1290"/>
+    <path class="el" d="M1290 ${bus}H1330"/><rect class="notel" x="1330" y="${bus - 9}" width="18" height="18"/><path class="el" d="M1348 ${bus}H1500"/>
+    <text class="lbl" x="1339" y="${bus - 16}" text-anchor="middle">52-L1</text><text class="ntm" x="1339" y="${bus + 26}" text-anchor="middle">no telemetry</text>
+    <g class="gridop click" data-path="Plant/MWSetpoint"><rect x="1390" y="${bus + 34}" width="120" height="36"/><text class="lbl big" x="1400" y="${bus + 49}">Grid operator</text><text class="lbl" x="1400" y="${bus + 63}">dispatch · AGC ▸</text></g>
+    <text class="lbl" x="1500" y="${bus - 12}" text-anchor="end">LINE TO THE GRID</text>`;
+  s += db("Plant/GridFrequency", 150, 20, { w: 110 }) + db("Plant/TotalMW", 266, 20, { w: 110, sp: "Plant/MWSetpoint" });
+  s += `<text class="elev" x="384" y="40" id="sl-mvar"></text>`;
+  for (const u of CFG.units) {
+    const x = SLX[u], n = unitNo(u), p = `Powerhouse/${u}`;
+    s += `<path class="el" id="sl-f1-${u}" d="M${x} ${bus}V${bus + 40}"/>
+      <circle class="el" id="sl-t1-${u}" cx="${x}" cy="${bus + 54}" r="14"/><circle class="el" id="sl-t2-${u}" cx="${x}" cy="${bus + 74}" r="14"/>
+      <text class="lbl" x="${x - 22}" y="${bus + 68}" text-anchor="end">T${n}</text><text class="ntm" x="${x - 22}" y="${bus + 82}" text-anchor="end">step-up</text>
+      <path class="el" id="sl-f2-${u}" d="M${x} ${bus + 88}V${bus + 130}"/>
+      <g class="click" data-path="${p}/BreakerClosed"><rect class="brk" id="sl-brk-${u}" x="${x - 11}" y="${bus + 130}" width="22" height="22"/></g>
+      <text class="lbl" x="${x - 20}" y="${bus + 146}" text-anchor="end">52-G${n}</text>
+      <path class="el" id="sl-f3-${u}" d="M${x} ${bus + 152}V${bus + 196}"/>
+      <g class="click" data-unit="${u}"><circle class="equip" id="sl-g-${u}" cx="${x}" cy="${bus + 226}" r="30"/>
+      <path id="sl-gs-${u}" d="M${x - 14} ${bus + 226}q7 -12 14 0t14 0" fill="none" stroke="var(--text)" stroke-width="2"/>
+      <text class="lbl big" x="${x}" y="${bus + 278}" text-anchor="middle">G${n} · Unit ${n}</text></g>`;
+    s += db(`${p}/BreakerClosed`, x + 22, bus + 124, { w: 84 });
+    s += db(`${p}/MW`, x + 44, bus + 176, { w: 120, sp: `${p}/MWSetpoint` }) + db(`${p}/MVAr`, x + 44, bus + 216, { w: 120 });
+    s += db(`${p}/Speed`, x + 44, bus + 256, { w: 120 }) + db(`${p}/State`, x - 60, bus + 290, { w: 120 });
+  }
+  s += `<text class="ntm" x="150" y="455">The customer tree has no bus voltage, currents, transformer or line measurements, and no excitation data: those are drawn for orientation only. A unit breaker closes at the end of synchronising and opens on a stop or a trip (load rejection).</text>`;
+  $("#sld").innerHTML = s;
+}
+function renderSld() {
+  const g = $("#sld"); renderBlocks(g);
+  let mvar = 0, anyClosed = false;
+  for (const u of CFG.units) {
+    const p = `Powerhouse/${u}`, br = !!val(`${p}/BreakerClosed`), st = val(`${p}/State`) || "", spin = (val(`${p}/Speed`) || 0) > 15;
+    const codes = val(`${p}/ActiveAlarms`) || [], trip = st === "Tripped" || codes.some(c => c.startsWith("TRIP_")), trans = stateCls(st) === "trans";
+    anyClosed ||= br; mvar += br ? (val(`${p}/MVAr`) || 0) : 0;
+    $(`#sl-brk-${u}`).classList.toggle("closed", br);
+    for (const id of [`#sl-f1-${u}`, `#sl-f2-${u}`, `#sl-t1-${u}`, `#sl-t2-${u}`]) $(id).classList.toggle("dead", !br);
+    $(`#sl-f3-${u}`).classList.toggle("dead", !spin);
+    $(`#sl-g-${u}`).setAttribute("class", "equip" + (spin && !trip && !trans ? " run" : "") + (trip ? " trip" : trans ? " trans" : ""));
+    $(`#sl-gs-${u}`).setAttribute("stroke", spin && !trip && !trans ? "#fff" : "var(--text)");
+  }
+  $("#sl-bus").classList.toggle("dead", !anyClosed);
+  $("#sl-mvar").textContent = `Σ MVAr ${mvar.toFixed(2)} (calculated)`;
+}
+$("#sld").addEventListener("click", e => {
+  const u = e.target.closest("[data-unit]"); if (u) { go(`#unit/${u.dataset.unit}`); return; }
+  const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path);
+});
+
+/* ---------------------------------------------------------------- joint control (level 2)
+   Which plant totals the units in PLANT mode can make at the current head without one of them in the
+   rough zone: k units above the rough zone, the others below it (at least the minimum stable load).
+   The gaps between the bands are why a setpoint can be "not reachable". */
+const JX = { L: 230, R: 1490, m0: 0, m1: 130 };
+const jX = m => JX.L + (Math.max(JX.m0, Math.min(JX.m1, m)) - JX.m0) / (JX.m1 - JX.m0) * (JX.R - JX.L);
+function buildJcc() {
+  let s = `<text class="lbl big" x="20" y="24">MAKEABLE PLANT TOTALS AT THE CURRENT HEAD · MW</text><text class="elev" x="20" y="40" id="j-head"></text>`;
+  for (let m = 0; m <= 130; m += 10) s += `<line class="oc-grid" x1="${jX(m)}" x2="${jX(m)}" y1="56" y2="236"/><text class="oc-t" x="${jX(m)}" y="252" text-anchor="middle">${m}</text>`;
+  s += `<g id="j-bands"></g><line class="spline" id="j-sp" x1="0" x2="0" y1="50" y2="240"/><line class="ttline" id="j-tot" x1="0" x2="0" y1="50" y2="240"/>
+    <text class="bal-v" id="j-spl" x="0" y="48" text-anchor="middle"></text><text class="elev" id="j-totl" x="0" y="268" text-anchor="middle"></text>
+    <text class="ntm" x="20" y="290">Solid line: the plant setpoint (CC-JY-302); dashed: the plant output (CC-JI-301). Rough zone from the turbine design data; the controller keeps a small extra margin. Units in LOCAL mode shift the bands by their own MW.</text>`;
+  $("#jcc").innerHTML = s;
+  const us = CFG.units;
+  let h = `<thead><tr><th>Unit</th><th>State</th><th>Mode</th><th style="text-align:right">MW setpoint</th><th style="text-align:right">MW</th><th>Rough zone at its head</th><th>Where</th><th>Load (hatched: rough zone)</th></tr></thead><tbody>`;
+  for (const u of us) h += `<tr data-u="${u}"><td class="tagcell"><a href="#unit/${u}">Unit ${unitNo(u)} ▸</a></td><td data-f="st"></td><td class="click" data-path="Powerhouse/${u}/ControlMode" data-f="md"></td>
+    <td class="n click" data-path="Powerhouse/${u}/MWSetpoint" data-f="sp"></td><td class="n click" data-path="Powerhouse/${u}/MW" data-f="mw"></td><td class="m" data-f="rz"></td><td data-f="wh"></td><td data-f="bar"></td></tr>`;
+  $("#jcc-t").innerHTML = h + "</tbody>";
+}
+function renderJcc() {
+  renderBlocks($("#jcc"));
+  const us = CFG.units, gen = u => val(`Powerhouse/${u}/State`) === "Generating";
+  const plant = us.filter(u => gen(u) && val(`Powerhouse/${u}/ControlMode`) === "PLANT");
+  const local = us.filter(u => gen(u) && val(`Powerhouse/${u}/ControlMode`) === "LOCAL").reduce((a, u) => a + (val(`Powerhouse/${u}/MW`) || 0), 0);
+  const heads = plant.map(u => val(`Powerhouse/${u}/NetHead`)).filter(x => typeof x === "number");
+  const head = heads.length ? heads.reduce((a, b) => a + b, 0) / heads.length : val("Plant/GrossHead");
+  const z = zoneAt(head), n = plant.length, pmin = CFG.p_min_mw;
+  $("#j-head").textContent = `${n} unit${n === 1 ? "" : "s"} in PLANT mode generating · net head ${typeof head === "number" ? head.toFixed(1) : "####"} m · rough zone ${z.lo.toFixed(1)}–${z.hi.toFixed(1)} MW · max. ${z.max.toFixed(1)} MW per unit${local ? ` · LOCAL units ${local.toFixed(1)} MW` : ""}`;
+  const sp = val("Plant/MWSetpoint"), tot = val("Plant/TotalMW");
+  let b = "";
+  const rowH = n ? Math.min(40, 170 / (n + 1)) : 40;
+  for (let k = n; k >= 0; k--) {
+    const lo = local + k * z.hi + (n - k) * pmin, hi = local + k * z.max + (n - k) * z.lo, y = 60 + (n - k) * rowH;
+    const on = typeof sp === "number" && sp >= lo - 0.01 && sp <= hi + 0.01;
+    b += `<rect class="band ${on ? "on" : ""}" x="${jX(lo)}" y="${y}" width="${Math.max(1, jX(hi) - jX(lo))}" height="${rowH - 8}"/>
+      <text class="elev" x="${JX.L - 8}" y="${y + rowH / 2}" text-anchor="end">${k} above · ${n - k} below</text>
+      <text class="elev" x="${jX(lo) + 4}" y="${y + rowH / 2}" style="fill:${on ? "#fff" : "var(--text)"}">${lo.toFixed(1)}–${hi.toFixed(1)}</text>`;
+  }
+  if (!n) b = `<text class="elev" x="${JX.L}" y="120">No unit in PLANT mode is generating: the plant controller has nothing to split.</text>`;
+  $("#j-bands").innerHTML = b;
+  for (const [id, v] of [["#j-sp", sp], ["#j-tot", tot]]) if (typeof v === "number") { $(id).setAttribute("x1", jX(v)); $(id).setAttribute("x2", jX(v)); }
+  if (typeof sp === "number") { $("#j-spl").setAttribute("x", jX(sp)); $("#j-spl").textContent = `SP ${sp.toFixed(1)}${val("Plant/MWSetpointReachable") === false ? " · not reachable" : ""}`; }
+  if (typeof tot === "number") { $("#j-totl").setAttribute("x", jX(tot)); $("#j-totl").textContent = `output ${tot.toFixed(1)}`; }
+  for (const r of $$("#jcc-t tr[data-u]")) {
+    const u = r.dataset.u, p = `Powerhouse/${u}`, mw = val(`${p}/MW`), zu = zoneAt(val(`${p}/NetHead`));
+    $('[data-f="st"]', r).textContent = fmt(`${p}/State`); $('[data-f="md"]', r).textContent = fmt(`${p}/ControlMode`);
+    $('[data-f="sp"]', r).textContent = fmt(`${p}/MWSetpoint`); $('[data-f="mw"]', r).textContent = fmt(`${p}/MW`);
+    $('[data-f="rz"]', r).textContent = `${zu.lo.toFixed(1)}–${zu.hi.toFixed(1)} MW`;
+    $('[data-f="wh"]', r).textContent = !gen(u) ? "—" : mw > zu.hi ? "above" : mw < zu.lo ? "below" : "IN the rough zone";
+    $('[data-f="wh"]', r).style.fontWeight = gen(u) && mw >= zu.lo && mw <= zu.hi ? "700" : "";
+    const X = x => Math.max(0, Math.min(100, x / 45 * 100));
+    const html = `<span class="ab-mini" style="width:220px;margin:0"><s class="rough" style="left:${X(zu.lo)}%;right:${100 - X(zu.hi)}%"></s>${typeof mw === "number" ? `<i style="left:${X(mw)}%"></i>` : ""}</span>`;
+    const c = $('[data-f="bar"]', r); if (c._h !== html) { c.innerHTML = html; c._h = html; }
+  }
+}
+$("#jcc-t").addEventListener("click", e => { const d = e.target.closest("[data-path]"); if (d && TAG[d.dataset.path]) select(d.dataset.path); });
+async function loadJccTrend() {
+  const end = Date.now() / 1000, start = end - 3600;
+  const h = await fetchTrend(["Plant/TotalMW", "Plant/MWSetpoint"], 60, 300); if (!h || TAB !== "jcc") return;
+  const s1 = ["Plant/TotalMW", "Plant/MWSetpoint"].map((p, i) => ({ name: p, color: COLORS[i], t: h.t, data: h.series[p] || [] }));
+  scaleOf(s1, "Plant/TotalMW"); drawTrend($("#j-c1"), s1, start, end);
+}
+
 /* ---------------------------------------------------------------- KPI strip */
 function kpiItems() {
   const units = CFG.units, gen = units.filter(u => val(`Powerhouse/${u}/State`) === "Generating").length;
@@ -1040,10 +1299,10 @@ async function loadLevelRate() {
 
 /* ---------------------------------------------------------------- display bar */
 const DISPLAYS = [
-  { label: "Water", href: "/scada-classic#reservoir", watch: ["Reservoir/", "River/", "Intake/", "Penstock/", "Spillway/", "BottomOutlet/"] },
+  { label: "Water", hash: "#water", watch: ["Reservoir/", "River/", "Intake/", "Penstock/", "Spillway/", "BottomOutlet/"] },
   { label: "Powerhouse", hash: "#units", watch: ["Powerhouse/"] },
-  { label: "Single-line", watch: [], later: true },
-  { label: "Joint control", watch: ["Plant/MWSetpointReachable"], later: true },
+  { label: "Single-line", hash: "#sld", watch: ["Plant/GridFrequency"].concat(["Unit1", "Unit2", "Unit3"].map(u => `Powerhouse/${u}/BreakerClosed`)) },
+  { label: "Joint control", hash: "#jcc", watch: ["Plant/MWSetpointReachable", "Plant/TotalMW"] },
 ];
 function renderDnav() {
   const sec = `<a href="#section" class="${TAB === "section" ? "on" : ""}" title="The dam to scale, with training notes">Dam section</a>`;
@@ -1054,7 +1313,7 @@ function renderDnav() {
     if (d.later) return `<button disabled title="Coming in a later step of the SCADA rebuild">${ico}${esc(d.label)}</button>`;
     if (d.hash) return `<a href="${d.hash}" class="${location.hash === d.hash ? "on" : ""}">${ico}${esc(d.label)}</a>`;
     return `<a href="${d.href}" title="Opens the previous HMI until this display is rebuilt">${ico}${esc(d.label)} <span class="classic">classic</span></a>`;
-  }).join("") + `<span class="r note" style="margin:0">The water display still opens the previous HMI</span>`;
+  }).join("");
   for (const box of $$("[data-dnav]")) if (box._h !== html) { box.innerHTML = html; box._h = html; }
 }
 
@@ -1386,6 +1645,9 @@ function render() {
   if (TAB === "section") { renderDnav(); renderSection(); }
   if (TAB === "unit") { renderDnav(); renderUnit(); }
   if (TAB === "units") { renderDnav(); renderCmp(); }
+  if (TAB === "water") { renderDnav(); renderWater(); }
+  if (TAB === "sld") { renderDnav(); renderSld(); }
+  if (TAB === "jcc") { renderDnav(); renderJcc(); }
   trackSteps();
   if (TAB === "alarms") renderAlarms();
   if (TAB === "points") renderPoints();
@@ -1393,11 +1655,13 @@ function render() {
 }
 function showTab(name) {
   TAB = name;
-  $$("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === (["section", "unit", "units"].includes(name) ? "overview" : name)));
+  $$("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === (["section", "unit", "units", "water", "sld", "jcc"].includes(name) ? "overview" : name)));
   $("#btn-dam").classList.toggle("on", name === "section");
   $$(".tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + name));
   render();
   if (name === "unit") loadUnitTrends();
+  if (name === "water") loadWaterTrends();
+  if (name === "jcc") loadJccTrend();
   if (name === "trends") loadTrend();
   if (name === "alarms") loadEvents();
 }
@@ -1406,6 +1670,7 @@ function route() {
   const h = location.hash.slice(1);
   if (CLASSIC.includes(h.split("/")[0])) { location.replace("/scada-classic#" + h); return; }
   if (h === "governor") { location.replace("#units"); return; }        // the old Governor & HPU display
+  if (h === "reservoir") { location.replace("#water"); return; }       // the old Reservoir & spillway display
   if (h === "unit" || h.startsWith("unit/")) {
     const u = CFG.units.includes(h.split("/")[1]) ? h.split("/")[1] : CFG.units[0];
     if (UD !== u) buildUnit(u);
@@ -1440,14 +1705,14 @@ async function init() {
   const q = new URLSearchParams(location.search), resolve = x => TAG[x] ? x : BYPT[x];
   if (q.get("trend")) trendSel = q.get("trend").split(",").map(resolve).filter(Boolean).slice(0, 8);
   if (q.get("range")) trendMin = +q.get("range") || 60;
-  buildMimic(); buildSection(); buildCmp(); buildPoints(); buildPicker();
+  buildMimic(); buildSection(); buildCmp(); buildWater(); buildSld(); buildJcc(); buildPoints(); buildPicker();
   route();
   await poll();
   if (q.get("tag") && resolve(q.get("tag"))) select(resolve(q.get("tag")));
   loadLevelRate();
   setInterval(poll, 1000);
   setInterval(loadLevelRate, 60000);
-  setInterval(() => { if (TAB === "trends") loadTrend(); if (TAB === "unit") loadUnitTrends(); if (SEL) loadFpTrend(); }, 10000);
+  setInterval(() => { if (TAB === "trends") loadTrend(); if (TAB === "unit") loadUnitTrends(); if (TAB === "water") loadWaterTrends(); if (TAB === "jcc") loadJccTrend(); if (SEL) loadFpTrend(); }, 10000);
   setInterval(() => { if (TAB === "alarms") loadEvents(); }, 5000);
   tickClock(); setInterval(tickClock, 1000);
 }

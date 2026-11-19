@@ -9,8 +9,8 @@ builder's data.
 It is being rebuilt as a **high-performance HMI (ISA-101)** in the style of the HCW operator
 console: a light-grey screen, colour only for alarms (priority 1 red, 2 amber, 3 violet, stale
 data magenta), one muted blue for water, a point name on every value, faceplates for every
-command. The reservoir and spillway display is not rebuilt yet: it opens the **previous HMI** at
-http://localhost:8120/scada-classic (marked *classic* in the display bar).
+command. The previous (dark) HMI is still at http://localhost:8120/scada-classic until the rebuild
+is finished; nothing on the new one links to it any more.
 
 ![Dam SCADA overview](images/scada-overview.png)
 
@@ -20,13 +20,15 @@ http://localhost:8120/scada-classic (marked *classic* in the display bar).
 |---|---|---|
 | Plant overview | KPI strip (plant MW and setpoint, frequency, reservoir level and its rate, gross head, river flow, units generating, spillway and outlet discharge); the flow path from reservoir to river with the spillway gates, intake, penstock, the three units, tailrace and bottom outlet; the 150 kV side (step-up transformers, breakers, generators); the grid operator | `/scada#overview` |
 | Dam section (🎓 Dam view) | The dam to scale in elevation: reservoir and tailwater levels live, the gross head as a dimension, spillway gates, intake, penstock through the dam, powerhouse, bottom outlet; teal training notes on what each part does (*Hide notes* for the plain view) | `/scada#section` |
+| Water | The reservoir level on a gauge against every limit (alarms, spillway crest, maximum, start permissive), level rate, volume, tailwater, head; the **water balance** (inflow, units, spillway, bottom outlet, release to the river, net into the reservoir); spillway gates, bottom outlet, intake and trash rack, penstock with their modes; 24 h trends | `/scada#water` (old `#reservoir` forwards here) |
+| Single-line | The 150 kV bus, step-up transformers T1–T3, generator breakers 52-G1…G3 (filled = closed), generators with MW, MVAr, speed and state, the grid frequency and plant output; what the customer tree doesn't measure (line breaker, transformer values) is drawn dashed or marked | `/scada#sld` |
+| Joint control | The plant controller: which plant totals the units in PLANT mode can make at the current head without one in the rough zone (*k above, n−k below*), with the setpoint and the output on the same axis; per unit the mode, setpoint, MW, its rough zone and where it sits; 60 min trend of output vs setpoint | `/scada#jcc` |
 | Powerhouse | The three units side by side, one row per signal: state, sequence step, mode, MW and setpoint, MVAr, gate, speed, flow, head, breaker, inlet valve, the four bearing RTDs, cooling water, governor oil (with the unit's alarm and trip zones), start permissives, unit alarms | `/scada#units` |
 | Unit display (Unit 1–3) | The water path (penstock, inlet valve, spiral case, wicket gates, runner, draft tube), the shaft with the four bearing RTDs, generator and breaker, governor and HPU, all as data blocks; the **sequence** step by step (S00–S11) with the current step, the **start permissives**, the **first-out** trip, the unit protection limits; the **operating chart** (MW against net head, rough zone, max. output, all three units, the last 30 min); MW and bearing trends | `/scada#unit/Unit1` |
 | Alarms and events | Alarm summary (priority, time, point, text, value, state, acknowledge) and the event journal with filters | `/scada#alarms` |
 | Trends | Up to 8 points picked by point name, 15 min to 48 h, cursor read-out | `/scada#trends`, `/scada?trend=CC-JI-301,CC-JY-302&range=60` |
 | Point list | Every SCADA point: point name, description, value, range bar, age, alarm, customer UNS path | `/scada#points` |
 | Faceplate | Opens beside any screen: value, range with alarm limits, quality and age, the object's commands, a 30-min trend, the point's names | `/scada?tag=U1-TI-304` (point name or path) |
-| Reservoir and spillway | Still on the previous HMI: `#reservoir` on `/scada` forwards there (`#governor` now opens the Powerhouse display) | `/scada-classic#reservoir` |
 
 Every value is a **data block**: point name, value, unit and a thin bar over the point's range,
 with the zones beyond its alarm limits shaded and, where there is one, the setpoint as a hollow
@@ -76,6 +78,21 @@ output dashed, for all three units: it shows why the plant controller keeps unit
 rough zone, and what a low reservoir (less head) does to the available output.
 
 ![Powerhouse](images/scada-powerhouse.png)
+
+### Joint control: why a setpoint can be "not reachable"
+
+At about 106 m net head a unit's rough zone is roughly 11–33 MW. With three units in PLANT mode,
+the plant controller can make a total with all three above the rough zone (about 98–126 MW), or
+with two above and one below (about 69–95 MW), and so on: between those bands there are **gaps**.
+A setpoint in a gap (100 MW at that head, for example) can't be made without parking a unit in
+the rough zone, so the controller delivers the nearest total it can and `MWSetpointReachable`
+goes false (`CC-YA-303`, a P3 alarm after 60 s). The Joint control display draws the bands, the
+setpoint and the output on one axis: the gap is visible. A lower reservoir (scenario H) shrinks
+and shifts the bands.
+
+![Joint control](images/scada-jcc.png)
+
+![Water](images/scada-water.png)
 
 ## Point names: three names for one signal
 

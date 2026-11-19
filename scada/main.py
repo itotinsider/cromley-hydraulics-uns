@@ -291,7 +291,7 @@ def build_app(sc):
                 "start_permissives": [{"id": k, "text": t} for k, t in NS.START_PERMISSIVES],
                 "unit_limits": UNIT_LIMITS,
                 "unit_codes": {k: {"priority": p, "text": t} for k, (p, t) in UNIT_CODES.items()},
-                "zones": zones(), "rated_mw": T.RATED_MW, "rated_rpm": T.RATED_RPM, "links": LINKS,
+                "zones": zones(), "rated_mw": T.RATED_MW, "p_min_mw": T.P_MIN_MW, "rated_rpm": T.RATED_RPM, "links": LINKS,
                 "stale_s": STALE_S}
 
     @app.get("/api/trend")
