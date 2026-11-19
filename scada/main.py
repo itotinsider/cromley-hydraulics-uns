@@ -32,6 +32,7 @@ from datetime import datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "common"))
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "common"))
+sys.path.insert(0, HERE)          # historian.py next to this file (also when a test loads it by path)
 
 import httpd  # noqa: E402
 import mqttio  # noqa: E402
