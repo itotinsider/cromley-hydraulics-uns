@@ -79,7 +79,9 @@ The control room has two screens for Unit 1:
   nobody is assigned to watch it.
 
 The screenshots below come from `rca-demo/replay.sh`, which plays the recorded history on the
-running stack (see [Replay it yourself](#replay-it-yourself)). The clock on the screens is the wall
+running stack (see [Replay it yourself](#replay-it-yourself)). They show the **previous** dam SCADA
+HMI; the [current one](Dam-SCADA) shows the same data in the high-performance style, with the same
+point names and alarms. The clock on the screens is the wall
 clock of the replay; the plant time is in each heading.
 
 ### 2 Nov 23:54: pad 3 passes 75 °C

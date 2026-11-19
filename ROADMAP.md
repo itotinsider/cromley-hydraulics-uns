@@ -117,6 +117,7 @@ Topic names in Ideas and Planned may not exist yet. That is why this file is not
 - **Done when:** the four steps of the proposal are merged, each green: (1) shell, Plant overview, faceplates, point names; (2) unit displays, sequence and permissives; (3) water, single-line, joint control; (4) historian, SOE, docs and screenshots.
 - **Notes:** `2026-11-19 David: decided: light-grey theme as HCW; ISA-5.1 point names with a unit prefix (U1-TI-304, CC-LI-101); publish SequenceStep and StartPermissives; add a persistent (SQLite) historian.` Open: single-line values (proposal: only what the tree has), when to remove `/scada-classic` (proposal: step 4).
   `2026-11-19 David: keep the old overview's physical picture of the dam.` Done in step 1 as the *Dam section* display (`#section`, header button *🎓 Dam view*): the cross-section to scale with teal training notes. `/scada-classic` is then only needed for the unit, water and governor displays.
+  `2026-11-19 Claude:` steps 1–4 built on the branch (interface 1.0 → 1.3: page `/scada-classic`, topics `SequenceStep` and `StartPermissives`, routes `/api/soe`, `/api/points`, `/api/historian`); `/scada-classic` kept as a page listing the successors (removing it would be a breaking change). Open: the RCA replay (`rca-demo/build/replay_history.py`, item `rca-history-and-bot-run`) doesn't publish the two new unit tags, so the unit display shows them stale during a replay, and the six `rca-scada-*.png` still show the previous HMI. Single-line built with only the tree's values (proposal default).
 
 ## Planned
 
