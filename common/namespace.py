@@ -24,8 +24,8 @@ VERSION = "v1.0"
 # Raise the first number for a rename, a removal or a changed type or unit; the second for an addition.
 # INTERFACE_DIGEST is the fingerprint of inventory/ at that version: tests/test_inventory.py fails
 # when the inventory changes and these two lines do not, and prints the new digest.
-INTERFACE_VERSION = "1.2"
-INTERFACE_DIGEST = "5bcd52f5a3da6d38"
+INTERFACE_VERSION = "1.3"
+INTERFACE_DIGEST = "2bd1ebe2ce4ffdbe"
 
 # ----------------------------------------------------------------------------- customer tree
 CUSTOMER_ID = "DRWPA"            # Desert River Water & Power Authority

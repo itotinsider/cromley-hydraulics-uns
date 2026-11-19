@@ -9,8 +9,8 @@ builder's data.
 It is being rebuilt as a **high-performance HMI (ISA-101)** in the style of the HCW operator
 console: a light-grey screen, colour only for alarms (priority 1 red, 2 amber, 3 violet, stale
 data magenta), one muted blue for water, a point name on every value, faceplates for every
-command. The previous (dark) HMI is still at http://localhost:8120/scada-classic until the rebuild
-is finished; nothing on the new one links to it any more.
+command. The previous (dark) HMI was at http://localhost:8120/scada-classic until the rebuild
+was finished; it now lists the successor of each old display, and old deep links forward.
 
 ![Dam SCADA overview](images/scada-overview.png)
 
@@ -163,8 +163,11 @@ A value older than 5 s is shown as bad quality and isn't evaluated.
 |---|---|
 | `GET /api/state` | Every value with its age, the alarm list (each alarm with the `path` and `point` it is on), the last 40 events |
 | `GET /api/config` | Tags, commands, alarm limits, `points` (SCADA point name per path), operating zones (rough zone and max MW per head), links |
-| `GET /api/trend?paths=a,b&minutes=60&points=300` | Bucket means; 1 s resolution for 2 h, then 1 min for 48 h |
-| `GET /api/events?limit=200` | The journal |
+| `GET /api/trend?paths=a,b&minutes=60&points=300` | Bucket means from the historian (a bucket without samples holds the last value; a stale point is a gap) |
+| `GET /api/events?limit=200` | The journal (from the historian) |
+| `GET /api/soe?limit=200` | Sequence of events: unit trips (with the first-out), unit alarms, breaker operations, state changes, in source time |
+| `GET /api/points` | Every SCADA point: point name, path, description, unit, range, alarm limits, historized or not |
+| `GET /api/historian` | Historian statistics: points, samples, first sample, size, deadband, heartbeat, retention |
 | `POST /api/cmd` | `{"path": "<command path>", "value": ...}` |
 | `POST /api/alarms/ack` | `{"id": "..."}` or `{"all": true}` |
 
@@ -173,5 +176,20 @@ curl -s -X POST -H 'Content-Type: application/json' \
   -d '{"path": "Plant/Cmd/MWSetpoint", "value": 90}' localhost:8120/api/cmd
 ```
 
-Trends and the journal are kept in memory: a restart of `dam-scada` starts empty. (A persistent
-historian is planned in the SCADA rebuild.)
+## Historian and sequence of events
+
+The SCADA keeps its own **historian** (SQLite, `data/scada_historian.db`), built like the HCW DCS
+historian: every numeric customer point with **exception reporting** (stored when it moved more
+than 0.1 % of its range, or after a 60 s heartbeat), a stale point stored once as a gap (bad
+quality), the journal, and the sequence of events; 14 days retention. Trends go up to 7 days and
+survive a restart. If the file can't be opened, the SCADA logs why and falls back to its memory
+(2 h at 1 s, 48 h at 1 min).
+
+The **sequence of events** (Alarms & events, and the last rows on each unit display) lists unit
+trips, unit alarms, breaker operations and state changes with their source timestamp. The
+first trip code of a unit that wasn't tripped is marked **FIRST-OUT**. The resolution is 1 s
+(what the MQTT payloads carry): a real SOE recorder in the unit controller timestamps to 1 ms,
+which is what separates causes that happen within the same second.
+
+The RCA demo's `replay.sh` publishes recorded history with the current wall-clock time: the
+historian stores it like live data. Delete `data/scada_historian.db` (SCADA stopped) to start clean.

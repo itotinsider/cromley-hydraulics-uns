@@ -10,8 +10,14 @@ HTTP :8120 (host): the hub (/), the SCADA HMI (/scada; the previous HMI at /scad
   GET  /api/config                tags, commands, alarm limits, operating zones, links
   GET  /api/trend?paths=a,b&minutes=60&points=300
   GET  /api/events?limit=200
+  GET  /api/soe?limit=200         sequence of events: unit trips (first-out), alarms, breakers, state changes
+  GET  /api/points                every SCADA point: point name, path, description, unit, range, alarm limits
+  GET  /api/historian             historian statistics
   POST /api/cmd                   {"path": "Powerhouse/Unit1/Cmd/Start", "value": true}
   POST /api/alarms/ack            {"id": "..."} or {"all": true}
+
+Trends and the journal come from the historian (scada/historian.py, SQLite in DATA_DIR) when it can
+be opened; otherwise from the in-memory store (2 h at 1 s, 48 h at 1 min), as before.
 """
 
 import json
@@ -21,6 +27,7 @@ import sys
 import threading
 import time
 from collections import deque
+from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "common"))
@@ -31,6 +38,7 @@ import mqttio  # noqa: E402
 import namespace as NS  # noqa: E402
 import store  # noqa: E402
 import turbine as T  # noqa: E402
+from historian import Historian  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 log = logging.getLogger("dam-scada")
@@ -39,6 +47,11 @@ MQTT_HOST = os.environ.get("MQTT_HOST", "mosquitto")
 MQTT_PORT = int(os.environ.get("MQTT_PORT", "1883"))
 WEB_PORT = int(os.environ.get("WEB_PORT", "8120"))
 STALE_S = float(os.environ.get("STALE_SECONDS", "5"))
+DATA_DIR = os.environ.get("DATA_DIR", os.path.join(HERE, "data"))
+HISTORIAN_FILE = os.environ.get("HISTORIAN_FILE", os.path.join(DATA_DIR, "scada_historian.db"))
+HISTORIAN_DEADBAND_PCT = float(os.environ.get("HISTORIAN_DEADBAND_PCT", "0.1"))
+HISTORIAN_HEARTBEAT_S = float(os.environ.get("HISTORIAN_HEARTBEAT_S", "60"))
+HISTORIAN_RETENTION_DAYS = float(os.environ.get("HISTORIAN_RETENTION_DAYS", "14"))
 
 LINKS = {
     "instructor": os.environ.get("PUBLIC_INSTRUCTOR_URL", "http://localhost:8121"),
@@ -185,19 +198,85 @@ class Alarms:
         return sorted(rows, key=lambda a: (a["priority"], -a["since"]))
 
 
+def _epoch(stamp, default):
+    """Payload timestamp (ISO 8601, Z) -> epoch seconds."""
+    try:
+        return datetime.fromisoformat(str(stamp).replace("Z", "+00:00")).timestamp()
+    except (TypeError, ValueError):
+        return default
+
+
+def open_historian():
+    """The SQLite historian for every numeric customer tag, or None (the SCADA then runs on memory)."""
+    pts = {}
+    for t in NS.customer_tags():
+        if t["type"] == "float":
+            pts[t["path"]] = (t["unit"], t["desc"], (t["hi"] - t["lo"]) if t["lo"] is not None else 1.0)
+        elif t["type"] == "bool":
+            pts[t["path"]] = ("", t["desc"], 1.0)
+    try:
+        return Historian(HISTORIAN_FILE, pts, HISTORIAN_DEADBAND_PCT, HISTORIAN_HEARTBEAT_S, HISTORIAN_RETENTION_DAYS)
+    except Exception as e:  # noqa: BLE001
+        log.error("Historian not available (%s: %s): trends and the journal stay in memory. "
+                  "Is %s writable for the container user?", type(e).__name__, e, os.path.dirname(HISTORIAN_FILE))
+        return None
+
+
 class Scada:
-    def __init__(self):
+    def __init__(self, historian=None):
         self.store = store.TagStore(stale_s=STALE_S)
         self.events = deque(maxlen=2000)
         self.lock = threading.Lock()
         self.alarms = Alarms(self.journal)
         self.stats = {"messages": 0, "bytes": 0, "commands": 0}
+        self.hist = historian
+        self.pending_events, self.pending_soe = [], []
+        self.soe_mem = deque(maxlen=1000)
+        self.prev = {}               # unit signals the SOE watches: path -> last value
+        self.prev_seen = set()       # the first (retained) value of each is the starting point, not an event
         self.client = mqttio.make_client("dam-scada", MQTT_HOST, MQTT_PORT,
                                          subscriptions=[NS.CUSTOMER_PREFIX + "/#"], on_message=self.on_message)
 
     def journal(self, kind, text, source="SCADA"):
-        self.events.appendleft({"t": time.time(), "timestamp": mqttio.iso(), "kind": kind, "source": source,
-                                "text": text})
+        e = {"t": time.time(), "timestamp": mqttio.iso(), "kind": kind, "source": source, "text": text}
+        self.events.appendleft(e)
+        self.pending_events.append(e)
+
+    def soe(self, path, value, stamp):
+        """Sequence of events from the unit signals, in source time (1 s resolution: what MQTT gives).
+        First-out: the first TRIP_ code of a unit that was not tripped; the unit controller lists its
+        latched cause first, so codes arriving in the same message keep that order."""
+        u, key = path.split("/")[1], path.split("/")[2]
+        old = self.prev.get(path)
+        self.prev[path] = value
+        if old is None and path not in self.prev_seen:
+            self.prev_seen.add(path)
+            return
+        t = _epoch(stamp, time.time())
+        rows = []
+        if key == "ActiveAlarms":
+            old, new = list(old or []), list(value or [])
+            tripped = any(c.startswith("TRIP_") for c in old)
+            first = True
+            for c in new:
+                if c in old:
+                    continue
+                fo = c.startswith("TRIP_") and not tripped and first
+                if c.startswith("TRIP_"):
+                    first = False
+                rows.append({"kind": "trip" if c.startswith("TRIP_") else "alarm", "code": c, "first_out": fo,
+                             "text": f"{u} {'FIRST-OUT ' if fo else ''}{c}"})
+            for c in old:
+                if c not in new:
+                    rows.append({"kind": "clear", "code": c, "text": f"{u} {c} cleared"})
+        elif key == "BreakerClosed" and old != value:
+            rows.append({"kind": "breaker", "text": f"{u} breaker 52-G{u[-1]} {'CLOSED' if value else 'OPENED'}"})
+        elif key == "State" and old != value:
+            rows.append({"kind": "state", "text": f"{u} {old} → {value}"})
+        for r in rows:
+            r.update({"t": t, "timestamp": stamp or mqttio.iso(t), "unit": u})
+            self.soe_mem.appendleft(r)
+            self.pending_soe.append(r)
 
     def on_message(self, client, userdata, msg):
         prefix = NS.CUSTOMER_PREFIX + "/"
@@ -213,8 +292,10 @@ class Scada:
                 e = json.loads(msg.payload)
             except ValueError:
                 return
-            self.events.appendleft({"t": time.time(), "timestamp": e.get("timestamp"), "kind": e.get("kind", "info"),
-                                    "source": e.get("source", "Plant"), "text": e.get("text", "")})
+            row = {"t": time.time(), "timestamp": e.get("timestamp"), "kind": e.get("kind", "info"),
+                   "source": e.get("source", "Plant"), "text": e.get("text", "")}
+            self.events.appendleft(row)
+            self.pending_events.append(row)
             return
         try:
             p = json.loads(msg.payload)
@@ -222,6 +303,9 @@ class Scada:
             return
         if isinstance(p, dict):
             self.store.update(path, p.get("value"), p.get("timestamp"))
+            if path.startswith("Powerhouse/") and path.rsplit("/", 1)[1] in ("ActiveAlarms", "BreakerClosed", "State"):
+                with self.lock:
+                    self.soe(path, p.get("value"), p.get("timestamp"))
 
     def evaluate(self):
         now = time.time()
@@ -248,6 +332,35 @@ class Scada:
                 self.evaluate()
             except Exception:  # noqa: BLE001
                 log.exception("alarm evaluation")
+            try:
+                self.historize()
+            except Exception:  # noqa: BLE001
+                log.exception("historian")
+
+    def historize(self):
+        """Every second: each numeric tag in source time (None = stale/BAD), plus the new journal and SOE rows."""
+        with self.lock:
+            events, self.pending_events = self.pending_events, []
+            soe, self.pending_soe = self.pending_soe, []
+        if not self.hist:
+            return
+        now, values = time.time(), {}
+        for path, e in self.store.snapshot().items():
+            if path not in self.hist.ids:
+                continue
+            v = e["v"]
+            if isinstance(v, bool):
+                v = 1.0 if v else 0.0
+            if e["age"] > STALE_S or not isinstance(v, (int, float)):
+                values[path] = (now, None)
+            else:
+                values[path] = (_epoch(e["ts"], now - e["age"]), float(v))
+        self.hist.store(now, values, events, soe)
+
+    def trend(self, paths, minutes, points):
+        if self.hist:
+            return self.hist.trend(paths, minutes, points)
+        return self.store.trend(paths, minutes, points)
 
     def command(self, path, value, source="SCADA operator"):
         if path not in CMDS:
@@ -297,11 +410,31 @@ def build_app(sc):
     @app.get("/api/trend")
     def trend(req):
         paths = [p for p in req.query.get("paths", "").split(",") if p]
-        return sc.store.trend(paths, float(req.query.get("minutes", 60)), int(req.query.get("points", 300)))
+        return sc.trend(paths, float(req.query.get("minutes", 60)), int(req.query.get("points", 300)))
 
     @app.get("/api/events")
     def events(req):
-        return {"events": list(sc.events)[:int(req.query.get("limit", 200))]}
+        n = int(req.query.get("limit", 200))
+        return {"events": sc.hist.events(n) if sc.hist else list(sc.events)[:n]}
+
+    @app.get("/api/soe")
+    def soe(req):
+        n = int(req.query.get("limit", 200))
+        return {"soe": sc.hist.soe(n) if sc.hist else list(sc.soe_mem)[:n]}
+
+    @app.get("/api/points")
+    def points(req):
+        lims = {}
+        for a in ALARMS:
+            lims.setdefault(a[1], []).append({"id": a[0], "op": a[2], "limit": a[3], "priority": a[4]})
+        return {"prefix": NS.CUSTOMER_PREFIX,
+                "points": [{"point": POINTS.get(t["path"]), "path": t["path"], "description": t["desc"], "unit": t["unit"],
+                            "type": t["type"], "lo": t["lo"], "hi": t["hi"], "alarms": lims.get(t["path"], []),
+                            "historized": bool(sc.hist and t["path"] in sc.hist.ids)} for t in NS.customer_tags()]}
+
+    @app.get("/api/historian")
+    def historian(req):
+        return sc.hist.stats() if sc.hist else {"enabled": False, "file": HISTORIAN_FILE}
 
     @app.post("/api/cmd")
     def cmd(req):
@@ -321,7 +454,7 @@ def build_app(sc):
 
 
 def main():
-    sc = Scada()
+    sc = Scada(open_historian())
     sc.store.start_sampler()
     threading.Thread(target=sc.loop, daemon=True, name="alarms").start()
     build_app(sc).serve(WEB_PORT, background=False)

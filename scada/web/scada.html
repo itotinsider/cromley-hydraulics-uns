@@ -378,6 +378,7 @@
             <h4><span>Start permissives</span><span id="u-ready"></span></h4><ul class="perm" id="u-perm"></ul>
             <h4><span>Protection · first-out</span></h4><div id="u-fo"></div><div class="codes2" id="u-codes"></div>
             <div class="note" id="u-limits"></div>
+            <h4><span>Last events (SOE)</span><a href="#alarms" style="color:var(--muted);font-weight:400;text-transform:none">all ▸</a></h4><div class="codes2" id="u-soe" style="font-size:10.5px;line-height:1.5"></div>
           </div>
         </div>
       </div>
@@ -438,9 +439,15 @@
         <h3>Alarm summary <span class="r"><button class="btn" id="ack2">Acknowledge all</button></span></h3>
         <div class="scroll" style="max-height:340px"><table><thead><tr><th></th><th>Since</th><th>Point</th><th>Alarm</th><th>Value</th><th>State</th><th></th></tr></thead><tbody id="al-body"></tbody></table></div>
       </div>
-      <div class="panel">
-        <h3>Event journal <span class="r evf" id="evfilter"></span></h3>
-        <div class="scroll" style="max-height:calc(100vh - 560px);min-height:260px"><table><thead><tr><th>Time</th><th>Kind</th><th>Source</th><th>Text</th></tr></thead><tbody id="ev-body"></tbody></table></div>
+      <div class="two">
+        <div class="panel">
+          <h3>Sequence of events <span class="r note" style="margin:0">unit trips, alarms, breakers, states · source time, 1 s resolution</span></h3>
+          <div class="scroll" style="max-height:calc(100vh - 560px);min-height:260px"><table><thead><tr><th>Time</th><th>Unit</th><th>Kind</th><th>Event</th></tr></thead><tbody id="soe-body"></tbody></table></div>
+        </div>
+        <div class="panel">
+          <h3>Event journal <span class="r evf" id="evfilter"></span></h3>
+          <div class="scroll" style="max-height:calc(100vh - 560px);min-height:260px"><table><thead><tr><th>Time</th><th>Kind</th><th>Source</th><th>Text</th></tr></thead><tbody id="ev-body"></tbody></table></div>
+        </div>
       </div>
     </section>
 
@@ -454,7 +461,7 @@
             <div style="padding:10px"><canvas id="bigtrend"></canvas></div>
             <table class="legend"><thead><tr><th></th><th>Point</th><th>Description</th><th>Cursor / now</th><th>Min</th><th>Max</th><th>Scale</th></tr></thead><tbody id="legend"></tbody></table>
           </div>
-          <div class="note" style="margin:0 2px">From the SCADA's trend store: 1 s values for 2 h, 1-minute means for 48 h, kept in memory (a restart starts empty).</div>
+          <div class="note" style="margin:0 2px" id="histstat">Historian: —</div>
         </div>
       </div>
     </section>
@@ -474,13 +481,13 @@
     <div class="fp-body" id="fp-body"></div>
   </aside>
 </main>
-<div class="foot">This SCADA reads the customer tree only (<code>v1.0/DRWPA/CopperCanyon/…</code>) and sends operator commands on its <code>Cmd</code> topics. The CH turbine data (<code>v1.0/CH/…</code>) is the machine builder's and is not shown here. The previous HMI is still at <a href="/scada-classic">/scada-classic</a>.</div>
+<div class="foot">This SCADA reads the customer tree only (<code>v1.0/DRWPA/CopperCanyon/…</code>) and sends operator commands on its <code>Cmd</code> topics. The CH turbine data (<code>v1.0/CH/…</code>) is the machine builder's and is not shown here.</div>
 <div id="toast"></div>
 
 <script>
 "use strict";
 const COLORS = ["#1f2326", "#1d6fd6", "#0f8a6c", "#b5528f", "#8a6d00", "#5a4fcf", "#c2410c", "#4b7f99"];
-const RANGES = [["15m", 15], ["1h", 60], ["4h", 240], ["12h", 720], ["24h", 1440], ["48h", 2880]];
+const RANGES = [["15m", 15], ["1h", 60], ["4h", 240], ["12h", 720], ["24h", 1440], ["7d", 10080]];
 const TABS = ["overview", "section", "water", "units", "sld", "jcc", "unit", "alarms", "trends", "points"];
 const CLASSIC = [];        // displays not rebuilt yet: served by /scada-classic (none left)
 const AREAS = [["Reservoir", "Reservoir and river"], ["River", null], ["Plant", "Plant and grid"], ["Intake", "Intake and penstock"],
@@ -1360,6 +1367,30 @@ $("#evfilter").innerHTML = ["all", "alarm", "trip", "operator", "refused", "plan
 $$("#evfilter [data-ev]").forEach(b => b.addEventListener("click", () => {
   evKind = b.dataset.ev; $$("#evfilter [data-ev]").forEach(x => x.classList.toggle("primary", x === b)); loadEvents();
 }));
+const dts = t => new Date(t * 1000).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+async function loadSoe(unit = null, limit = 300) {
+  try { const r = (await (await fetch(`/api/soe?limit=${limit}`)).json()).soe || []; return unit ? r.filter(e => e.unit === unit) : r; } catch { return null; }
+}
+async function renderSoeTable() {
+  const rows = await loadSoe(); if (!rows) return;
+  $("#soe-body").innerHTML = rows.map(e => `<tr class="click" data-unit="${esc(e.unit)}"><td class="m">${dts(e.t)}</td><td>${esc(e.unit)}</td>
+      <td class="m k-${e.kind === "trip" ? "trip" : e.kind === "alarm" ? "alarm" : "x"}">${esc(e.kind)}</td>
+      <td class="m" style="${e.first_out ? "font-weight:700" : ""}">${e.first_out ? "FIRST-OUT " : ""}${esc(e.code || e.text.replace(`${e.unit} `, ""))}</td></tr>`).join("")
+    || `<tr><td colspan="4" class="note">No unit events yet.</td></tr>`;
+}
+$("#soe-body").addEventListener("click", e => { const r = e.target.closest("tr[data-unit]"); if (r && CFG.units.includes(r.dataset.unit)) go(`#unit/${r.dataset.unit}`); });
+async function renderUnitSoe() {
+  if (!UD) return;
+  const rows = await loadSoe(UD, 400); if (!rows) return;
+  $("#u-soe").innerHTML = rows.slice(0, 8).map(e => `<div>${dts(e.t)} · ${e.first_out ? "<b>FIRST-OUT</b> " : ""}${esc(e.code || e.text.replace(`${e.unit} `, ""))}</div>`).join("") || "none yet";
+}
+async function loadHistStat() {
+  try {
+    const s = await (await fetch("/api/historian")).json();
+    $("#histstat").textContent = s.enabled === false ? "Historian off (its file could not be opened): trends from memory, 2 h at 1 s and 48 h at 1 min; a restart starts empty."
+      : `Historian (SQLite): ${s.points} points · ${s.samples.toLocaleString()} samples since ${s.first_ts ? dts(s.first_ts) : "—"} · ${(s.size_bytes / 1e6).toFixed(1)} MB · exception reporting, deadband ${s.deadband_pct} % of range, heartbeat ${s.max_interval_s} s, retention ${s.retention_days} d.`;
+  } catch { }
+}
 async function loadEvents() {
   let ev = [];
   try { ev = (await (await fetch("/api/events?limit=500")).json()).events || []; } catch { return; }
@@ -1663,7 +1694,9 @@ function showTab(name) {
   if (name === "water") loadWaterTrends();
   if (name === "jcc") loadJccTrend();
   if (name === "trends") loadTrend();
-  if (name === "alarms") loadEvents();
+  if (name === "alarms") { loadEvents(); renderSoeTable(); }
+  if (name === "trends") loadHistStat();
+  if (name === "unit") renderUnitSoe();
 }
 // The hash is the display address. Displays not rebuilt yet (#reservoir, #governor, #unit/<unit>) go to the previous HMI.
 function route() {
@@ -1713,7 +1746,7 @@ async function init() {
   setInterval(poll, 1000);
   setInterval(loadLevelRate, 60000);
   setInterval(() => { if (TAB === "trends") loadTrend(); if (TAB === "unit") loadUnitTrends(); if (TAB === "water") loadWaterTrends(); if (TAB === "jcc") loadJccTrend(); if (SEL) loadFpTrend(); }, 10000);
-  setInterval(() => { if (TAB === "alarms") loadEvents(); }, 5000);
+  setInterval(() => { if (TAB === "alarms") { loadEvents(); renderSoeTable(); } if (TAB === "unit") renderUnitSoe(); }, 5000);
   tickClock(); setInterval(tickClock, 1000);
 }
 init();

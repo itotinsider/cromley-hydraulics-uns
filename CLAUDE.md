@@ -61,7 +61,8 @@ chplc/main.py            one PLC per turbine (thread, MQTT client + LWT, seq), w
 scada/main.py            dam SCADA server: customer tree only, alarms, journal, trends, Cmd publisher, HTTP :8120
 scada/web/index.html     hub (the only page that isn't a persona HMI)
 scada/web/scada.html     the dam SCADA HMI: high-performance (ISA-101, light grey, HCW style), being rebuilt in steps
-scada/web/scada-classic.html  the previous (dark) HMI at /scada-classic: serves the displays not rebuilt yet
+scada/web/scada-classic.html  /scada-classic: the old HMI's displays and their successors (old deep links forward)
+scada/historian.py       the SCADA historian (SQLite: samples, journal, SOE)
 instructor/main.py       instructor station: proxies to the simulators over HTTP, HTTP :8121
 instructor/web/index.html
 chviewer/main.py         CH asset viewer: CH tree only, nameplates, values, events, raw waveforms, HTTP :8122
@@ -75,7 +76,7 @@ wiki/                    the GitHub wiki's source; wiki/images/ screenshots
 mosquitto/config/        broker config; mosquitto/data/ retained-message persistence (git-ignored)
 nodered_data/flows.json  the only tracked file in nodered_data/ (hand-written, 3 tabs)
 mqtt_explorer_data/settings.json   the seeded "Copper Canyon Dam" connection (only file tracked there)
-data/                    bind mount: ch_plc_counters.json (git-ignored)
+data/                    bind mount: ch_plc_counters.json, scada_historian.db (git-ignored)
 exports/                 bind mount: CSVs Node-RED writes (git-ignored)
 rca-demo/                RCA bot demo: document library (library/), instructor answer key, generators (build/),
                          recorded historian per scenario (history/), bot instructions (bot/), run_rca.sh,
@@ -274,8 +275,8 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
 
 - **Dam SCADA (`scada/main.py`):** customer tree only (`test_scada_never_reads_the_ch_tree`). Alarm
   engine ISA-18.2-style (`ALARMS` limits with on-delays + unit codes + `COMM_DAM` stale), an alarm
-  stays listed until cleared *and* acked. Journal: SCADA events + `Plant/Events`. Trends in memory
-  (`common/store.py`: 2 h at 1 s, 48 h at 1 min); a restart starts empty. Commands: `POST /api/cmd`
+  stays listed until cleared *and* acked. Journal: SCADA events + `Plant/Events`. Trends from the historian (below), the
+  in-memory store (`common/store.py`: 2 h at 1 s, 48 h at 1 min) only when it can't be opened. Commands: `POST /api/cmd`
   → MQTT with `source: "SCADA operator"`.
   - **Rebuild in progress (`scada-hp-hmi`, ROADMAP):** `/scada` is the new high-performance HMI
     (step 1: Plant overview, the **Dam section** training view `#section` = the old cross-section
@@ -288,7 +289,15 @@ Further: `flood`, `generator_trip`, `trash_debris` (dam); `cooler_fouling`, `oil
     forwards), Single-line `#sld` (only customer-tree values; untelemetered parts dashed), Joint
     control `#jcc` (makeable totals for k units above / n−k below the rough zone at the current
     head, from `/api/config` zones and `p_min_mw`). Nothing links to `/scada-classic` any more.
-    Step 4: SQLite historian and SOE, remove `/scada-classic`.
+    Step 4: SQLite historian (`scada/historian.py`, `data/scada_historian.db`: exception
+    reporting 0.1 % / 60 s heartbeat, stale = one BAD gap row, trend buckets hold the last value,
+    14 d) for `/api/trend` and `/api/events`; the SOE (`Scada.soe()`: diffs of `ActiveAlarms`,
+    `BreakerClosed`, `State` per unit, first-out = first `TRIP_` of a unit that wasn't tripped,
+    source time, 1 s) on `/api/soe`; `/api/points`, `/api/historian`. `/scada-classic` is now a
+    page listing the successors (old deep links forward): kept as a route so the interface only
+    grows (1.3).
+  - **Gotcha:** the RCA replay publishes with the wall clock, so the historian stores replayed
+    values as live; delete `data/scada_historian.db` to start clean.
   - **Unit limits:** `UNIT_LIMITS` in `scada/main.py` (bearing 80/90 °C, governor oil 55/52/48 bar,
     cooling water 56 L/s, overspeed 145 %) is the SCADA's engineering copy of the unit controller's
     protection, on `/api/config`; `test_scada_unit_limits_match_the_unit_controller` keeps it equal
